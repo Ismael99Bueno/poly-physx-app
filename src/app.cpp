@@ -1,0 +1,109 @@
+#include "app.hpp"
+#include "constants.hpp"
+#include "imgui.h"
+#include "imgui-SFML.h"
+
+namespace phys
+{
+    app::app(const rk::butcher_tableau &table,
+             float dt,
+             std::size_t allocations,
+             const std::string &name) : m_engine(table, allocations),
+                                        m_dt(dt),
+                                        m_window(sf::VideoMode::getFullscreenModes()[0],
+                                                 name,
+                                                 sf::Style::Fullscreen)
+    {
+        m_window.setView(sf::View(sf::Vector2f(0.f, 0.f), sf::Vector2f(WIDTH, -HEIGHT)));
+        // implement subscription to add_entity event
+    }
+
+    void app::run(std::function<bool(engine2D &, float &)> forward = &engine2D::raw_forward)
+    {
+        m_window.setFramerateLimit(DEFAULT_FPS);
+        if (!ImGui::SFML::Init(m_window))
+        {
+            perror("ImGui initialization failed\n");
+            exit(EXIT_FAILURE);
+        }
+
+        sf::Clock dclock;
+        while (m_window.isOpen())
+        {
+            handle_events();
+            sf::Clock phys_clock;
+            for (std::size_t i = 0; i < m_integrations_per_frame; i++)
+                forward(m_engine, m_dt);
+            m_phys_time = phys_clock.getElapsedTime();
+
+            sf::Clock draw_clock;
+            ImGui::SFML::Update(m_window, dclock.restart());
+
+            m_window.clear();
+            draw_entities();
+            ImGui::SFML::Render(m_window);
+            m_window.display();
+            m_draw_time = draw_clock.getElapsedTime();
+        }
+    }
+
+    void app::push_layer(layer *l) { m_layers.push(l); }
+
+    void app::draw_entities()
+    {
+        m_engine.retrieve();
+        const std::vector<phys::entity2D> &etts = m_engine.entities();
+        const alg::vec2 mpos = world_mouse();
+        for (std::size_t i = 0; i < m_shapes.size(); i++)
+        {
+            for (std::size_t j = 0; j < m_shapes[i].getPointCount(); j++)
+                m_shapes[i].setPoint(j, etts[i].shape()[j] * WORLD_TO_PIXEL);
+            m_window.draw(m_shapes[i]);
+        }
+    }
+
+    void app::handle_events()
+    {
+        sf::Event event;
+        while (m_window.pollEvent(event))
+        {
+            ImGui::SFML::ProcessEvent(event);
+            switch (event.type)
+            {
+            case sf::Event::Closed:
+                m_window.close();
+                break;
+
+            case sf::Event::KeyPressed:
+                switch (event.key.code)
+                {
+                case sf::Keyboard::Escape:
+                    m_window.close();
+                    break;
+                default:
+                    break;
+                }
+            default:
+                break;
+            }
+        }
+    }
+
+    alg::vec2 app::world_mouse() const
+    {
+        const sf::Vector2i mpos = sf::Mouse::getPosition(m_window);
+        const sf::Vector2f wpos = m_window.mapPixelToCoords(mpos);
+        return alg::vec2(wpos.x, wpos.y) * PIXEL_TO_WORLD; //{x - WIDTH / 2.f, HEIGHT / 2.f - y};
+    }
+
+    alg::vec2 app::world_mouse_delta() const
+    {
+        return alg::vec2(ImGui::GetIO().MouseDelta.x, -ImGui::GetIO().MouseDelta.y) * PIXEL_TO_WORLD;
+    }
+
+    const engine2D &app::engine() const { return m_engine; }
+    engine2D &app::engine() { return m_engine; }
+
+    const sf::Time &app::phys_time() const { return m_phys_time; }
+    const sf::Time &app::draw_time() const { return m_draw_time; }
+}
