@@ -42,12 +42,30 @@ namespace phys
             m_window.clear();
             draw_entities();
             ImGui::SFML::Render(m_window);
+            update_layers();
+            on_update();
             m_window.display();
             m_draw_time = draw_clock.getElapsedTime();
         }
     }
 
-    void app::push_layer(layer *l) { m_layers.push(l); }
+    void app::push_layer(layer *l)
+    {
+        m_layers.emplace_back(l);
+        l->on_attach();
+    }
+
+    void app::update_layers()
+    {
+        for (layer *l : m_layers)
+            l->on_update();
+    }
+
+    void app::event_layers(sf::Event &event)
+    {
+        for (auto it = m_layers.rbegin(); it != m_layers.rend(); ++it)
+            (*it)->on_event(event);
+    }
 
     void app::draw_entities()
     {
@@ -65,6 +83,7 @@ namespace phys
     void app::handle_events()
     {
         sf::Event event;
+        event_layers(event);
         while (m_window.pollEvent(event))
         {
             ImGui::SFML::ProcessEvent(event);
@@ -104,6 +123,11 @@ namespace phys
     const engine2D &app::engine() const { return m_engine; }
     engine2D &app::engine() { return m_engine; }
 
+    const sf::Color &app::entity_color() const { return m_entity_color; }
+    sf::Color &app::entity_color() { return m_entity_color; }
+
     const sf::Time &app::phys_time() const { return m_phys_time; }
     const sf::Time &app::draw_time() const { return m_draw_time; }
+
+    void app::entity_color(const sf::Color &color) { m_entity_color = color; }
 }

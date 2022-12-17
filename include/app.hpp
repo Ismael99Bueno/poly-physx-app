@@ -5,7 +5,6 @@
 #include "layer.hpp"
 #include "tableaus.hpp"
 #include <string>
-#include <stack>
 #include <vector>
 #include <functional>
 #include <SFML/Graphics.hpp>
@@ -29,23 +28,31 @@ namespace phys
         const engine2D &engine() const;
         engine2D &engine();
 
+        const sf::Color &entity_color() const;
+        sf::Color &entity_color();
+
         const sf::Time &phys_time() const;
         const sf::Time &draw_time() const;
+
+        void entity_color(const sf::Color &color);
 
     private:
         const std::string m_name;
         sf::RenderWindow m_window;
         engine2D m_engine;
-        std::stack<layer *> m_layers;
+        std::vector<layer *> m_layers;
         std::vector<sf::ConvexShape> m_shapes;
 
         alg::vec2 m_mouse_add;
         sf::Time m_phys_time, m_draw_time;
+        sf::Color m_entity_color;
 
         int m_integrations_per_frame = 10;
         float m_dt;
         bool m_visualize_qt;
 
+        void update_layers();
+        void event_layers(sf::Event &event);
         void draw_entities();
         void handle_events();
         alg::vec2 world_mouse() const;
