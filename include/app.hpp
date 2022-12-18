@@ -29,6 +29,12 @@ namespace phys
         const sf::Color &entity_color() const;
         sf::Color &entity_color();
 
+        int integrations_per_frame() const;
+        void integrations_per_frame(int integrations_per_frame);
+
+        float timestep() const;
+        void timestep(float ts);
+
         const sf::RenderWindow &window() const;
         sf::RenderWindow &window();
 

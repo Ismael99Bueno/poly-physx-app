@@ -71,7 +71,7 @@ namespace phys
     void app::push_layer(layer *l)
     {
         m_layers.emplace_back(l);
-        l->on_attach();
+        l->on_attach(this);
     }
 
     void app::update_layers()
@@ -150,6 +150,12 @@ namespace phys
 
     const sf::Color &app::entity_color() const { return m_entity_color; }
     sf::Color &app::entity_color() { return m_entity_color; }
+
+    int app::integrations_per_frame() const { return m_integrations_per_frame; }
+    void app::integrations_per_frame(int integrations_per_frame) { m_integrations_per_frame = integrations_per_frame; }
+
+    float app::timestep() const { return m_dt; }
+    void app::timestep(float ts) { m_dt = ts; }
 
     const sf::RenderWindow &app::window() const { return m_window; }
     sf::RenderWindow &app::window() { return m_window; }

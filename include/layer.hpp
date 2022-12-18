@@ -19,7 +19,7 @@ namespace phys
         const std::string m_name;
 
     private:
-        virtual void on_attach() {}
+        virtual void on_attach(app *papp) {}
         virtual void on_detach() {}
         virtual void on_update() {}
         virtual void on_event(sf::Event &event) {}
