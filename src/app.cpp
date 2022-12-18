@@ -15,10 +15,29 @@ namespace phys
                                                  sf::Style::Fullscreen)
     {
         m_window.setView(sf::View(sf::Vector2f(0.f, 0.f), sf::Vector2f(WIDTH, -HEIGHT)));
-        // implement subscription to add_entity event
+
+        const auto add_shape = [this](entity2D &e)
+        {
+            sf::ConvexShape &shape = m_shapes.emplace_back(sf::ConvexShape());
+            const geo::polygon2D &poly = e.shape();
+
+            shape.setPointCount(poly.size());
+            for (std::size_t i = 0; i < poly.size(); i++)
+                shape.setPoint(i, poly[i] * WORLD_TO_PIXEL);
+            shape.setFillColor(sf::Color::Green);
+            shape.setOutlineColor(sf::Color::Red);
+        };
+        const auto remove_shape = [this](entity2D &e)
+        {
+            m_shapes[e.index()] = m_shapes.back();
+            m_shapes.pop_back();
+        };
+
+        m_engine.on_entity_addition(add_shape);
+        m_engine.on_entity_removal(remove_shape);
     }
 
-    void app::run(std::function<bool(engine2D &, float &)> forward = &engine2D::raw_forward)
+    void app::run(std::function<bool(engine2D &, float &)> forward)
     {
         m_window.setFramerateLimit(DEFAULT_FPS);
         if (!ImGui::SFML::Init(m_window))
@@ -70,13 +89,17 @@ namespace phys
     void app::draw_entities()
     {
         m_engine.retrieve();
-        const std::vector<phys::entity2D> &etts = m_engine.entities();
+        const std::vector<phys::entity2D> &entities = m_engine.entities();
         const alg::vec2 mpos = world_mouse();
         for (std::size_t i = 0; i < m_shapes.size(); i++)
         {
-            for (std::size_t j = 0; j < m_shapes[i].getPointCount(); j++)
-                m_shapes[i].setPoint(j, etts[i].shape()[j] * WORLD_TO_PIXEL);
-            m_window.draw(m_shapes[i]);
+            sf::ConvexShape &shape = m_shapes[i];
+            const entity2D &e = entities[i];
+            if (shape.getPointCount() != e.shape().size())
+                shape.setPointCount(e.shape().size());
+            for (std::size_t j = 0; j < shape.getPointCount(); j++)
+                shape.setPoint(j, e.shape()[j] * WORLD_TO_PIXEL);
+            m_window.draw(shape);
         }
     }
 
