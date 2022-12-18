@@ -24,7 +24,7 @@ namespace phys
             shape.setPointCount(poly.size());
             for (std::size_t i = 0; i < poly.size(); i++)
                 shape.setPoint(i, poly[i] * WORLD_TO_PIXEL);
-            shape.setFillColor(sf::Color::Green);
+            shape.setFillColor(m_entity_color);
             shape.setOutlineColor(sf::Color::Red);
         };
         const auto remove_shape = [this](entity2D &e)

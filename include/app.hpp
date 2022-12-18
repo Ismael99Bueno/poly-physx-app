@@ -45,7 +45,7 @@ namespace phys
 
         alg::vec2 m_mouse_add;
         sf::Time m_phys_time, m_draw_time;
-        sf::Color m_entity_color;
+        sf::Color m_entity_color = sf::Color::Green;
 
         int m_integrations_per_frame = 10;
         float m_dt;
