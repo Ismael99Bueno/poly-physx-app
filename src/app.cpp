@@ -60,9 +60,9 @@ namespace phys
 
             m_window.clear();
             draw_entities();
-            ImGui::SFML::Render(m_window);
             update_layers();
             on_update();
+            ImGui::SFML::Render(m_window);
             m_window.display();
             m_draw_time = draw_clock.getElapsedTime();
         }
@@ -99,6 +99,7 @@ namespace phys
                 shape.setPointCount(e.shape().size());
             for (std::size_t j = 0; j < shape.getPointCount(); j++)
                 shape.setPoint(j, e.shape()[j] * WORLD_TO_PIXEL);
+            on_entity_draw({&entities, i}, shape);
             m_window.draw(shape);
         }
     }
@@ -106,7 +107,6 @@ namespace phys
     void app::handle_events()
     {
         sf::Event event;
-        event_layers(event);
         while (m_window.pollEvent(event))
         {
             ImGui::SFML::ProcessEvent(event);
@@ -128,6 +128,8 @@ namespace phys
             default:
                 break;
             }
+            event_layers(event);
+            on_event(event);
         }
     }
 
@@ -148,6 +150,9 @@ namespace phys
 
     const sf::Color &app::entity_color() const { return m_entity_color; }
     sf::Color &app::entity_color() { return m_entity_color; }
+
+    const sf::RenderWindow &app::window() const { return m_window; }
+    sf::RenderWindow &app::window() { return m_window; }
 
     const sf::Time &app::phys_time() const { return m_phys_time; }
     const sf::Time &app::draw_time() const { return m_draw_time; }

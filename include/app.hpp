@@ -23,18 +23,23 @@ namespace phys
         void run(std::function<bool(engine2D &, float &)> forward = &engine2D::raw_forward);
         void push_layer(layer *l);
 
-        virtual void on_update() {}
-
         const engine2D &engine() const;
         engine2D &engine();
 
         const sf::Color &entity_color() const;
         sf::Color &entity_color();
 
+        const sf::RenderWindow &window() const;
+        sf::RenderWindow &window();
+
         const sf::Time &phys_time() const;
         const sf::Time &draw_time() const;
 
         void entity_color(const sf::Color &color);
+
+    protected:
+        alg::vec2 world_mouse() const;
+        alg::vec2 world_mouse_delta() const;
 
     private:
         const std::string m_name;
@@ -43,9 +48,12 @@ namespace phys
         std::vector<layer *> m_layers;
         std::vector<sf::ConvexShape> m_shapes;
 
-        alg::vec2 m_mouse_add;
         sf::Time m_phys_time, m_draw_time;
         sf::Color m_entity_color = sf::Color::Green;
+
+        virtual void on_update() {}
+        virtual void on_entity_draw(const phys::const_entity_ptr &e, sf::ConvexShape &shape) {}
+        virtual void on_event(sf::Event &event) {}
 
         int m_integrations_per_frame = 10;
         float m_dt;
@@ -55,8 +63,6 @@ namespace phys
         void event_layers(sf::Event &event);
         void draw_entities();
         void handle_events();
-        alg::vec2 world_mouse() const;
-        alg::vec2 world_mouse_delta() const;
     };
 
 }
