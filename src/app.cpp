@@ -49,22 +49,26 @@ namespace phys
         sf::Clock dclock;
         while (m_window.isOpen())
         {
+            PERF_SCOPE("-Frame-")
             handle_events();
             sf::Clock phys_clock;
             for (std::size_t i = 0; i < m_integrations_per_frame; i++)
                 forward(m_engine, m_dt);
             m_phys_time = phys_clock.getElapsedTime();
 
-            sf::Clock draw_clock;
-            ImGui::SFML::Update(m_window, dclock.restart());
+            {
+                PERF_SCOPE("-Drawing-")
+                sf::Clock draw_clock;
+                ImGui::SFML::Update(m_window, dclock.restart());
 
-            m_window.clear();
-            draw_entities();
-            update_layers();
-            on_update();
-            ImGui::SFML::Render(m_window);
-            m_window.display();
-            m_draw_time = draw_clock.getElapsedTime();
+                m_window.clear();
+                draw_entities();
+                update_layers();
+                on_update();
+                ImGui::SFML::Render(m_window);
+                m_window.display();
+                m_draw_time = draw_clock.getElapsedTime();
+            }
         }
     }
 
@@ -88,6 +92,7 @@ namespace phys
 
     void app::draw_entities()
     {
+        PERF_FUNCTION()
         m_engine.retrieve();
         const std::vector<phys::entity2D> &entities = m_engine.entities();
         const alg::vec2 mpos = world_mouse();
