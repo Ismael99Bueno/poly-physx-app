@@ -16,10 +16,10 @@ namespace phys
     {
         m_window.setView(sf::View(sf::Vector2f(0.f, 0.f), sf::Vector2f(WIDTH, -HEIGHT)));
 
-        const auto add_shape = [this](entity2D &e)
+        const auto add_shape = [this](entity_ptr e)
         {
             sf::ConvexShape &shape = m_shapes.emplace_back(sf::ConvexShape());
-            const geo::polygon2D &poly = e.shape();
+            const geo::polygon2D &poly = e->shape();
 
             shape.setPointCount(poly.size());
             for (std::size_t i = 0; i < poly.size(); i++)
@@ -27,9 +27,9 @@ namespace phys
             shape.setFillColor(m_entity_color);
             shape.setOutlineColor(sf::Color::Red);
         };
-        const auto remove_shape = [this](entity2D &e)
+        const auto remove_shape = [this](const std::size_t index)
         {
-            m_shapes[e.index()] = m_shapes.back();
+            m_shapes[index] = m_shapes.back();
             m_shapes.pop_back();
         };
 
