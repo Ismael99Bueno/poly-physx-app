@@ -26,6 +26,9 @@ namespace phys
         const engine2D &engine() const;
         engine2D &engine();
 
+        const std::vector<sf::ConvexShape> &shapes() const;
+        std::vector<sf::ConvexShape> &shapes();
+
         const sf::Color &entity_color() const;
         sf::Color &entity_color();
 

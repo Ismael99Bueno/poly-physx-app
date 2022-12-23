@@ -153,6 +153,9 @@ namespace phys
     const engine2D &app::engine() const { return m_engine; }
     engine2D &app::engine() { return m_engine; }
 
+    const std::vector<sf::ConvexShape> &app::shapes() const { return m_shapes; }
+    std::vector<sf::ConvexShape> &app::shapes() { return m_shapes; }
+
     const sf::Color &app::entity_color() const { return m_entity_color; }
     sf::Color &app::entity_color() { return m_entity_color; }
 
