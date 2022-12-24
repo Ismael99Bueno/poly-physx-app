@@ -38,6 +38,9 @@ namespace phys
         float timestep() const;
         void timestep(float ts);
 
+        bool paused() const;
+        void paused(bool paused);
+
         const sf::RenderWindow &window() const;
         sf::RenderWindow &window();
 
@@ -56,6 +59,7 @@ namespace phys
         engine2D m_engine;
         std::vector<layer *> m_layers;
         std::vector<sf::ConvexShape> m_shapes;
+        bool m_paused = false;
 
         sf::Time m_phys_time, m_draw_time;
         sf::Color m_entity_color = sf::Color::Green;

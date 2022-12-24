@@ -52,8 +52,9 @@ namespace phys
             PERF_SCOPE("-Frame-")
             handle_events();
             sf::Clock phys_clock;
-            for (std::size_t i = 0; i < m_integrations_per_frame; i++)
-                forward(m_engine, m_dt);
+            if (!m_paused)
+                for (std::size_t i = 0; i < m_integrations_per_frame; i++)
+                    forward(m_engine, m_dt);
             m_phys_time = phys_clock.getElapsedTime();
 
             {
@@ -127,6 +128,9 @@ namespace phys
                 case sf::Keyboard::Escape:
                     m_window.close();
                     break;
+                case sf::Keyboard::Space:
+                    m_paused = !m_paused;
+                    break;
                 default:
                     break;
                 }
@@ -164,6 +168,9 @@ namespace phys
 
     float app::timestep() const { return m_dt; }
     void app::timestep(float ts) { m_dt = ts; }
+
+    bool app::paused() const { return m_paused; }
+    void app::paused(const bool paused) { m_paused = paused; }
 
     const sf::RenderWindow &app::window() const { return m_window; }
     sf::RenderWindow &app::window() { return m_window; }
