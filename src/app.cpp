@@ -6,10 +6,8 @@
 namespace phys
 {
     app::app(const rk::butcher_tableau &table,
-             float dt,
-             std::size_t allocations,
+             const std::size_t allocations,
              const std::string &name) : m_engine(table, allocations),
-                                        m_dt(dt),
                                         m_window(sf::VideoMode::getFullscreenModes()[0],
                                                  name,
                                                  sf::Style::Fullscreen)
@@ -35,11 +33,11 @@ namespace phys
 
         m_engine.on_entity_addition(add_shape);
         m_engine.on_entity_removal(remove_shape);
+        align_dt();
     }
 
     void app::run(std::function<bool(engine2D &, float &)> forward)
     {
-        m_window.setFramerateLimit(DEFAULT_FPS);
         if (!ImGui::SFML::Init(m_window))
         {
             perror("ImGui initialization failed\n");
@@ -70,6 +68,8 @@ namespace phys
                 m_window.display();
                 m_draw_time = draw_clock.getElapsedTime();
             }
+            if (m_aligned_dt)
+                align_dt();
         }
     }
 
@@ -142,6 +142,12 @@ namespace phys
         }
     }
 
+    void app::align_dt()
+    {
+        const rk::integrator &integ = m_engine.integrator();
+        m_dt = std::clamp((m_phys_time + m_draw_time).asSeconds(), integ.min_dt(), integ.max_dt());
+    }
+
     alg::vec2 app::world_mouse() const
     {
         const sf::Vector2i mpos = sf::Mouse::getPosition(m_window);
@@ -171,6 +177,9 @@ namespace phys
 
     bool app::paused() const { return m_paused; }
     void app::paused(const bool paused) { m_paused = paused; }
+
+    bool app::aligned_timestep() const { return m_aligned_dt; }
+    void app::aligned_timestep(const bool aligned_dt) { m_aligned_dt = aligned_dt; }
 
     const sf::RenderWindow &app::window() const { return m_window; }
     sf::RenderWindow &app::window() { return m_window; }

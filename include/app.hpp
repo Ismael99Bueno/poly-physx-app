@@ -15,7 +15,6 @@ namespace phys
     {
     public:
         app(const rk::butcher_tableau &table = rk::rk4,
-            float dt = 0.001f,
             std::size_t allocations = 100,
             const std::string &name = "Physics engine");
         virtual ~app() = default;
@@ -41,6 +40,9 @@ namespace phys
         bool paused() const;
         void paused(bool paused);
 
+        bool aligned_timestep() const;
+        void aligned_timestep(bool aligned_dt);
+
         const sf::RenderWindow &window() const;
         sf::RenderWindow &window();
 
@@ -59,7 +61,7 @@ namespace phys
         engine2D m_engine;
         std::vector<layer *> m_layers;
         std::vector<sf::ConvexShape> m_shapes;
-        bool m_paused = false;
+        bool m_paused = false, m_aligned_dt = true;
 
         sf::Time m_phys_time, m_draw_time;
         sf::Color m_entity_color = sf::Color::Green;
@@ -68,7 +70,7 @@ namespace phys
         virtual void on_entity_draw(const phys::const_entity_ptr &e, sf::ConvexShape &shape) {}
         virtual void on_event(sf::Event &event) {}
 
-        int m_integrations_per_frame = 10;
+        int m_integrations_per_frame = 1;
         float m_dt;
         bool m_visualize_qt;
 
@@ -76,6 +78,7 @@ namespace phys
         void event_layers(sf::Event &event);
         void draw_entities();
         void handle_events();
+        void align_dt();
     };
 
 }
