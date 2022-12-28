@@ -1,7 +1,5 @@
 #include "app.hpp"
 #include "constants.hpp"
-#include "imgui.h"
-#include "imgui-SFML.h"
 
 namespace phys
 {
@@ -38,9 +36,15 @@ namespace phys
 
     void app::run(std::function<bool(engine2D &, float &)> forward)
     {
-        if (!ImGui::SFML::Init(m_window))
+        if (!ImGui::SFML::Init(m_window, false))
         {
             perror("ImGui initialization failed\n");
+            exit(EXIT_FAILURE);
+        }
+        add_font("fonts/FiraCode/FiraCode-Light.ttf", FONT_SIZE_PIXELS);
+        if (!ImGui::SFML::UpdateFontTexture())
+        {
+            perror("ImGui font initialization failed\n");
             exit(EXIT_FAILURE);
         }
 
@@ -168,6 +172,13 @@ namespace phys
 
     const sf::Color &app::entity_color() const { return m_entity_color; }
     sf::Color &app::entity_color() { return m_entity_color; }
+
+    void app::add_font(const char *path, const float size_pixels) const
+    {
+        ImGuiIO &io = ImGui::GetIO();
+        io.Fonts->AddFontFromFileTTF(path, size_pixels);
+        io.Fonts->Build();
+    }
 
     int app::integrations_per_frame() const { return m_integrations_per_frame; }
     void app::integrations_per_frame(int integrations_per_frame) { m_integrations_per_frame = integrations_per_frame; }

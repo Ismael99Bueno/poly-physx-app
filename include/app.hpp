@@ -8,6 +8,8 @@
 #include <vector>
 #include <functional>
 #include <SFML/Graphics.hpp>
+#include "imgui.h"
+#include "imgui-SFML.h"
 
 namespace phys
 {
@@ -50,6 +52,7 @@ namespace phys
         const sf::Time &draw_time() const;
 
         void entity_color(const sf::Color &color);
+        void add_font(const char *path, float size_pixels) const;
 
     protected:
         alg::vec2 world_mouse() const;
