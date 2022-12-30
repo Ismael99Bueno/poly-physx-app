@@ -48,6 +48,7 @@ namespace phys
             exit(EXIT_FAILURE);
         }
 
+        m_window.setFramerateLimit(DEFAULT_FPS);
         sf::Clock dclock;
         while (m_window.isOpen())
         {
