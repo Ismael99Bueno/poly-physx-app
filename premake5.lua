@@ -40,4 +40,3 @@ project "phys-app"
       defines { "DEBUG", "PERF" }
       runtime "Debug"
       symbols "On"
-      removefiles "src/main.cpp"
