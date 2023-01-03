@@ -54,6 +54,9 @@ namespace phys
         void entity_color(const sf::Color &color);
         void add_font(const char *path, float size_pixels) const;
 
+        alg::vec2 pixel_mouse() const;
+        alg::vec2 pixel_mouse_delta() const;
+
         alg::vec2 world_mouse() const;
         alg::vec2 world_mouse_delta() const;
 

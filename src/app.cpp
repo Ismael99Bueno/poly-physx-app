@@ -101,7 +101,6 @@ namespace phys
         PERF_FUNCTION()
         m_engine.retrieve();
         const std::vector<phys::entity2D> &entities = m_engine.entities();
-        const alg::vec2 mpos = world_mouse();
         for (std::size_t i = 0; i < m_shapes.size(); i++)
         {
             sf::ConvexShape &shape = m_shapes[i];
@@ -153,17 +152,20 @@ namespace phys
         m_dt = std::clamp((m_phys_time + m_draw_time).asSeconds(), integ.min_dt(), integ.max_dt());
     }
 
-    alg::vec2 app::world_mouse() const
+    alg::vec2 app::pixel_mouse() const
     {
         const sf::Vector2i mpos = sf::Mouse::getPosition(m_window);
         const sf::Vector2f wpos = m_window.mapPixelToCoords(mpos);
-        return alg::vec2(wpos.x, wpos.y) * PIXEL_TO_WORLD; //{x - WIDTH / 2.f, HEIGHT / 2.f - y};
+        return alg::vec2(wpos.x, wpos.y);
     }
 
-    alg::vec2 app::world_mouse_delta() const
+    alg::vec2 app::pixel_mouse_delta() const
     {
-        return alg::vec2(ImGui::GetIO().MouseDelta.x, -ImGui::GetIO().MouseDelta.y) * PIXEL_TO_WORLD;
+        return alg::vec2(ImGui::GetIO().MouseDelta.x, -ImGui::GetIO().MouseDelta.y);
     }
+
+    alg::vec2 app::world_mouse() const { return pixel_mouse() * PIXEL_TO_WORLD; }
+    alg::vec2 app::world_mouse_delta() const { return pixel_mouse_delta() * PIXEL_TO_WORLD; }
 
     const engine2D &app::engine() const { return m_engine; }
     engine2D &app::engine() { return m_engine; }
