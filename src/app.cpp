@@ -100,7 +100,7 @@ namespace phys
     {
         PERF_FUNCTION()
         m_engine.retrieve();
-        const std::vector<phys::entity2D> &entities = m_engine.entities();
+        std::vector<phys::entity2D> &entities = m_engine.entities();
         for (std::size_t i = 0; i < m_shapes.size(); i++)
         {
             sf::ConvexShape &shape = m_shapes[i];

@@ -72,7 +72,7 @@ namespace phys
         sf::Color m_entity_color = sf::Color::Green;
 
         virtual void on_update() {}
-        virtual void on_entity_draw(const phys::const_entity_ptr &e, sf::ConvexShape &shape) {}
+        virtual void on_entity_draw(const entity_ptr &e, sf::ConvexShape &shape) {}
         virtual void on_event(sf::Event &event) {}
 
         int m_integrations_per_frame = 1;
