@@ -1,5 +1,8 @@
 #include "app.hpp"
 #include "constants.hpp"
+#include "spring_line.hpp"
+#include "thick_line.hpp"
+#include "rigid_bar2D.hpp"
 
 namespace phys
 {
@@ -67,6 +70,8 @@ namespace phys
 
                 m_window.clear();
                 draw_entities();
+                draw_springs();
+                draw_rigid_bars();
                 update_layers();
                 on_update();
                 ImGui::SFML::Render(m_window);
@@ -111,6 +116,29 @@ namespace phys
                 shape.setPoint(j, e.shape()[j] * WORLD_TO_PIXEL);
             on_entity_draw({&entities, i}, shape);
             m_window.draw(shape);
+        }
+    }
+
+    void app::draw_springs()
+    {
+        for (const phys::spring2D &sp : m_engine.springs())
+        {
+            const alg::vec2 p1 = (sp.e1()->pos() + sp.joint1()) * WORLD_TO_PIXEL,
+                            p2 = (sp.e2()->pos() + sp.joint2()) * WORLD_TO_PIXEL;
+            prm::spring_line sp_line(p1, p2, m_springs_color);
+            m_window.draw(sp_line);
+        }
+    }
+
+    void app::draw_rigid_bars()
+    {
+        for (const auto &ctr : m_engine.compeller().constraints())
+        {
+            const auto &rb = dynamic_cast<phys::rigid_bar2D &>(*ctr);
+            const alg::vec2 p1 = (rb.e1()->pos() + rb.joint1()) * WORLD_TO_PIXEL,
+                            p2 = (rb.e2()->pos() + rb.joint2()) * WORLD_TO_PIXEL;
+            prm::thick_line tl(p1, p2, 8.f, m_rigid_bars_color);
+            m_window.draw(tl);
         }
     }
 
@@ -171,10 +199,14 @@ namespace phys
     engine2D &app::engine() { return m_engine; }
 
     const std::vector<sf::ConvexShape> &app::shapes() const { return m_shapes; }
-    std::vector<sf::ConvexShape> &app::shapes() { return m_shapes; }
 
     const sf::Color &app::entity_color() const { return m_entity_color; }
-    sf::Color &app::entity_color() { return m_entity_color; }
+    const sf::Color &app::springs_color() const { return m_springs_color; }
+    const sf::Color &app::rigid_bars_color() const { return m_rigid_bars_color; }
+
+    void app::entity_color(const sf::Color &color) { m_entity_color = color; }
+    void app::springs_color(const sf::Color &color) { m_springs_color = color; }
+    void app::rigid_bars_color(const sf::Color &color) { m_rigid_bars_color = color; }
 
     void app::add_font(const char *path, const float size_pixels) const
     {
@@ -200,6 +232,4 @@ namespace phys
 
     const sf::Time &app::phys_time() const { return m_phys_time; }
     const sf::Time &app::draw_time() const { return m_draw_time; }
-
-    void app::entity_color(const sf::Color &color) { m_entity_color = color; }
 }

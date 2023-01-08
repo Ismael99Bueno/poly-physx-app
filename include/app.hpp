@@ -28,10 +28,14 @@ namespace phys
         engine2D &engine();
 
         const std::vector<sf::ConvexShape> &shapes() const;
-        std::vector<sf::ConvexShape> &shapes();
 
         const sf::Color &entity_color() const;
-        sf::Color &entity_color();
+        const sf::Color &springs_color() const;
+        const sf::Color &rigid_bars_color() const;
+
+        void entity_color(const sf::Color &color);
+        void springs_color(const sf::Color &color);
+        void rigid_bars_color(const sf::Color &color);
 
         int integrations_per_frame() const;
         void integrations_per_frame(int integrations_per_frame);
@@ -51,7 +55,6 @@ namespace phys
         const sf::Time &phys_time() const;
         const sf::Time &draw_time() const;
 
-        void entity_color(const sf::Color &color);
         void add_font(const char *path, float size_pixels) const;
 
         alg::vec2 pixel_mouse() const;
@@ -69,7 +72,9 @@ namespace phys
         bool m_paused = false, m_aligned_dt = true;
 
         sf::Time m_phys_time, m_draw_time;
-        sf::Color m_entity_color = sf::Color::Green;
+        sf::Color m_entity_color = sf::Color::Green,
+                  m_springs_color = sf::Color::Magenta,
+                  m_rigid_bars_color = sf::Color::Magenta;
 
         virtual void on_update() {}
         virtual void on_entity_draw(const entity_ptr &e, sf::ConvexShape &shape) {}
@@ -82,6 +87,8 @@ namespace phys
         void update_layers();
         void event_layers(sf::Event &event);
         void draw_entities();
+        void draw_springs();
+        void draw_rigid_bars();
         void handle_events();
         void align_dt();
     };
