@@ -134,9 +134,11 @@ namespace phys
     {
         for (const auto &ctr : m_engine.compeller().constraints())
         {
-            const auto &rb = dynamic_cast<phys::rigid_bar2D &>(*ctr);
-            const alg::vec2 p1 = (rb.e1()->pos() + rb.joint1()) * WORLD_TO_PIXEL,
-                            p2 = (rb.e2()->pos() + rb.joint2()) * WORLD_TO_PIXEL;
+            const auto &rb = dynamic_cast<phys::rigid_bar2D *>(ctr.get());
+            if (!rb)
+                continue;
+            const alg::vec2 p1 = (rb->e1()->pos() + rb->joint1()) * WORLD_TO_PIXEL,
+                            p2 = (rb->e2()->pos() + rb->joint2()) * WORLD_TO_PIXEL;
             prm::thick_line tl(p1, p2, 8.f, m_rigid_bars_color);
             m_window.draw(tl);
         }
