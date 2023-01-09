@@ -89,6 +89,17 @@ namespace phys
         l->on_attach(this);
     }
 
+    void app::draw_spring(const alg::vec2 &p1, const alg::vec2 &p2)
+    {
+        prm::spring_line sp_line(p1, p2, m_springs_color);
+        m_window.draw(sp_line);
+    }
+    void app::draw_rigid_bar(const alg::vec2 &p1, const alg::vec2 &p2)
+    {
+        prm::thick_line tl(p1, p2, 8.f, m_rigid_bars_color);
+        m_window.draw(tl);
+    }
+
     void app::update_layers()
     {
         for (layer *l : m_layers)
@@ -125,8 +136,7 @@ namespace phys
         {
             const alg::vec2 p1 = (sp.e1()->pos() + sp.joint1()) * WORLD_TO_PIXEL,
                             p2 = (sp.e2()->pos() + sp.joint2()) * WORLD_TO_PIXEL;
-            prm::spring_line sp_line(p1, p2, m_springs_color);
-            m_window.draw(sp_line);
+            draw_spring(p1, p2);
         }
     }
 
@@ -139,8 +149,7 @@ namespace phys
                 continue;
             const alg::vec2 p1 = (rb->e1()->pos() + rb->joint1()) * WORLD_TO_PIXEL,
                             p2 = (rb->e2()->pos() + rb->joint2()) * WORLD_TO_PIXEL;
-            prm::thick_line tl(p1, p2, 8.f, m_rigid_bars_color);
-            m_window.draw(tl);
+            draw_rigid_bar(p1, p2);
         }
     }
 

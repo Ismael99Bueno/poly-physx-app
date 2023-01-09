@@ -24,6 +24,9 @@ namespace phys
         void run(std::function<bool(engine2D &, float &)> forward = &engine2D::raw_forward);
         void push_layer(layer *l);
 
+        void draw_spring(const alg::vec2 &p1, const alg::vec2 &p2);
+        void draw_rigid_bar(const alg::vec2 &p1, const alg::vec2 &p2);
+
         const engine2D &engine() const;
         engine2D &engine();
 
