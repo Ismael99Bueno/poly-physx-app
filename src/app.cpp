@@ -69,11 +69,12 @@ namespace phys
                 ImGui::SFML::Update(m_window, dclock.restart());
 
                 m_window.clear();
+                on_update();
+                update_layers();
                 draw_entities();
                 draw_springs();
                 draw_rigid_bars();
-                update_layers();
-                on_update();
+                on_late_update();
                 ImGui::SFML::Render(m_window);
                 m_window.display();
                 m_draw_time = draw_clock.getElapsedTime();

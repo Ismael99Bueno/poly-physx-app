@@ -80,6 +80,7 @@ namespace phys
                   m_rigid_bars_color = sf::Color::Magenta;
 
         virtual void on_update() {}
+        virtual void on_late_update() {}
         virtual void on_entity_draw(const entity_ptr &e, sf::ConvexShape &shape) {}
         virtual void on_event(sf::Event &event) {}
 
