@@ -90,16 +90,36 @@ namespace phys
         l->on_attach(this);
     }
 
-    void app::draw_spring(const alg::vec2 &p1, const alg::vec2 &p2)
+    void app::draw_entity(const std::vector<alg::vec2> vertices,
+                          sf::ConvexShape &shape, const sf::Color &color)
     {
-        prm::spring_line sp_line(p1, p2, m_springs_color);
+        shape.setFillColor(color);
+        draw_entity(vertices, shape);
+    }
+
+    void app::draw_entity(const std::vector<alg::vec2> vertices,
+                          sf::ConvexShape &shape)
+    {
+        if (shape.getPointCount() != vertices.size())
+            shape.setPointCount(vertices.size());
+        for (std::size_t j = 0; j < shape.getPointCount(); j++)
+            shape.setPoint(j, vertices[j] * WORLD_TO_PIXEL);
+        m_window.draw(shape);
+    }
+
+    void app::draw_spring(const alg::vec2 &p1, const alg::vec2 &p2, const sf::Color &color)
+    {
+        prm::spring_line sp_line(p1, p2, color);
         m_window.draw(sp_line);
     }
-    void app::draw_rigid_bar(const alg::vec2 &p1, const alg::vec2 &p2)
+    void app::draw_rigid_bar(const alg::vec2 &p1, const alg::vec2 &p2, const sf::Color &color)
     {
-        prm::thick_line tl(p1, p2, 8.f, m_rigid_bars_color);
+        prm::thick_line tl(p1, p2, 8.f, color);
         m_window.draw(tl);
     }
+
+    void app::draw_spring(const alg::vec2 &p1, const alg::vec2 &p2) { draw_spring(p1, p2, m_springs_color); }
+    void app::draw_rigid_bar(const alg::vec2 &p1, const alg::vec2 &p2) { draw_rigid_bar(p1, p2, m_rigid_bars_color); }
 
     void app::update_layers()
     {
@@ -121,13 +141,8 @@ namespace phys
         for (std::size_t i = 0; i < m_shapes.size(); i++)
         {
             sf::ConvexShape &shape = m_shapes[i];
-            const entity2D &e = entities[i];
-            if (shape.getPointCount() != e.shape().size())
-                shape.setPointCount(e.shape().size());
-            for (std::size_t j = 0; j < shape.getPointCount(); j++)
-                shape.setPoint(j, e.shape()[j] * WORLD_TO_PIXEL);
             on_entity_draw({&entities, i}, shape);
-            m_window.draw(shape);
+            draw_entity(entities[i].shape().vertices(), shape);
         }
     }
 
