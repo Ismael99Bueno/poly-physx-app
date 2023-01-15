@@ -17,7 +17,7 @@ namespace phys
     {
         m_window.setView(sf::View(sf::Vector2f(0.f, 0.f), sf::Vector2f(WIDTH, -HEIGHT)));
 
-        const auto add_shape = [this](entity_ptr e)
+        const auto add_shape = [this](entity2D_ptr e)
         {
             sf::ConvexShape &shape = m_shapes.emplace_back(sf::ConvexShape());
             const geo::polygon2D &poly = e->shape();

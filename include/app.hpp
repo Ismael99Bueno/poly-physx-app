@@ -90,7 +90,7 @@ namespace phys
         virtual void on_update() {}
         virtual void on_late_update() {}
         virtual void on_render() {}
-        virtual void on_entity_draw(const entity_ptr &e, sf::ConvexShape &shape) {}
+        virtual void on_entity_draw(const entity2D_ptr &e, sf::ConvexShape &shape) {}
         virtual void on_event(sf::Event &event) {}
 
         int m_integrations_per_frame = 1;
