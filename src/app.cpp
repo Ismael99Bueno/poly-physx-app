@@ -3,6 +3,8 @@
 #include "spring_line.hpp"
 #include "thick_line.hpp"
 #include "rigid_bar2D.hpp"
+#include "imgui.h"
+#include "imgui-SFML.h"
 
 namespace phys
 {
@@ -35,22 +37,17 @@ namespace phys
         m_engine.on_entity_addition(add_shape);
         m_engine.on_entity_removal(remove_shape);
         align_dt();
-    }
 
-    void app::run(std::function<bool(engine2D &, float &)> forward)
-    {
         if (!ImGui::SFML::Init(m_window, false))
         {
             perror("ImGui initialization failed\n");
             exit(EXIT_FAILURE);
         }
         add_font("fonts/FiraCode/FiraCode-Light.ttf", FONT_SIZE_PIXELS);
-        if (!ImGui::SFML::UpdateFontTexture())
-        {
-            perror("ImGui font initialization failed\n");
-            exit(EXIT_FAILURE);
-        }
+    }
 
+    void app::run(std::function<bool(engine2D &, float &)> forward)
+    {
         m_window.setFramerateLimit(DEFAULT_FPS);
         sf::Clock dclock;
         while (m_window.isOpen())
@@ -70,10 +67,14 @@ namespace phys
 
                 m_window.clear();
                 on_update();
-                update_layers();
+
                 draw_entities();
                 draw_springs();
                 draw_rigid_bars();
+
+                on_render();
+                layer_render();
+
                 on_late_update();
                 ImGui::SFML::Render(m_window);
                 m_window.display();
@@ -121,13 +122,13 @@ namespace phys
     void app::draw_spring(const alg::vec2 &p1, const alg::vec2 &p2) { draw_spring(p1, p2, m_springs_color); }
     void app::draw_rigid_bar(const alg::vec2 &p1, const alg::vec2 &p2) { draw_rigid_bar(p1, p2, m_rigid_bars_color); }
 
-    void app::update_layers()
+    void app::layer_render()
     {
         for (layer *l : m_layers)
-            l->on_update();
+            l->on_render();
     }
 
-    void app::event_layers(sf::Event &event)
+    void app::layer_event(sf::Event &event)
     {
         for (auto it = m_layers.rbegin(); it != m_layers.rend(); ++it)
             (*it)->on_event(event);
@@ -196,8 +197,8 @@ namespace phys
             default:
                 break;
             }
-            event_layers(event);
             on_event(event);
+            layer_event(event);
         }
     }
 
@@ -226,6 +227,7 @@ namespace phys
     engine2D &app::engine() { return m_engine; }
 
     const std::vector<sf::ConvexShape> &app::shapes() const { return m_shapes; }
+    std::vector<sf::ConvexShape> &app::shapes() { return m_shapes; }
 
     const sf::Color &app::entity_color() const { return m_entity_color; }
     const sf::Color &app::springs_color() const { return m_springs_color; }
@@ -240,6 +242,11 @@ namespace phys
         ImGuiIO &io = ImGui::GetIO();
         io.Fonts->AddFontFromFileTTF(path, size_pixels);
         io.Fonts->Build();
+        if (!ImGui::SFML::UpdateFontTexture())
+        {
+            perror("ImGui font initialization failed\n");
+            exit(EXIT_FAILURE);
+        }
     }
 
     int app::integrations_per_frame() const { return m_integrations_per_frame; }

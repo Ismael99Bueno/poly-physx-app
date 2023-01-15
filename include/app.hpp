@@ -8,8 +8,6 @@
 #include <vector>
 #include <functional>
 #include <SFML/Graphics.hpp>
-#include "imgui.h"
-#include "imgui-SFML.h"
 
 namespace phys
 {
@@ -40,6 +38,7 @@ namespace phys
         engine2D &engine();
 
         const std::vector<sf::ConvexShape> &shapes() const;
+        std::vector<sf::ConvexShape> &shapes();
 
         const sf::Color &entity_color() const;
         const sf::Color &springs_color() const;
@@ -90,6 +89,7 @@ namespace phys
 
         virtual void on_update() {}
         virtual void on_late_update() {}
+        virtual void on_render() {}
         virtual void on_entity_draw(const entity_ptr &e, sf::ConvexShape &shape) {}
         virtual void on_event(sf::Event &event) {}
 
@@ -97,8 +97,9 @@ namespace phys
         float m_dt;
         bool m_visualize_qt;
 
-        void update_layers();
-        void event_layers(sf::Event &event);
+        void layer_render();
+        void layer_event(sf::Event &event);
+
         void draw_entities();
         void draw_springs();
         void draw_rigid_bars();
