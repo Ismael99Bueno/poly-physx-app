@@ -58,8 +58,8 @@ namespace phys
             if (!m_paused)
                 for (std::size_t i = 0; i < m_integrations_per_frame; i++)
                     forward(m_engine, m_dt);
-            m_prev_phys_time = m_phys_time;
-            m_phys_time = phys_clock.getElapsedTime();
+            m_phys_time = (1.f - m_time_smoothness) * phys_clock.getElapsedTime() +
+                          m_time_smoothness * m_phys_time;
 
             {
                 PERF_SCOPE("-Drawing-")
@@ -79,8 +79,8 @@ namespace phys
                 on_late_update();
                 ImGui::SFML::Render(m_window);
                 m_window.display();
-                m_prev_draw_time = m_draw_time;
-                m_draw_time = draw_clock.getElapsedTime();
+                m_draw_time = (1.f - m_time_smoothness) * draw_clock.getElapsedTime() +
+                              m_time_smoothness * m_draw_time;
             }
             if (m_aligned_dt)
                 align_dt();
@@ -268,12 +268,7 @@ namespace phys
 
     const sf::Time &app::phys_time() const { return m_phys_time; }
     const sf::Time &app::draw_time() const { return m_draw_time; }
-    sf::Time app::phys_time(const float smooth) const
-    {
-        return (1.f - smooth) * m_phys_time + smooth * m_prev_phys_time;
-    }
-    sf::Time app::draw_time(const float smooth) const
-    {
-        return (1.f - smooth) * m_draw_time + smooth * m_prev_draw_time;
-    }
+
+    float app::time_measure_smoothness() const { return m_time_smoothness; }
+    void app::time_measure_smoothness(const float smoothness) { m_time_smoothness = smoothness; }
 }
