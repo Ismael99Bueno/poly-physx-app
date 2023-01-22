@@ -65,6 +65,8 @@ namespace phys
 
         const sf::Time &phys_time() const;
         const sf::Time &draw_time() const;
+        sf::Time phys_time(float smooth) const;
+        sf::Time draw_time(float smooth) const;
 
         void add_font(const char *path, float size_pixels) const;
 
@@ -82,7 +84,8 @@ namespace phys
         std::vector<sf::ConvexShape> m_shapes;
         bool m_paused = false, m_aligned_dt = true;
 
-        sf::Time m_phys_time, m_draw_time;
+        sf::Time m_phys_time, m_draw_time,
+            m_prev_phys_time, m_prev_draw_time;
         sf::Color m_entity_color = sf::Color::Green,
                   m_springs_color = sf::Color::Magenta,
                   m_rigid_bars_color = sf::Color::Magenta;
