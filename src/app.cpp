@@ -126,6 +126,7 @@ namespace phys
 
     void app::layer_render()
     {
+        PERF_FUNCTION()
         for (layer *l : m_layers)
             l->on_render();
     }
@@ -151,6 +152,7 @@ namespace phys
 
     void app::draw_springs()
     {
+        PERF_FUNCTION()
         for (const phys::spring2D &sp : m_engine.springs())
         {
             const alg::vec2 p1 = (sp.e1()->pos() + sp.joint1()) * WORLD_TO_PIXEL,
@@ -161,6 +163,7 @@ namespace phys
 
     void app::draw_rigid_bars()
     {
+        PERF_FUNCTION()
         for (const auto &ctr : m_engine.compeller().constraints())
         {
             const auto &rb = dynamic_cast<phys::rigid_bar2D *>(ctr.get());
