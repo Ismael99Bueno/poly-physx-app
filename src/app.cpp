@@ -77,6 +77,7 @@ namespace phys
                 layer_render();
 
                 on_late_update();
+                move_camera();
                 ImGui::SFML::Render(m_window);
                 m_window.display();
                 m_draw_time = (1.f - m_time_smoothness) * draw_clock.getElapsedTime() +
@@ -199,6 +200,9 @@ namespace phys
                 default:
                     break;
                 }
+            case sf::Event::MouseWheelScrolled:
+                if (event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel)
+                    zoom(event.mouseWheelScroll.delta);
             default:
                 break;
             }
@@ -223,6 +227,36 @@ namespace phys
     alg::vec2 app::pixel_mouse_delta() const
     {
         return alg::vec2(ImGui::GetIO().MouseDelta.x, -ImGui::GetIO().MouseDelta.y);
+    }
+
+    void app::move_camera()
+    {
+        const alg::vec2 size = m_window.getView().getSize();
+        const float speed = 0.75f * delta_time().asSeconds() * size.norm();
+        alg::vec2 vel;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+            vel.x += speed;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+            vel.x -= speed;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+            vel.y += speed;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+            vel.y -= speed;
+        if (vel.sq_norm() > 0.f)
+        {
+            sf::View v = m_window.getView();
+            v.move(vel);
+            m_window.setView(v);
+        }
+    }
+
+    void app::zoom(const float delta)
+    {
+        const float factor = delta * delta_time().asSeconds();
+        sf::View v = m_window.getView();
+        v.setSize(v.getSize() * (1.f - factor));
+        v.move((pixel_mouse() - v.getCenter()) * factor);
+        m_window.setView(v);
     }
 
     alg::vec2 app::world_mouse() const { return pixel_mouse() * PIXEL_TO_WORLD; }
@@ -271,6 +305,7 @@ namespace phys
 
     const sf::Time &app::phys_time() const { return m_phys_time; }
     const sf::Time &app::draw_time() const { return m_draw_time; }
+    sf::Time app::delta_time() const { return m_phys_time + m_draw_time; }
 
     float app::time_measure_smoothness() const { return m_time_smoothness; }
     void app::time_measure_smoothness(const float smoothness) { m_time_smoothness = smoothness; }

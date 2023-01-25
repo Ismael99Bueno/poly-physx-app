@@ -65,6 +65,7 @@ namespace phys
 
         const sf::Time &phys_time() const;
         const sf::Time &draw_time() const;
+        sf::Time delta_time() const;
 
         float time_measure_smoothness() const;
         void time_measure_smoothness(float smoothness);
@@ -109,6 +110,9 @@ namespace phys
         void draw_rigid_bars();
         void handle_events();
         void align_dt();
+
+        void move_camera();
+        void zoom(float delta);
     };
 
 }
