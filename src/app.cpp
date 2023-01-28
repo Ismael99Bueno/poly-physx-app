@@ -10,10 +10,10 @@ namespace phys
 {
     app::app(const rk::butcher_tableau &table,
              const std::size_t allocations,
-             const std::string &name) : m_engine(table, allocations),
-                                        m_window(sf::VideoMode::getFullscreenModes()[0],
+             const std::string &name) : m_window(sf::VideoMode::getFullscreenModes()[0],
                                                  name,
-                                                 sf::Style::Fullscreen)
+                                                 sf::Style::Fullscreen),
+                                        m_engine(table, allocations)
     {
         m_window.setView(sf::View(sf::Vector2f(0.f, 0.f), sf::Vector2f(WIDTH, -HEIGHT)));
 

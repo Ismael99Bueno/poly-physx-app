@@ -92,15 +92,14 @@ namespace phys
                   m_springs_color = sf::Color::Magenta,
                   m_rigid_bars_color = sf::Color::Magenta;
 
+        int m_integrations_per_frame = 1;
+        float m_dt;
+
         virtual void on_update() {}
         virtual void on_late_update() {}
         virtual void on_render() {}
         virtual void on_entity_draw(const entity2D_ptr &e, sf::ConvexShape &shape) {}
         virtual void on_event(sf::Event &event) {}
-
-        int m_integrations_per_frame = 1;
-        float m_dt;
-        bool m_visualize_qt;
 
         void layer_render();
         void layer_event(sf::Event &event);
