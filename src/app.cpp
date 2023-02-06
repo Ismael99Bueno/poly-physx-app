@@ -122,6 +122,54 @@ namespace phys
         m_window.draw(tl);
     }
 
+    void app::write(ini::output &out) const
+    {
+        m_engine.write(out);
+        std::size_t index = 0;
+        const std::string section = "entity";
+        for (const sf::ConvexShape &shape : m_shapes)
+        {
+            out.begin_section(section + std::to_string(index++));
+            out.write("r", (int)shape.getFillColor().r);
+            out.write("g", (int)shape.getFillColor().g);
+            out.write("b", (int)shape.getFillColor().b);
+            out.end_section();
+        }
+
+        out.begin_section("springs_color");
+        out.write("r", (int)m_springs_color.r);
+        out.write("g", (int)m_springs_color.g);
+        out.write("b", (int)m_springs_color.b);
+        out.end_section();
+        out.begin_section("rigid_bars_color");
+        out.write("r", (int)m_rigid_bars_color.r);
+        out.write("g", (int)m_rigid_bars_color.g);
+        out.write("b", (int)m_rigid_bars_color.b);
+        out.end_section();
+        out.write("paused", m_paused);
+    }
+
+    void app::read(ini::input &in)
+    {
+        m_engine.read(in);
+        std::size_t index = 0;
+        const std::string section = "entity";
+        for (sf::ConvexShape &shape : m_shapes)
+        {
+            in.begin_section(section + std::to_string(index++));
+            shape.setFillColor({(sf::Uint8)in.readi("r"), (sf::Uint8)in.readi("g"), (sf::Uint8)in.readi("b")});
+            in.end_section();
+        }
+
+        in.begin_section("springs_color");
+        m_springs_color = {(sf::Uint8)in.readi("r"), (sf::Uint8)in.readi("g"), (sf::Uint8)in.readi("b")};
+        in.end_section();
+        in.begin_section("rigid_bars_color");
+        m_rigid_bars_color = {(sf::Uint8)in.readi("r"), (sf::Uint8)in.readi("g"), (sf::Uint8)in.readi("b")};
+        in.end_section();
+        m_paused = (bool)in.readi("paused");
+    }
+
     void app::draw_spring(const alg::vec2 &p1, const alg::vec2 &p2) { draw_spring(p1, p2, m_springs_color); }
     void app::draw_rigid_bar(const alg::vec2 &p1, const alg::vec2 &p2) { draw_rigid_bar(p1, p2, m_rigid_bars_color); }
 
