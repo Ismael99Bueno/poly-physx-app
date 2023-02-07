@@ -23,6 +23,8 @@ namespace phys
         virtual void on_start() {}
         virtual void on_render() {}
         virtual void on_event(sf::Event &event) {}
+        virtual void on_detach() {}
+        virtual void on_end() {}
 
         friend class app;
     };

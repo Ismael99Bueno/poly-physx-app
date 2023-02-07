@@ -89,12 +89,21 @@ namespace phys
             if (m_aligned_dt)
                 align_dt();
         }
+        on_end();
+        layer_end();
     }
 
     void app::push_layer(layer *l)
     {
         m_layers.emplace_back(l);
         l->on_attach(this);
+    }
+
+    void app::pop_layer(const layer *l)
+    {
+        const auto it = m_layers.erase(std::remove(m_layers.begin(), m_layers.end(), l), m_layers.end());
+        if (it != m_layers.end())
+            (*it)->on_detach();
     }
 
     void app::draw_entity(const std::vector<alg::vec2> vertices,
@@ -193,6 +202,12 @@ namespace phys
     {
         for (auto it = m_layers.rbegin(); it != m_layers.rend(); ++it)
             (*it)->on_event(event);
+    }
+
+    void app::layer_end()
+    {
+        for (layer *l : m_layers)
+            l->on_end();
     }
 
     void app::draw_entities()

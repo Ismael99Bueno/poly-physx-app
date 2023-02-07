@@ -21,6 +21,7 @@ namespace phys
 
         void run(std::function<bool(engine2D &, float &)> forward = &engine2D::raw_forward);
         void push_layer(layer *l);
+        void pop_layer(const layer *l);
 
         void draw_entity(const std::vector<alg::vec2> vertices,
                          sf::ConvexShape &shape,
@@ -104,10 +105,12 @@ namespace phys
         virtual void on_render() {}
         virtual void on_entity_draw(const entity2D_ptr &e, sf::ConvexShape &shape) {}
         virtual void on_event(sf::Event &event) {}
+        virtual void on_end() {}
 
         void layer_start();
         void layer_render();
         void layer_event(sf::Event &event);
+        void layer_end();
 
         void draw_entities();
         void draw_springs();
