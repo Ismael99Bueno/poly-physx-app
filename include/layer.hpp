@@ -20,7 +20,7 @@ namespace phys
 
     private:
         virtual void on_attach(app *papp) {}
-        virtual void on_detach() {}
+        virtual void on_start() {}
         virtual void on_render() {}
         virtual void on_event(sf::Event &event) {}
 

@@ -50,6 +50,9 @@ namespace phys
     {
         m_window.setFramerateLimit(DEFAULT_FPS);
         sf::Clock dclock;
+        on_start();
+        layer_start();
+
         while (m_window.isOpen())
         {
             PERF_SCOPE("-Frame-")
@@ -172,6 +175,12 @@ namespace phys
 
     void app::draw_spring(const alg::vec2 &p1, const alg::vec2 &p2) { draw_spring(p1, p2, m_springs_color); }
     void app::draw_rigid_bar(const alg::vec2 &p1, const alg::vec2 &p2) { draw_rigid_bar(p1, p2, m_rigid_bars_color); }
+
+    void app::layer_start()
+    {
+        for (layer *l : m_layers)
+            l->on_start();
+    }
 
     void app::layer_render()
     {
