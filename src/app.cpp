@@ -303,6 +303,8 @@ namespace phys
 
     void app::move_camera()
     {
+        if (ImGui::GetIO().WantCaptureKeyboard)
+            return;
         const alg::vec2 size = m_window.getView().getSize();
         const float speed = 0.75f * delta_time().asSeconds() * size.norm();
         alg::vec2 vel;
@@ -324,6 +326,8 @@ namespace phys
 
     void app::zoom(const float delta)
     {
+        if (ImGui::GetIO().WantCaptureMouse)
+            return;
         const float factor = delta * delta_time().asSeconds();
         sf::View v = m_window.getView();
         v.setSize(v.getSize() * (1.f - factor));
