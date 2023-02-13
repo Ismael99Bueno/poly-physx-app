@@ -61,6 +61,9 @@ namespace phys
         bool paused() const;
         void paused(bool paused);
 
+        int framerate() const;
+        void framerate(int framerate);
+
         bool aligned_timestep() const;
         void aligned_timestep(bool aligned_dt);
 
@@ -92,11 +95,11 @@ namespace phys
 
         sf::Time m_phys_time, m_draw_time;
         float m_time_smoothness = 0.f;
-        sf::Color m_entity_color = sf::Color::Green,
-                  m_springs_color = sf::Color::Magenta,
-                  m_rigid_bars_color = sf::Color::Magenta;
+        sf::Color m_entity_color = sf::Color(123, 143, 161),
+                  m_springs_color = sf::Color(207, 185, 151),
+                  m_rigid_bars_color = sf::Color(207, 185, 151);
 
-        int m_integrations_per_frame = 1;
+        int m_integrations_per_frame = 1, m_framerate;
         float m_dt;
 
         virtual void on_start() {}

@@ -44,11 +44,11 @@ namespace phys
             exit(EXIT_FAILURE);
         }
         add_font("fonts/FiraCode/FiraCode-Light.ttf", FONT_SIZE_PIXELS);
+        framerate(DEFAULT_FPS);
     }
 
     void app::run(std::function<bool(engine2D &, float &)> forward)
     {
-        m_window.setFramerateLimit(DEFAULT_FPS);
         sf::Clock dclock;
         on_start();
         layer_start();
@@ -148,6 +148,11 @@ namespace phys
             out.end_section();
         }
 
+        out.write("framerate", m_framerate);
+        out.write("time_smoothness", m_time_smoothness);
+        out.write("integ_per_frame", m_integrations_per_frame);
+        out.write("aligned_dt", m_aligned_dt);
+        out.write("timestep", m_dt);
         out.begin_section("springs_color");
         out.write("r", (int)m_springs_color.r);
         out.write("g", (int)m_springs_color.g);
@@ -173,6 +178,11 @@ namespace phys
             in.end_section();
         }
 
+        framerate(in.readi("framerate"));
+        m_integrations_per_frame = in.readi("integ_per_frame");
+        m_aligned_dt = (bool)in.readi("aligned_dt");
+        m_time_smoothness = in.readf("time_smoothness");
+        m_dt = in.readf("timestep");
         in.begin_section("springs_color");
         m_springs_color = {(sf::Uint8)in.readi("r"), (sf::Uint8)in.readi("g"), (sf::Uint8)in.readi("b")};
         in.end_section();
@@ -372,6 +382,13 @@ namespace phys
 
     bool app::paused() const { return m_paused; }
     void app::paused(const bool paused) { m_paused = paused; }
+
+    int app::framerate() const { return m_framerate; }
+    void app::framerate(const int framerate)
+    {
+        m_framerate = framerate;
+        m_window.setFramerateLimit(framerate);
+    }
 
     bool app::aligned_timestep() const { return m_aligned_dt; }
     void app::aligned_timestep(const bool aligned_dt) { m_aligned_dt = aligned_dt; }
