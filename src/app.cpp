@@ -337,7 +337,7 @@ namespace phys
     {
         if (ImGui::GetIO().WantCaptureMouse)
             return;
-        const float factor = delta * delta_time().asSeconds();
+        const float factor = delta * 0.006f;
         sf::View v = m_window.getView();
         v.setSize(v.getSize() * (1.f - factor));
         v.move((pixel_mouse() - v.getCenter()) * factor);
