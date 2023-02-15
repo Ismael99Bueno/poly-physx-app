@@ -121,7 +121,9 @@ namespace phys
         void handle_events();
         void align_dt();
 
-        void move_camera();
+        void transform_camera(const alg::vec2 &dir);
+        void transform_camera(const alg::vec2 &dir, const alg::vec2 &size);
+        void control_camera();
         void zoom(float delta);
     };
 

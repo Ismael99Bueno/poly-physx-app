@@ -80,7 +80,7 @@ namespace phys
                 layer_render();
 
                 on_late_update();
-                move_camera();
+                control_camera();
                 ImGui::SFML::Render(m_window);
                 m_window.display();
                 m_draw_time = (1.f - m_time_smoothness) * draw_clock.getElapsedTime() +
@@ -310,7 +310,22 @@ namespace phys
         return alg::vec2(ImGui::GetIO().MouseDelta.x, -ImGui::GetIO().MouseDelta.y);
     }
 
-    void app::move_camera()
+    void app::transform_camera(const alg::vec2 &dir)
+    {
+        sf::View v = m_window.getView();
+        v.move(dir);
+        m_window.setView(v);
+    }
+
+    void app::transform_camera(const alg::vec2 &dir, const alg::vec2 &size)
+    {
+        sf::View v = m_window.getView();
+        v.setSize(size);
+        v.move(dir);
+        m_window.setView(v);
+    }
+
+    void app::control_camera()
     {
         if (ImGui::GetIO().WantCaptureKeyboard)
             return;
@@ -326,11 +341,7 @@ namespace phys
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
             vel.y -= speed;
         if (vel.sq_norm() > 0.f)
-        {
-            sf::View v = m_window.getView();
-            v.move(vel);
-            m_window.setView(v);
-        }
+            transform_camera(vel);
     }
 
     void app::zoom(const float delta)
@@ -338,10 +349,9 @@ namespace phys
         if (ImGui::GetIO().WantCaptureMouse)
             return;
         const float factor = delta * 0.006f;
-        sf::View v = m_window.getView();
-        v.setSize(v.getSize() * (1.f - factor));
-        v.move((pixel_mouse() - v.getCenter()) * factor);
-        m_window.setView(v);
+
+        const sf::View &v = m_window.getView();
+        transform_camera((pixel_mouse() - v.getCenter()) * factor, v.getSize() * (1.f - factor));
     }
 
     alg::vec2 app::world_mouse() const { return pixel_mouse() * PIXEL_TO_WORLD; }
