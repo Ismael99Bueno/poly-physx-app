@@ -223,12 +223,13 @@ namespace phys
     void app::draw_entities()
     {
         PERF_FUNCTION()
-        std::vector<phys::entity2D> &entities = m_engine.entities();
         for (std::size_t i = 0; i < m_shapes.size(); i++)
         {
             sf::ConvexShape &shape = m_shapes[i];
-            on_entity_draw({&entities, i}, shape);
-            draw_entity(entities[i].shape().vertices(), shape);
+            const phys::entity2D_ptr e = m_engine[i];
+
+            on_entity_draw(e, shape);
+            draw_entity(e->shape().vertices(), shape);
         }
     }
 
