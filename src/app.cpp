@@ -362,7 +362,7 @@ namespace phys
     engine2D &app::engine() { return m_engine; }
 
     const std::vector<sf::ConvexShape> &app::shapes() const { return m_shapes; }
-    std::vector<sf::ConvexShape> &app::shapes() { return m_shapes; }
+    utils::vector_view<sf::ConvexShape> app::shapes() { return m_shapes; }
 
     const sf::Color &app::entity_color() const { return m_entity_color; }
     const sf::Color &app::springs_color() const { return m_springs_color; }

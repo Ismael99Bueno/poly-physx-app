@@ -42,7 +42,7 @@ namespace phys
         engine2D &engine();
 
         const std::vector<sf::ConvexShape> &shapes() const;
-        std::vector<sf::ConvexShape> &shapes();
+        utils::vector_view<sf::ConvexShape> shapes();
 
         const sf::Color &entity_color() const;
         const sf::Color &springs_color() const;
