@@ -74,6 +74,10 @@ namespace phys
         const sf::Time &draw_time() const;
         sf::Time delta_time() const;
 
+        const sf::Time &raw_phys_time() const;
+        const sf::Time &raw_draw_time() const;
+        sf::Time raw_delta_time() const;
+
         float time_measure_smoothness() const;
         void time_measure_smoothness(float smoothness);
 
@@ -93,14 +97,16 @@ namespace phys
         std::vector<sf::ConvexShape> m_shapes;
         bool m_paused = false, m_aligned_dt = true;
 
-        sf::Time m_phys_time, m_draw_time;
+        sf::Time m_phys_time, m_draw_time,
+            m_raw_phys_time, m_raw_draw_time;
+
         float m_time_smoothness = 0.f;
         sf::Color m_entity_color = sf::Color(123, 143, 161),
                   m_springs_color = sf::Color(207, 185, 151),
                   m_rigid_bars_color = sf::Color(207, 185, 151);
 
         int m_integrations_per_frame = 1, m_framerate;
-        float m_dt;
+        float m_dt = 1e-3f;
 
         virtual void on_start() {}
         virtual void on_update() {}

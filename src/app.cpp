@@ -36,7 +36,6 @@ namespace phys
 
         m_engine.on_entity_addition(add_shape);
         m_engine.on_entity_removal(remove_shape);
-        align_dt();
 
         if (!ImGui::SFML::Init(m_window, false))
         {
@@ -61,7 +60,9 @@ namespace phys
             if (!m_paused)
                 for (std::size_t i = 0; i < m_integrations_per_frame; i++)
                     forward(m_engine, m_dt);
-            m_phys_time = (1.f - m_time_smoothness) * phys_clock.getElapsedTime() +
+
+            m_raw_phys_time = phys_clock.getElapsedTime();
+            m_phys_time = (1.f - m_time_smoothness) * m_raw_phys_time +
                           m_time_smoothness * m_phys_time;
 
             {
@@ -83,7 +84,9 @@ namespace phys
                 control_camera();
                 ImGui::SFML::Render(m_window);
                 m_window.display();
-                m_draw_time = (1.f - m_time_smoothness) * draw_clock.getElapsedTime() +
+
+                m_raw_draw_time = draw_clock.getElapsedTime();
+                m_draw_time = (1.f - m_time_smoothness) * m_raw_draw_time +
                               m_time_smoothness * m_draw_time;
             }
             if (m_aligned_dt)
@@ -210,6 +213,7 @@ namespace phys
 
     void app::layer_event(sf::Event &event)
     {
+        PERF_FUNCTION()
         for (auto it = m_layers.rbegin(); it != m_layers.rend(); ++it)
             (*it)->on_event(event);
     }
@@ -260,6 +264,7 @@ namespace phys
 
     void app::handle_events()
     {
+        PERF_FUNCTION()
         sf::Event event;
         while (m_window.pollEvent(event))
         {
@@ -296,7 +301,7 @@ namespace phys
     void app::align_dt()
     {
         const rk::integrator &integ = m_engine.integrator();
-        m_dt = std::clamp((m_phys_time + m_draw_time).asSeconds(), integ.min_dt(), integ.max_dt());
+        m_dt = std::clamp(raw_delta_time().asSeconds(), integ.min_dt(), integ.max_dt());
     }
 
     alg::vec2 app::pixel_mouse() const
@@ -331,7 +336,7 @@ namespace phys
         if (ImGui::GetIO().WantCaptureKeyboard)
             return;
         const alg::vec2 size = m_window.getView().getSize();
-        const float speed = 0.75f * delta_time().asSeconds() * size.norm();
+        const float speed = 0.75f * raw_delta_time().asSeconds() * size.norm();
         alg::vec2 vel;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
             vel.x += speed;
@@ -409,6 +414,10 @@ namespace phys
     const sf::Time &app::phys_time() const { return m_phys_time; }
     const sf::Time &app::draw_time() const { return m_draw_time; }
     sf::Time app::delta_time() const { return m_phys_time + m_draw_time; }
+
+    const sf::Time &app::raw_phys_time() const { return m_raw_phys_time; }
+    const sf::Time &app::raw_draw_time() const { return m_raw_draw_time; }
+    sf::Time app::raw_delta_time() const { return m_raw_phys_time + m_raw_draw_time; }
 
     float app::time_measure_smoothness() const { return m_time_smoothness; }
     void app::time_measure_smoothness(const float smoothness) { m_time_smoothness = smoothness; }
