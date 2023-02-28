@@ -11,7 +11,7 @@
 
 namespace phys
 {
-    class app : ini::saveable
+    class app : public ini::saveable
     {
     public:
         app(const rk::butcher_tableau &table = rk::rk4,
