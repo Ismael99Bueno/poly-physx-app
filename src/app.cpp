@@ -139,7 +139,10 @@ namespace phys
 
     void app::write(ini::output &out) const
     {
+        out.begin_section("engine");
         m_engine.write(out);
+        out.end_section();
+
         std::size_t index = 0;
         const std::string section = "entity";
         for (const sf::ConvexShape &shape : m_shapes)
@@ -178,7 +181,10 @@ namespace phys
 
     void app::read(ini::input &in)
     {
+        in.begin_section("engine");
         m_engine.read(in);
+        in.end_section();
+
         std::size_t index = 0;
         const std::string section = "entity";
         for (sf::ConvexShape &shape : m_shapes)
