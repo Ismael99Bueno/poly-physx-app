@@ -167,6 +167,13 @@ namespace phys
         out.write("b", (int)m_rigid_bars_color.b);
         out.end_section();
         out.write("paused", m_paused);
+
+        const sf::View &view = m_window.getView();
+        out.write("camx", view.getCenter().x);
+        out.write("camy", view.getCenter().y);
+
+        out.write("width", view.getSize().x);
+        out.write("height", view.getSize().y);
     }
 
     void app::read(ini::input &in)
@@ -193,6 +200,14 @@ namespace phys
         m_rigid_bars_color = {(sf::Uint8)in.readi("r"), (sf::Uint8)in.readi("g"), (sf::Uint8)in.readi("b")};
         in.end_section();
         m_paused = (bool)in.readi("paused");
+
+        sf::View view = m_window.getView();
+        const float camx = in.readf("camx"), camy = in.readf("camy"),
+                    width = in.readf("width"), height = in.readf("height");
+
+        view.setCenter(camx, camy);
+        view.setSize(width, height);
+        m_window.setView(view);
     }
 
     void app::draw_spring(const alg::vec2 &p1, const alg::vec2 &p2) { draw_spring(p1, p2, m_springs_color); }
