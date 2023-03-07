@@ -35,6 +35,9 @@ namespace phys
         void draw_spring(const alg::vec2 &p1, const alg::vec2 &p2);
         void draw_rigid_bar(const alg::vec2 &p1, const alg::vec2 &p2);
 
+        void transform_camera(const alg::vec2 &dir);
+        void transform_camera(const alg::vec2 &dir, const alg::vec2 &size);
+
         virtual void write(ini::output &out) const override;
         virtual void read(ini::input &in) override;
 
@@ -127,8 +130,6 @@ namespace phys
         void handle_events();
         void align_dt();
 
-        void transform_camera(const alg::vec2 &dir);
-        void transform_camera(const alg::vec2 &dir, const alg::vec2 &size);
         void control_camera();
         void zoom(float delta);
     };
