@@ -297,6 +297,8 @@ namespace phys
                 break;
 
             case sf::Event::KeyPressed:
+                if (ImGui::GetIO().WantCaptureKeyboard)
+                    break;
                 switch (event.key.code)
                 {
                 case sf::Keyboard::Escape:

@@ -4,6 +4,7 @@
 #include "engine2D.hpp"
 #include "layer.hpp"
 #include "tableaus.hpp"
+#include "constants.hpp"
 #include <string>
 #include <vector>
 #include <functional>
@@ -104,9 +105,9 @@ namespace phys
             m_raw_phys_time, m_raw_draw_time;
 
         float m_time_smoothness = 0.f;
-        sf::Color m_entity_color = sf::Color(123, 143, 161),
-                  m_springs_color = sf::Color(207, 185, 151),
-                  m_rigid_bars_color = sf::Color(207, 185, 151);
+        sf::Color m_entity_color = DEFAULT_ENTITY_COLOR,
+                  m_springs_color = DEFAULT_ATTACH_COLOR,
+                  m_rigid_bars_color = DEFAULT_ATTACH_COLOR;
 
         int m_integrations_per_frame = 1, m_framerate;
         float m_dt = 1e-3f;
