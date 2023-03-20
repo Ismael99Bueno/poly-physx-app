@@ -339,7 +339,7 @@ namespace phys
         return alg::vec2(ImGui::GetIO().MouseDelta.x, -ImGui::GetIO().MouseDelta.y);
     }
 
-    void app::transform_camera(const alg::vec2 &dir)
+    void app::transform_camera(const alg::vec2 &dir) // TODO: rebuild quad tree si se esta usando
     {
         sf::View v = m_window.getView();
         v.move(dir);
