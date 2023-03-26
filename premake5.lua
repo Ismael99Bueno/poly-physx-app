@@ -1,4 +1,4 @@
-project "phys-app"
+project "poly-physx-app"
    kind "StaticLib"
 
    language "C++"
