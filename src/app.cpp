@@ -20,7 +20,7 @@ namespace phys
         const auto add_shape = [this](entity2D_ptr e)
         {
             sf::ConvexShape &shape = m_shapes.emplace_back(sf::ConvexShape());
-            const geo::polygon2D &poly = e->shape();
+            const geo::polygon &poly = e->shape();
 
             shape.setPointCount(poly.size());
             for (std::size_t i = 0; i < poly.size(); i++)
