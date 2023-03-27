@@ -10,8 +10,7 @@ namespace ppx
 {
     app::app(const rk::butcher_tableau &table,
              const std::size_t allocations,
-             const std::string &name) : m_window(sf::VideoMode(800, 600),
-                                                 name),
+             const std::string &name) : m_window(sf::VideoMode(800, 600), name),
                                         m_engine(table, allocations)
     {
         m_window.setView(sf::View(sf::Vector2f(0.f, 0.f), sf::Vector2f(WIDTH, -HEIGHT)));
