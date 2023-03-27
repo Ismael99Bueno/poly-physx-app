@@ -4,7 +4,7 @@
 #include <string>
 #include <SFML/Graphics.hpp>
 
-namespace phys
+namespace ppx
 {
     class app;
     class layer

@@ -10,7 +10,7 @@
 #include <functional>
 #include <SFML/Graphics.hpp>
 
-namespace phys
+namespace ppx
 {
     class app : public ini::saveable
     {

@@ -1,6 +1,6 @@
 #include "layer.hpp"
 
-namespace phys
+namespace ppx
 {
     layer::layer(const std::string &name) : m_name(name) {}
 
