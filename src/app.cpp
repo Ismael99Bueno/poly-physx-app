@@ -37,7 +37,7 @@ namespace ppx
         m_engine.on_entity_addition(add_shape);
         m_engine.on_entity_removal(remove_shape);
 
-        if (!ImGui::SFML::Init(m_window, false))
+        if (!ImGui::SFML::Init(m_window))
         {
             perror("ImGui initialization failed\n");
             exit(EXIT_FAILURE);
