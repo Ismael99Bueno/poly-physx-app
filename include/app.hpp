@@ -17,7 +17,7 @@ namespace ppx
     public:
         app(const rk::butcher_tableau &table = rk::rk4,
             std::size_t allocations = 100,
-            const std::string &name = "Physics engine");
+            const std::string &name = "poly-physx");
         virtual ~app() = default;
 
         void run(std::function<bool(engine2D &, float &)> forward = &engine2D::raw_forward);

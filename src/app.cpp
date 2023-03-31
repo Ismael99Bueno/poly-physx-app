@@ -10,11 +10,10 @@ namespace ppx
 {
     app::app(const rk::butcher_tableau &table,
              const std::size_t allocations,
-             const std::string &name) : m_engine(table, allocations)
+             const std::string &name) : m_window(sf::VideoMode(800, 600), name),
+                                        m_engine(table, allocations)
+
     {
-        sf::ContextSettings conf;
-        conf.antialiasingLevel = 4;
-        m_window.create(sf::VideoMode(800, 600), name, 7, conf);
         m_window.setView(sf::View(sf::Vector2f(0.f, 0.f), sf::Vector2f(WIDTH, -HEIGHT)));
 
         const auto add_shape = [this](entity2D_ptr e)
