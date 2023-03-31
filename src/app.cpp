@@ -34,8 +34,8 @@ namespace ppx
             m_shapes.pop_back();
         };
 
-        m_engine.on_entity_addition(add_shape);
-        m_engine.on_entity_removal(remove_shape);
+        m_engine.callbacks().on_entity_addition(add_shape);
+        m_engine.callbacks().on_late_entity_removal(remove_shape);
 
         if (!ImGui::SFML::Init(m_window))
         {
