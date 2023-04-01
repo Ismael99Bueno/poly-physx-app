@@ -250,7 +250,7 @@ namespace ppx
         for (std::size_t i = 0; i < m_shapes.size(); i++)
         {
             sf::ConvexShape &shape = m_shapes[i];
-            const ppx::entity2D_ptr e = m_engine[i];
+            const entity2D_ptr e = m_engine[i];
 
             on_entity_draw(e, shape);
             draw_entity(e->shape().vertices(), shape);
@@ -260,7 +260,7 @@ namespace ppx
     void app::draw_springs()
     {
         PERF_FUNCTION()
-        for (const ppx::spring2D &sp : m_engine.springs())
+        for (const spring2D &sp : m_engine.springs())
         {
             const alg::vec2 p1 = (sp.e1()->pos() + sp.joint1()) * WORLD_TO_PIXEL,
                             p2 = (sp.e2()->pos() + sp.joint2()) * WORLD_TO_PIXEL;
@@ -273,7 +273,7 @@ namespace ppx
         PERF_FUNCTION()
         for (const auto &ctr : m_engine.compeller().constraints())
         {
-            const auto &rb = dynamic_cast<ppx::rigid_bar2D *>(ctr.get());
+            const auto rb = std::dynamic_pointer_cast<rigid_bar2D>(ctr);
             if (!rb)
                 continue;
             const alg::vec2 p1 = (rb->e1()->pos() + rb->joint1()) * WORLD_TO_PIXEL,
