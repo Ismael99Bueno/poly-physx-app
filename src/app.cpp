@@ -23,7 +23,10 @@ namespace ppx
 
             shape.setPointCount(poly.size());
             for (std::size_t i = 0; i < poly.size(); i++)
-                shape.setPoint(i, poly[i] * WORLD_TO_PIXEL);
+            {
+                const alg::vec2 point = poly[i] * WORLD_TO_PIXEL;
+                shape.setPoint(i, VEC2_AS(point));
+            }
             shape.setFillColor(m_entity_color);
             shape.setOutlineColor(sf::Color::Red);
         };
@@ -121,7 +124,10 @@ namespace ppx
         if (shape.getPointCount() != vertices.size())
             shape.setPointCount(vertices.size());
         for (std::size_t j = 0; j < shape.getPointCount(); j++)
-            shape.setPoint(j, vertices[j] * WORLD_TO_PIXEL);
+        {
+            const alg::vec2 point = vertices[j] * WORLD_TO_PIXEL;
+            shape.setPoint(j, VEC2_AS(point));
+        }
         m_window.draw(shape);
     }
 
@@ -341,15 +347,15 @@ namespace ppx
     void app::transform_camera(const alg::vec2 &dir) // TODO: rebuild quad tree si se esta usando
     {
         sf::View v = m_window.getView();
-        v.move(dir);
+        v.move(VEC2_AS(dir));
         m_window.setView(v);
     }
 
     void app::transform_camera(const alg::vec2 &dir, const alg::vec2 &size)
     {
         sf::View v = m_window.getView();
-        v.setSize(size);
-        v.move(dir);
+        v.setSize(VEC2_AS(size));
+        v.move(VEC2_AS(dir));
         m_window.setView(v);
     }
 
@@ -357,7 +363,7 @@ namespace ppx
     {
         if (ImGui::GetIO().WantCaptureKeyboard)
             return;
-        const alg::vec2 size = m_window.getView().getSize();
+        const alg::vec2 size = AS_VEC2(m_window.getView().getSize());
         const float speed = 0.75f * raw_delta_time().asSeconds() * size.norm();
         alg::vec2 vel;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
@@ -379,7 +385,9 @@ namespace ppx
         const float factor = delta * 0.006f;
 
         const sf::View &v = m_window.getView();
-        transform_camera((pixel_mouse() - v.getCenter()) * factor, v.getSize() * (1.f - factor));
+        const alg::vec2 dir = (pixel_mouse() - AS_VEC2(v.getCenter())) * factor,
+                        size = AS_VEC2(v.getSize()) * (1.f - factor);
+        transform_camera(VEC2_AS(dir), VEC2_AS(size));
     }
 
     alg::vec2 app::world_mouse() const { return pixel_mouse() * PIXEL_TO_WORLD; }
