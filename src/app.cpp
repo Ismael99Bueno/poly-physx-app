@@ -1,10 +1,11 @@
 #include "app.hpp"
-#include "constants.hpp"
 #include "spring_line.hpp"
 #include "thick_line.hpp"
 #include "rigid_bar2D.hpp"
 #include "imgui.h"
 #include "imgui-SFML.h"
+
+#define FONTS_DIR "fonts/"
 
 namespace ppx
 {
@@ -409,11 +410,11 @@ namespace ppx
 
     void app::add_fonts() const
     {
-        if (!std::filesystem::exists("fonts/"))
+        if (!std::filesystem::exists(FONTS_DIR))
             return;
 
         ImGuiIO &io = ImGui::GetIO();
-        for (const auto &entry : std::filesystem::directory_iterator("fonts/")) // ADD MACRO FONTS DIR
+        for (const auto &entry : std::filesystem::directory_iterator(FONTS_DIR)) // ADD MACRO FONTS DIR
         {
             const std::string &path = entry.path(),
                               extension = path.substr(path.find(".") + 1, path.size() - 1);

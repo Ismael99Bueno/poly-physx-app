@@ -4,11 +4,19 @@
 #include "engine2D.hpp"
 #include "layer.hpp"
 #include "tableaus.hpp"
-#include "constants.hpp"
 #include <string>
 #include <vector>
 #include <functional>
 #include <SFML/Graphics.hpp>
+
+#define WIDTH 1920.f
+#define HEIGHT 1280.f
+#define WORLD_TO_PIXEL 10.f
+#define PIXEL_TO_WORLD 0.1f
+#define NO_FPS_LIMIT 0
+#define DEFAULT_FPS 120.f
+#define DEFAULT_ENTITY_COLOR sf::Color(123, 143, 161)
+#define DEFAULT_ATTACH_COLOR sf::Color(207, 185, 151)
 
 namespace ppx
 {
