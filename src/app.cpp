@@ -418,7 +418,6 @@ namespace ppx
         {
             const std::string &path = entry.path(),
                               extension = path.substr(path.find(".") + 1, path.size() - 1);
-            printf("%s\n", extension.c_str());
             if (extension != "ttf" && extension != "otf")
                 continue;
 
