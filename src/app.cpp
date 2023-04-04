@@ -44,7 +44,7 @@ namespace ppx
             perror("ImGui initialization failed\n");
             exit(EXIT_FAILURE);
         }
-        add_font("fonts/FiraCode/FiraCode-Light.ttf", FONT_SIZE_PIXELS);
+        add_fonts();
         framerate(DEFAULT_FPS);
     }
 
@@ -407,10 +407,23 @@ namespace ppx
     void app::springs_color(const sf::Color &color) { m_springs_color = color; }
     void app::rigid_bars_color(const sf::Color &color) { m_rigid_bars_color = color; }
 
-    void app::add_font(const char *path, const float size_pixels) const
+    void app::add_fonts() const
     {
+        if (!std::filesystem::exists("fonts/"))
+            return;
+
         ImGuiIO &io = ImGui::GetIO();
-        io.Fonts->AddFontFromFileTTF(path, size_pixels);
+        for (const auto &entry : std::filesystem::directory_iterator("fonts/")) // ADD MACRO FONTS DIR
+        {
+            const std::string &path = entry.path(),
+                              extension = path.substr(path.find(".") + 1, path.size() - 1);
+            printf("%s\n", extension.c_str());
+            if (extension != "ttf" && extension != "otf")
+                continue;
+
+            const float size_pixels = 26.f;
+            io.Fonts->AddFontFromFileTTF(entry.path().c_str(), size_pixels);
+        }
         io.Fonts->Build();
         if (!ImGui::SFML::UpdateFontTexture())
         {

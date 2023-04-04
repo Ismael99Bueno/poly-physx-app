@@ -85,8 +85,6 @@ namespace ppx
         float time_measure_smoothness() const;
         void time_measure_smoothness(float smoothness);
 
-        void add_font(const char *path, float size_pixels) const;
-
         alg::vec2 pixel_mouse() const;
         alg::vec2 pixel_mouse_delta() const;
 
@@ -131,6 +129,7 @@ namespace ppx
         void handle_events();
         void align_dt();
 
+        void add_fonts() const;
         void control_camera();
         void zoom(float delta);
     };
