@@ -2,7 +2,7 @@ project "poly-physx-app"
    kind "StaticLib"
 
    language "C++"
-   cppdialect "C++20"
+   cppdialect "C++17"
    staticruntime "on"
 
    targetdir("bin/" .. outputdir)
