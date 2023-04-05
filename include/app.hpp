@@ -25,7 +25,7 @@ namespace ppx
     public:
         app(const rk::butcher_tableau &table = rk::rk4,
             std::size_t allocations = 100,
-            const std::string &name = "poly-physx");
+            const char *name = "poly-physx");
         virtual ~app() = default;
 
         void run(std::function<bool(engine2D &, float &)> forward = &engine2D::raw_forward);
@@ -100,7 +100,6 @@ namespace ppx
         alg::vec2 world_mouse_delta() const;
 
     private:
-        const std::string m_name;
         sf::RenderWindow m_window;
         engine2D m_engine;
         std::vector<layer *> m_layers;

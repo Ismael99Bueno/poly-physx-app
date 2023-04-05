@@ -10,13 +10,8 @@ namespace ppx
     class layer
     {
     public:
-        layer(const std::string &name = "layer");
+        layer() = default;
         virtual ~layer() = default;
-
-        const std::string &name() const;
-
-    protected:
-        const std::string m_name;
 
     private:
         virtual void on_attach(app *papp) {}
