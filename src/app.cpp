@@ -421,7 +421,7 @@ namespace ppx
             if (extension != "ttf" && extension != "otf")
                 continue;
 
-            const float size_pixels = 26.f;
+            const float size_pixels = 13.f;
             io.Fonts->AddFontFromFileTTF(entry.path().c_str(), size_pixels);
         }
         io.Fonts->Build();
