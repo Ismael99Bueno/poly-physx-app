@@ -1,18 +1,13 @@
 from argparse import ArgumentParser
 import os
-from utils import build_sfml, clean_sfml
+from utils import build_sfml, clean_sfml, ROOT_PATH
+from exceptions import PathNotFoundError
 
 
 def main() -> None:
     parser = ArgumentParser(
         description="Generate the build files for SFML.",
         epilog="Once the SFML build files have been generated, the project must have its own build files generated with premake, and compiled according to the chosen premake5 action.",
-    )
-    parser.add_argument(
-        "src",
-        metavar="root-relpath",
-        type=str,
-        help="the relative path to the project root",
     )
     parser.add_argument(
         "--clean",
@@ -25,15 +20,14 @@ def main() -> None:
 
     args = parser.parse_args()
 
-    root_path = os.path.abspath(args.src)
-    if not os.path.exists(root_path):
-        raise ValueError(f"Path {root_path} does not exist.")
+    if not os.path.exists(ROOT_PATH):
+        raise PathNotFoundError(ROOT_PATH)
 
-    print(f"Setup wrt root: {root_path}\n")
+    print(f"Setup wrt root: {ROOT_PATH}\n")
     if args.clean:
-        clean_sfml(root_path)
+        clean_sfml()
     else:
-        build_sfml(root_path)
+        build_sfml()
 
 
 if __name__ == "__main__":
