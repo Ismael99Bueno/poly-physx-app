@@ -6,6 +6,8 @@ from exceptions import PathNotFoundError
 import platform
 
 ROOT_PATH = Path(os.path.dirname(os.path.realpath(__file__))).parent.absolute()
+if not os.path.exists(ROOT_PATH):
+    raise PathNotFoundError(ROOT_PATH)
 
 
 def clean_sfml() -> None:

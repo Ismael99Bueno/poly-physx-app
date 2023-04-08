@@ -1,7 +1,6 @@
 from argparse import ArgumentParser
 import os
 from utils import build_sfml, clean_sfml, ROOT_PATH
-from exceptions import PathNotFoundError
 
 
 def main() -> None:
@@ -19,9 +18,6 @@ def main() -> None:
     )
 
     args = parser.parse_args()
-
-    if not os.path.exists(ROOT_PATH):
-        raise PathNotFoundError(ROOT_PATH)
 
     print(f"Setup wrt root: {ROOT_PATH}\n")
     if args.clean:
