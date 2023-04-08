@@ -1,5 +1,4 @@
 from argparse import ArgumentParser
-import os
 from utils import build_sfml, clean_sfml, ROOT_PATH
 
 
