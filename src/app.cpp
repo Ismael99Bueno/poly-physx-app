@@ -63,7 +63,7 @@ namespace ppx
             handle_events();
             sf::Clock phys_clock;
             if (!m_paused)
-                for (std::size_t i = 0; i < m_integrations_per_frame; i++)
+                for (int i = 0; i < m_integrations_per_frame; i++)
                     forward(m_engine, m_dt);
 
             m_raw_phys_time = phys_clock.getElapsedTime();
