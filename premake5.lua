@@ -4,7 +4,7 @@ project "poly-physx-app"
 
    language "C++"
    cppdialect "C++17"
-   buildoptions {"-Wall", "-Wextra", "-Wpedantic", "-Wno-unused-parameter"}
+   buildoptions {"-Wall", "-Wextra", "-Wpedantic", "-Wconversion", "-Wno-unused-parameter"}
    
 
    targetdir("bin/" .. outputdir)
