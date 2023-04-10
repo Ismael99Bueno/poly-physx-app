@@ -1,5 +1,6 @@
 project "poly-physx-app"
    kind "StaticLib"
+   staticruntime "off"
 
    language "C++"
    cppdialect "C++17"
