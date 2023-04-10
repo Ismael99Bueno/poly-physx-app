@@ -63,7 +63,7 @@ namespace ppx
             handle_events();
             sf::Clock phys_clock;
             if (!m_paused)
-                for (int i = 0; i < m_integrations_per_frame; i++)
+                for (std::uint32_t i = 0; i < m_integrations_per_frame; i++)
                     forward(m_engine, m_dt);
 
             m_raw_phys_time = phys_clock.getElapsedTime();
@@ -202,8 +202,8 @@ namespace ppx
             in.end_section();
         }
 
-        framerate(in.readi32("framerate"));
-        m_integrations_per_frame = in.readi32("integ_per_frame");
+        framerate(in.readui32("framerate"));
+        m_integrations_per_frame = in.readui32("integ_per_frame");
         m_aligned_dt = (bool)in.readi16("aligned_dt");
         m_time_smoothness = in.readf32("time_smoothness");
         m_dt = in.readf32("timestep");
@@ -434,8 +434,8 @@ namespace ppx
         }
     }
 
-    int app::integrations_per_frame() const { return m_integrations_per_frame; }
-    void app::integrations_per_frame(int integrations_per_frame) { m_integrations_per_frame = integrations_per_frame; }
+    std::uint32_t app::integrations_per_frame() const { return m_integrations_per_frame; }
+    void app::integrations_per_frame(std::uint32_t integrations_per_frame) { m_integrations_per_frame = integrations_per_frame; }
 
     float app::timestep() const { return m_dt; }
     void app::timestep(float ts) { m_dt = ts; }
@@ -443,8 +443,8 @@ namespace ppx
     bool app::paused() const { return m_paused; }
     void app::paused(const bool paused) { m_paused = paused; }
 
-    int app::framerate() const { return m_framerate; }
-    void app::framerate(const int framerate)
+    std::uint32_t app::framerate() const { return m_framerate; }
+    void app::framerate(const std::uint32_t framerate)
     {
         m_framerate = framerate;
         m_window.setFramerateLimit(framerate);

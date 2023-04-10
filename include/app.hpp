@@ -14,7 +14,7 @@
 #define WORLD_TO_PIXEL 10.f
 #define PIXEL_TO_WORLD 0.1f
 #define NO_FPS_LIMIT 0
-#define DEFAULT_FPS 120.f
+#define DEFAULT_FPS 120
 #define DEFAULT_ENTITY_COLOR sf::Color(123, 143, 161)
 #define DEFAULT_ATTACH_COLOR sf::Color(207, 185, 151)
 
@@ -64,8 +64,8 @@ namespace ppx
         void springs_color(const sf::Color &color);
         void rigid_bars_color(const sf::Color &color);
 
-        int integrations_per_frame() const;
-        void integrations_per_frame(int integrations_per_frame);
+        std::uint32_t integrations_per_frame() const;
+        void integrations_per_frame(std::uint32_t integrations_per_frame);
 
         float timestep() const;
         void timestep(float ts);
@@ -73,8 +73,8 @@ namespace ppx
         bool paused() const;
         void paused(bool paused);
 
-        int framerate() const;
-        void framerate(int framerate);
+        std::uint32_t framerate() const;
+        void framerate(std::uint32_t framerate);
 
         bool aligned_timestep() const;
         void aligned_timestep(bool aligned_dt);
@@ -114,7 +114,7 @@ namespace ppx
                   m_springs_color = DEFAULT_ATTACH_COLOR,
                   m_rigid_bars_color = DEFAULT_ATTACH_COLOR;
 
-        int m_integrations_per_frame = 1, m_framerate;
+        std::uint32_t m_integrations_per_frame = 1, m_framerate;
         float m_dt = 1e-3f;
 
         virtual void on_start() {}
