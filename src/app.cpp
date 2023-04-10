@@ -198,26 +198,26 @@ namespace ppx
         for (sf::ConvexShape &shape : m_shapes)
         {
             in.begin_section(section + std::to_string(index++));
-            shape.setFillColor({(sf::Uint8)in.readi("r"), (sf::Uint8)in.readi("g"), (sf::Uint8)in.readi("b")});
+            shape.setFillColor({(sf::Uint8)in.readui32("r"), (sf::Uint8)in.readui32("g"), (sf::Uint8)in.readui32("b")});
             in.end_section();
         }
 
-        framerate(in.readi("framerate"));
-        m_integrations_per_frame = in.readi("integ_per_frame");
-        m_aligned_dt = (bool)in.readi("aligned_dt");
-        m_time_smoothness = in.readf("time_smoothness");
-        m_dt = in.readf("timestep");
+        framerate(in.readi32("framerate"));
+        m_integrations_per_frame = in.readi32("integ_per_frame");
+        m_aligned_dt = (bool)in.readi16("aligned_dt");
+        m_time_smoothness = in.readf32("time_smoothness");
+        m_dt = in.readf32("timestep");
         in.begin_section("springs_color");
-        m_springs_color = {(sf::Uint8)in.readi("r"), (sf::Uint8)in.readi("g"), (sf::Uint8)in.readi("b")};
+        m_springs_color = {(sf::Uint8)in.readui32("r"), (sf::Uint8)in.readui32("g"), (sf::Uint8)in.readui32("b")};
         in.end_section();
         in.begin_section("rigid_bars_color");
-        m_rigid_bars_color = {(sf::Uint8)in.readi("r"), (sf::Uint8)in.readi("g"), (sf::Uint8)in.readi("b")};
+        m_rigid_bars_color = {(sf::Uint8)in.readui32("r"), (sf::Uint8)in.readui32("g"), (sf::Uint8)in.readui32("b")};
         in.end_section();
-        m_paused = (bool)in.readi("paused");
+        m_paused = (bool)in.readi16("paused");
 
         sf::View view = m_window.getView();
-        const float camx = in.readf("camx"), camy = in.readf("camy"),
-                    width = in.readf("width"), height = in.readf("height");
+        const float camx = in.readf32("camx"), camy = in.readf32("camy"),
+                    width = in.readf32("width"), height = in.readf32("height");
 
         view.setCenter(camx, camy);
         view.setSize(width, height);
