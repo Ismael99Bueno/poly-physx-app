@@ -16,6 +16,7 @@ namespace ppx
 
     {
         m_window.setView(sf::View(sf::Vector2f(0.f, 0.f), sf::Vector2f(WIDTH, -HEIGHT)));
+        m_window.setVerticalSyncEnabled(false);
 
         const auto add_shape = [this](entity2D_ptr e)
         {
