@@ -4,6 +4,7 @@
 #include "rigid_bar2D.hpp"
 #include "imgui.h"
 #include "imgui-SFML.h"
+#include <filesystem>
 
 #define FONTS_DIR "fonts/"
 
@@ -17,6 +18,7 @@ namespace ppx
     {
         m_window.setView(sf::View(sf::Vector2f(0.f, 0.f), sf::Vector2f(WIDTH, -HEIGHT)));
         m_window.setVerticalSyncEnabled(false);
+        m_window.setFramerateLimit(0);
 
         const auto add_shape = [this](entity2D_ptr e)
         {
@@ -417,13 +419,13 @@ namespace ppx
         ImGuiIO &io = ImGui::GetIO();
         for (const auto &entry : std::filesystem::directory_iterator(FONTS_DIR)) // ADD MACRO FONTS DIR
         {
-            const std::string &path = entry.path(),
+            const std::string &path = entry.path().string(),
                               extension = path.substr(path.find(".") + 1, path.size() - 1);
             if (extension != "ttf" && extension != "otf")
                 continue;
 
             const float size_pixels = 13.f;
-            io.Fonts->AddFontFromFileTTF(entry.path().c_str(), size_pixels);
+            io.Fonts->AddFontFromFileTTF(entry.path().string().c_str(), size_pixels);
         }
         io.Fonts->Build();
         if (!ImGui::SFML::UpdateFontTexture())
