@@ -4,7 +4,9 @@ project "poly-physx-app"
 
    language "C++"
    cppdialect "C++17"
-   buildoptions {"-Wall", "-Wextra", "-Wpedantic", "-Wconversion", "-Wno-unused-parameter"}
+   filter "system:macosx"
+      buildoptions {"-Wall", "-Wextra", "-Wpedantic", "-Wconversion", "-Wno-unused-parameter"}
+   filter{}
    
 
    targetdir("bin/" .. outputdir)
