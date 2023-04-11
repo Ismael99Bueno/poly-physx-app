@@ -12,11 +12,10 @@ namespace ppx
 {
     app::app(const rk::butcher_tableau &table,
              const std::size_t allocations,
-             const char *name) : m_window(sf::VideoMode(800, 600), name),
-                                 m_engine(table, allocations)
+             const char *name) : m_engine(table, allocations)
 
     {
-        m_window.setView(sf::View(sf::Vector2f(0.f, 0.f), sf::Vector2f(WIDTH, -HEIGHT)));
+        recreate_window(sf::Style::Default, {0.f, 0.f}, {WIDTH, -HEIGHT}, name);
         m_window.setVerticalSyncEnabled(false);
 
         const auto add_shape = [this](entity2D_ptr e)
@@ -151,6 +150,7 @@ namespace ppx
         m_engine.write(out);
         out.end_section();
 
+        out.write("window_style", m_style);
         std::size_t index = 0;
         const std::string section = "entity";
         for (const sf::ConvexShape &shape : m_shapes)
@@ -192,6 +192,8 @@ namespace ppx
         in.begin_section("engine");
         m_engine.read(in);
         in.end_section();
+
+        recreate_window(in.readui32("window_style"));
 
         std::size_t index = 0;
         const std::string section = "entity";
@@ -360,6 +362,26 @@ namespace ppx
         v.setSize(VEC2_AS(size));
         v.move(VEC2_AS(dir));
         m_window.setView(v);
+    }
+
+    void app::recreate_window(const sf::Uint32 style,
+                              const alg::vec2 &center,
+                              const alg::vec2 &size,
+                              const char *name)
+    {
+        if (style & sf::Style::Fullscreen)
+            m_window.create(sf::VideoMode::getFullscreenModes()[0], name, sf::Style::Fullscreen);
+        else
+            m_window.create(sf::VideoMode(800, 600), name, style);
+        m_window.setView(sf::View(VEC2_AS(center), VEC2_AS(size)));
+        m_style = style;
+    }
+
+    void app::recreate_window(const sf::Uint32 style, const char *name)
+    {
+        const auto center = m_window.getView().getCenter(),
+                   size = m_window.getView().getSize();
+        recreate_window(style, AS_VEC2(center), AS_VEC2(size));
     }
 
     void app::control_camera()

@@ -47,6 +47,12 @@ namespace ppx
         void transform_camera(const alg::vec2 &dir);
         void transform_camera(const alg::vec2 &dir, const alg::vec2 &size);
 
+        void recreate_window(sf::Uint32 style,
+                             const alg::vec2 &center,
+                             const alg::vec2 &size,
+                             const char *name = "poly-physx");
+        void recreate_window(sf::Uint32 style, const char *name = "poly-physx");
+
         virtual void write(ini::output &out) const override;
         virtual void read(ini::input &in) override;
 
@@ -105,6 +111,7 @@ namespace ppx
         std::vector<layer *> m_layers;
         std::vector<sf::ConvexShape> m_shapes;
         bool m_paused = false, m_aligned_dt = true;
+        sf::Uint32 m_style = sf::Style::Default;
 
         sf::Time m_phys_time, m_draw_time,
             m_raw_phys_time, m_raw_draw_time;
