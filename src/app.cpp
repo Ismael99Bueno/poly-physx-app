@@ -364,8 +364,11 @@ namespace ppx
 
     void app::control_camera()
     {
-        if (ImGui::GetIO().WantCaptureKeyboard)
+        if (ImGui::GetIO().WantCaptureKeyboard ||
+            sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) ||
+            sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
             return;
+
         const alg::vec2 size = AS_VEC2(m_window.getView().getSize());
         const float speed = 0.75f * raw_delta_time().asSeconds() * size.norm();
         alg::vec2 vel;
