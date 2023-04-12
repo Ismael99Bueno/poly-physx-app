@@ -128,7 +128,7 @@ namespace ppx
         virtual void on_update() {}
         virtual void on_late_update() {}
         virtual void on_render() {}
-        virtual void on_entity_draw(entity2D_ptr e, sf::ConvexShape &shape) {}
+        virtual void on_entity_draw(const entity2D_ptr &e, sf::ConvexShape &shape) {}
         virtual void on_event(sf::Event &event) {}
         virtual void on_end() {}
 

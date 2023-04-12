@@ -18,7 +18,7 @@ namespace ppx
         recreate_window(sf::Style::Default, {0.f, 0.f}, {WIDTH, -HEIGHT}, name);
         m_window.setVerticalSyncEnabled(false);
 
-        const auto add_shape = [this](entity2D_ptr e)
+        const auto add_shape = [this](const entity2D_ptr &e)
         {
             sf::ConvexShape &shape = m_shapes.emplace_back(sf::ConvexShape());
             const geo::polygon &poly = e->shape();
