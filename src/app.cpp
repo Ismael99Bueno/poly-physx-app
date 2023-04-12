@@ -421,6 +421,9 @@ namespace ppx
     alg::vec2 app::world_mouse() const { return pixel_mouse() * PIXEL_TO_WORLD; }
     alg::vec2 app::world_mouse_delta() const { return pixel_mouse_delta() * PIXEL_TO_WORLD; }
 
+    sf::Uint32 app::style() const { return m_style; }
+    void app::style(const sf::Uint32 style) { m_style = style; }
+
     const engine2D &app::engine() const { return m_engine; }
     engine2D &app::engine() { return m_engine; }
 

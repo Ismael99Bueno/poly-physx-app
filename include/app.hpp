@@ -105,6 +105,9 @@ namespace ppx
         alg::vec2 world_mouse() const;
         alg::vec2 world_mouse_delta() const;
 
+        sf::Uint32 style() const;
+        void style(sf::Uint32 style);
+
     private:
         sf::RenderWindow m_window;
         engine2D m_engine;
