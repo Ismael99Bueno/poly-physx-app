@@ -374,6 +374,7 @@ namespace ppx
         else
             m_window.create(sf::VideoMode(800, 600), name, style);
         m_window.setView(sf::View(VEC2_AS(center), VEC2_AS(size)));
+        m_window.setFramerateLimit(m_framerate);
         m_style = style;
     }
 
