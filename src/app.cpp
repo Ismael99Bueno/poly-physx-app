@@ -433,7 +433,7 @@ namespace ppx
     {
         if (ImGui::GetIO().WantCaptureMouse)
             return;
-        const float factor = delta * 0.006f;
+        const float factor = std::clamp(delta, -0.05f, 0.05f); // delta * 0.006f;
 
         const sf::View &v = m_window.getView();
         const alg::vec2 dir = (pixel_mouse() - AS_VEC2(v.getCenter())) * factor,
