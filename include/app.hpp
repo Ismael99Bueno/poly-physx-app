@@ -52,6 +52,7 @@ namespace ppx
                              const alg::vec2 &size,
                              const char *name = "poly-physx");
         void recreate_window(sf::Uint32 style, const char *name = "poly-physx");
+        void resize_quad_tree_to_window();
 
         virtual void write(ini::output &out) const override;
         virtual void read(ini::input &in) override;

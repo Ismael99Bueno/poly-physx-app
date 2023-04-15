@@ -224,6 +224,9 @@ namespace ppx
         view.setCenter(camx, camy);
         view.setSize(width, height);
         m_window.setView(view);
+
+        if (m_engine.collider().coldet() == collider2D::QUAD_TREE)
+            resize_quad_tree_to_window();
     }
 
     void app::draw_spring(const alg::vec2 &p1, const alg::vec2 &p2) { draw_spring(p1, p2, m_springs_color); }
@@ -354,6 +357,9 @@ namespace ppx
         sf::View v = m_window.getView();
         v.move(VEC2_AS(dir));
         m_window.setView(v);
+
+        if (m_engine.collider().coldet() == collider2D::QUAD_TREE)
+            resize_quad_tree_to_window();
     }
 
     void app::transform_camera(const alg::vec2 &dir, const alg::vec2 &size)
@@ -362,6 +368,9 @@ namespace ppx
         v.setSize(VEC2_AS(size));
         v.move(VEC2_AS(dir));
         m_window.setView(v);
+
+        if (m_engine.collider().coldet() == collider2D::QUAD_TREE)
+            resize_quad_tree_to_window();
     }
 
     void app::recreate_window(const sf::Uint32 style,
@@ -383,6 +392,17 @@ namespace ppx
         const auto center = m_window.getView().getCenter(),
                    size = m_window.getView().getSize();
         recreate_window(style, AS_VEC2(center), AS_VEC2(size));
+    }
+
+    void app::resize_quad_tree_to_window()
+    {
+        const sf::View &v = m_window.getView();
+        const alg::vec2 pos = AS_VEC2(v.getCenter()),
+                        size = {v.getSize().x, -v.getSize().y};
+        const geo::aabb2D qt_size = {-PIXEL_TO_WORLD * (0.5f * size - pos),
+                                     PIXEL_TO_WORLD * (0.5f * size + pos)};
+        m_engine.collider().quad_tree().aabb(qt_size);
+        m_engine.collider().rebuild_quad_tree();
     }
 
     void app::control_camera()
