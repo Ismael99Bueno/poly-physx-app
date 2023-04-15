@@ -17,6 +17,8 @@ namespace ppx
     {
         recreate_window(sf::Style::Default, {0.f, 0.f}, {WIDTH, -HEIGHT}, name);
         m_window.setVerticalSyncEnabled(false);
+        m_engine.integrator().min_dt(1.e-5f);
+        m_engine.integrator().max_dt(0.0125f);
 
         const auto add_shape = [this](const entity2D_ptr &e)
         {
