@@ -5,8 +5,16 @@
 #include "imgui.h"
 #include "imgui-SFML.h"
 #include <filesystem>
+#include <glm/geometric.hpp>
+#include <glm/gtx/norm.hpp>
 
 #define FONTS_DIR "fonts/"
+#define VEC2_AS(vec)     \
+    {                    \
+        (vec).x, (vec).y \
+    }
+
+#define AS_VEC2(vec) glm::vec2((vec).x, (vec).y)
 
 namespace ppx
 {
@@ -18,7 +26,7 @@ namespace ppx
         recreate_window(sf::Style::Default, {0.f, 0.f}, {WIDTH, -HEIGHT}, name);
         m_window.setVerticalSyncEnabled(false);
         m_engine.integrator().min_dt(1.e-5f);
-        m_engine.integrator().max_dt(0.0125f);
+        m_engine.integrator().max_dt(0.008f);
 
         const auto add_shape = [this](const entity2D_ptr &e)
         {
@@ -28,7 +36,7 @@ namespace ppx
             shape.setPointCount(poly.size());
             for (std::size_t i = 0; i < poly.size(); i++)
             {
-                const alg::vec2 point = poly[i] * WORLD_TO_PIXEL;
+                const glm::vec2 point = poly[i] * WORLD_TO_PIXEL;
                 shape.setPoint(i, VEC2_AS(point));
             }
             shape.setFillColor(m_entity_color);
@@ -115,32 +123,32 @@ namespace ppx
             (*it)->on_detach();
     }
 
-    void app::draw_entity(const std::vector<alg::vec2> vertices,
+    void app::draw_entity(const std::vector<glm::vec2> vertices,
                           sf::ConvexShape &shape, const sf::Color &color)
     {
         shape.setFillColor(color);
         draw_entity(vertices, shape);
     }
 
-    void app::draw_entity(const std::vector<alg::vec2> vertices,
+    void app::draw_entity(const std::vector<glm::vec2> vertices,
                           sf::ConvexShape &shape)
     {
         if (shape.getPointCount() != vertices.size())
             shape.setPointCount(vertices.size());
         for (std::size_t j = 0; j < shape.getPointCount(); j++)
         {
-            const alg::vec2 point = vertices[j] * WORLD_TO_PIXEL;
+            const glm::vec2 point = vertices[j] * WORLD_TO_PIXEL;
             shape.setPoint(j, VEC2_AS(point));
         }
         m_window.draw(shape);
     }
 
-    void app::draw_spring(const alg::vec2 &p1, const alg::vec2 &p2, const sf::Color &color)
+    void app::draw_spring(const glm::vec2 &p1, const glm::vec2 &p2, const sf::Color &color)
     {
         prm::spring_line sp_line(p1, p2, color);
         m_window.draw(sp_line);
     }
-    void app::draw_rigid_bar(const alg::vec2 &p1, const alg::vec2 &p2, const sf::Color &color)
+    void app::draw_rigid_bar(const glm::vec2 &p1, const glm::vec2 &p2, const sf::Color &color)
     {
         prm::thick_line tl(p1, p2, 8.f, color);
         m_window.draw(tl);
@@ -231,8 +239,8 @@ namespace ppx
             resize_quad_tree_to_window();
     }
 
-    void app::draw_spring(const alg::vec2 &p1, const alg::vec2 &p2) { draw_spring(p1, p2, m_springs_color); }
-    void app::draw_rigid_bar(const alg::vec2 &p1, const alg::vec2 &p2) { draw_rigid_bar(p1, p2, m_rigid_bars_color); }
+    void app::draw_spring(const glm::vec2 &p1, const glm::vec2 &p2) { draw_spring(p1, p2, m_springs_color); }
+    void app::draw_rigid_bar(const glm::vec2 &p1, const glm::vec2 &p2) { draw_rigid_bar(p1, p2, m_rigid_bars_color); }
 
     void app::layer_start()
     {
@@ -278,7 +286,7 @@ namespace ppx
         PERF_FUNCTION()
         for (const spring2D &sp : m_engine.springs())
         {
-            const alg::vec2 p1 = (sp.e1()->pos() + sp.joint1()) * WORLD_TO_PIXEL,
+            const glm::vec2 p1 = (sp.e1()->pos() + sp.joint1()) * WORLD_TO_PIXEL,
                             p2 = (sp.e2()->pos() + sp.joint2()) * WORLD_TO_PIXEL;
             draw_spring(p1, p2);
         }
@@ -292,7 +300,7 @@ namespace ppx
             const auto rb = std::dynamic_pointer_cast<rigid_bar2D>(ctr);
             if (!rb)
                 continue;
-            const alg::vec2 p1 = (rb->e1()->pos() + rb->joint1()) * WORLD_TO_PIXEL,
+            const glm::vec2 p1 = (rb->e1()->pos() + rb->joint1()) * WORLD_TO_PIXEL,
                             p2 = (rb->e2()->pos() + rb->joint2()) * WORLD_TO_PIXEL;
             draw_rigid_bar(p1, p2);
         }
@@ -342,19 +350,19 @@ namespace ppx
         m_dt = std::clamp(raw_delta_time().asSeconds(), integ.min_dt(), integ.max_dt());
     }
 
-    alg::vec2 app::pixel_mouse() const
+    glm::vec2 app::pixel_mouse() const
     {
         const sf::Vector2i mpos = sf::Mouse::getPosition(m_window);
         const sf::Vector2f wpos = m_window.mapPixelToCoords(mpos);
-        return alg::vec2(wpos.x, wpos.y);
+        return glm::vec2(wpos.x, wpos.y);
     }
 
-    alg::vec2 app::pixel_mouse_delta() const
+    glm::vec2 app::pixel_mouse_delta() const
     {
-        return alg::vec2(ImGui::GetIO().MouseDelta.x, -ImGui::GetIO().MouseDelta.y);
+        return glm::vec2(ImGui::GetIO().MouseDelta.x, -ImGui::GetIO().MouseDelta.y);
     }
 
-    void app::transform_camera(const alg::vec2 &dir) // TODO: rebuild quad tree si se esta usando
+    void app::transform_camera(const glm::vec2 &dir) // TODO: rebuild quad tree si se esta usando
     {
         sf::View v = m_window.getView();
         v.move(VEC2_AS(dir));
@@ -364,7 +372,7 @@ namespace ppx
             resize_quad_tree_to_window();
     }
 
-    void app::transform_camera(const alg::vec2 &dir, const alg::vec2 &size)
+    void app::transform_camera(const glm::vec2 &dir, const glm::vec2 &size)
     {
         sf::View v = m_window.getView();
         v.setSize(VEC2_AS(size));
@@ -376,8 +384,8 @@ namespace ppx
     }
 
     void app::recreate_window(const sf::Uint32 style,
-                              const alg::vec2 &center,
-                              const alg::vec2 &size,
+                              const glm::vec2 &center,
+                              const glm::vec2 &size,
                               const char *name)
     {
         if (style & sf::Style::Fullscreen)
@@ -399,7 +407,7 @@ namespace ppx
     void app::resize_quad_tree_to_window()
     {
         const sf::View &v = m_window.getView();
-        const alg::vec2 pos = AS_VEC2(v.getCenter()),
+        const glm::vec2 pos = AS_VEC2(v.getCenter()),
                         size = {v.getSize().x, -v.getSize().y};
         const geo::aabb2D qt_size = {-PIXEL_TO_WORLD * (0.5f * size - pos),
                                      PIXEL_TO_WORLD * (0.5f * size + pos)};
@@ -414,9 +422,9 @@ namespace ppx
             sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
             return;
 
-        const alg::vec2 size = AS_VEC2(m_window.getView().getSize());
-        const float speed = 0.75f * raw_delta_time().asSeconds() * size.norm();
-        alg::vec2 vel;
+        const glm::vec2 size = AS_VEC2(m_window.getView().getSize());
+        const float speed = 0.75f * raw_delta_time().asSeconds() * glm::length(size);
+        glm::vec2 vel;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
             vel.x += speed;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
@@ -425,7 +433,7 @@ namespace ppx
             vel.y += speed;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
             vel.y -= speed;
-        if (vel.sq_norm() > 0.f)
+        if (glm::length2(vel) > 0.f)
             transform_camera(vel);
     }
 
@@ -436,13 +444,13 @@ namespace ppx
         const float factor = std::clamp(delta, -0.05f, 0.05f); // delta * 0.006f;
 
         const sf::View &v = m_window.getView();
-        const alg::vec2 dir = (pixel_mouse() - AS_VEC2(v.getCenter())) * factor,
+        const glm::vec2 dir = (pixel_mouse() - AS_VEC2(v.getCenter())) * factor,
                         size = AS_VEC2(v.getSize()) * (1.f - factor);
         transform_camera(VEC2_AS(dir), VEC2_AS(size));
     }
 
-    alg::vec2 app::world_mouse() const { return pixel_mouse() * PIXEL_TO_WORLD; }
-    alg::vec2 app::world_mouse_delta() const { return pixel_mouse_delta() * PIXEL_TO_WORLD; }
+    glm::vec2 app::world_mouse() const { return pixel_mouse() * PIXEL_TO_WORLD; }
+    glm::vec2 app::world_mouse_delta() const { return pixel_mouse_delta() * PIXEL_TO_WORLD; }
 
     sf::Uint32 app::style() const { return m_style; }
     void app::style(const sf::Uint32 style) { m_style = style; }

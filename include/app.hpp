@@ -32,24 +32,24 @@ namespace ppx
         void push_layer(layer *l);
         void pop_layer(const layer *l);
 
-        void draw_entity(const std::vector<alg::vec2> vertices,
+        void draw_entity(const std::vector<glm::vec2> vertices,
                          sf::ConvexShape &shape,
                          const sf::Color &color);
-        void draw_entity(const std::vector<alg::vec2> vertices,
+        void draw_entity(const std::vector<glm::vec2> vertices,
                          sf::ConvexShape &shape);
 
-        void draw_spring(const alg::vec2 &p1, const alg::vec2 &p2, const sf::Color &color);
-        void draw_rigid_bar(const alg::vec2 &p1, const alg::vec2 &p2, const sf::Color &color);
+        void draw_spring(const glm::vec2 &p1, const glm::vec2 &p2, const sf::Color &color);
+        void draw_rigid_bar(const glm::vec2 &p1, const glm::vec2 &p2, const sf::Color &color);
 
-        void draw_spring(const alg::vec2 &p1, const alg::vec2 &p2);
-        void draw_rigid_bar(const alg::vec2 &p1, const alg::vec2 &p2);
+        void draw_spring(const glm::vec2 &p1, const glm::vec2 &p2);
+        void draw_rigid_bar(const glm::vec2 &p1, const glm::vec2 &p2);
 
-        void transform_camera(const alg::vec2 &dir);
-        void transform_camera(const alg::vec2 &dir, const alg::vec2 &size);
+        void transform_camera(const glm::vec2 &dir);
+        void transform_camera(const glm::vec2 &dir, const glm::vec2 &size);
 
         void recreate_window(sf::Uint32 style,
-                             const alg::vec2 &center,
-                             const alg::vec2 &size,
+                             const glm::vec2 &center,
+                             const glm::vec2 &size,
                              const char *name = "poly-physx");
         void recreate_window(sf::Uint32 style, const char *name = "poly-physx");
         void resize_quad_tree_to_window();
@@ -100,11 +100,11 @@ namespace ppx
         float time_measure_smoothness() const;
         void time_measure_smoothness(float smoothness);
 
-        alg::vec2 pixel_mouse() const;
-        alg::vec2 pixel_mouse_delta() const;
+        glm::vec2 pixel_mouse() const;
+        glm::vec2 pixel_mouse_delta() const;
 
-        alg::vec2 world_mouse() const;
-        alg::vec2 world_mouse_delta() const;
+        glm::vec2 world_mouse() const;
+        glm::vec2 world_mouse_delta() const;
 
         sf::Uint32 style() const;
         void style(sf::Uint32 style);

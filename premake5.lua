@@ -13,4 +13,4 @@ project "poly-physx-app"
    objdir("build/" .. outputdir)
 
    files {"src/**.cpp", "include/**.hpp"}
-   includedirs "../**/include"
+   includedirs {"../**/include", "../vendor/glm"}
