@@ -424,7 +424,7 @@ namespace ppx
 
         const glm::vec2 size = AS_VEC2(m_window.getView().getSize());
         const float speed = 0.75f * raw_delta_time().asSeconds() * glm::length(size);
-        glm::vec2 vel;
+        glm::vec2 vel(0.f);
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
             vel.x += speed;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
