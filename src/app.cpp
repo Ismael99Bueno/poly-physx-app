@@ -18,6 +18,8 @@ namespace ppx
 
     {
         recreate_window(sf::Style::Default, {0.f, 0.f}, {WIDTH, -HEIGHT}, name);
+        push_layer(&m_menu_layer);
+
         m_window.setVerticalSyncEnabled(false);
         m_engine.integrator().min_dt(1.e-5f);
         m_engine.integrator().max_dt(0.008f);

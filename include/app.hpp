@@ -3,6 +3,7 @@
 
 #include "engine2D.hpp"
 #include "layer.hpp"
+#include "menu_layer.hpp"
 #include "tableaus.hpp"
 #include <string>
 #include <vector>
@@ -116,6 +117,7 @@ namespace ppx
         std::vector<sf::ConvexShape> m_shapes;
         bool m_paused = false, m_aligned_dt = true;
         sf::Uint32 m_style = sf::Style::Default;
+        menu_layer m_menu_layer;
 
         sf::Time m_phys_time, m_draw_time,
             m_raw_phys_time, m_raw_draw_time;
