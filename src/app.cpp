@@ -9,12 +9,6 @@
 #include <glm/gtx/norm.hpp>
 
 #define FONTS_DIR "fonts/"
-#define VEC2_AS(vec)     \
-    {                    \
-        (vec).x, (vec).y \
-    }
-
-#define AS_VEC2(vec) glm::vec2((vec).x, (vec).y)
 
 namespace ppx
 {
@@ -37,7 +31,7 @@ namespace ppx
             for (std::size_t i = 0; i < poly.size(); i++)
             {
                 const glm::vec2 point = poly[i] * WORLD_TO_PIXEL;
-                shape.setPoint(i, VEC2_AS(point));
+                shape.setPoint(i, {point.x, point.y});
             }
             shape.setFillColor(m_entity_color);
             shape.setOutlineColor(sf::Color::Red);
@@ -138,7 +132,7 @@ namespace ppx
         for (std::size_t j = 0; j < shape.getPointCount(); j++)
         {
             const glm::vec2 point = vertices[j] * WORLD_TO_PIXEL;
-            shape.setPoint(j, VEC2_AS(point));
+            shape.setPoint(j, {point.x, point.y});
         }
         m_window.draw(shape);
     }
@@ -365,7 +359,7 @@ namespace ppx
     void app::transform_camera(const glm::vec2 &dir) // TODO: rebuild quad tree si se esta usando
     {
         sf::View v = m_window.getView();
-        v.move(VEC2_AS(dir));
+        v.move({dir.x, dir.y});
         m_window.setView(v);
 
         if (m_engine.collider().coldet() == collider2D::QUAD_TREE)
@@ -375,8 +369,8 @@ namespace ppx
     void app::transform_camera(const glm::vec2 &dir, const glm::vec2 &size)
     {
         sf::View v = m_window.getView();
-        v.setSize(VEC2_AS(size));
-        v.move(VEC2_AS(dir));
+        v.setSize({size.x, size.y});
+        v.move({dir.x, dir.y});
         m_window.setView(v);
 
         if (m_engine.collider().coldet() == collider2D::QUAD_TREE)
@@ -392,7 +386,7 @@ namespace ppx
             m_window.create(sf::VideoMode::getFullscreenModes()[0], name, sf::Style::Fullscreen);
         else
             m_window.create(sf::VideoMode(800, 600), name, style);
-        m_window.setView(sf::View(VEC2_AS(center), VEC2_AS(size)));
+        m_window.setView(sf::View({center.x, center.y}, {size.x, size.y}));
         m_window.setFramerateLimit(m_framerate);
         m_style = style;
     }
@@ -401,13 +395,13 @@ namespace ppx
     {
         const auto center = m_window.getView().getCenter(),
                    size = m_window.getView().getSize();
-        recreate_window(style, AS_VEC2(center), AS_VEC2(size));
+        recreate_window(style, glm::vec2(center.x, center.y), glm::vec2(size.x, size.y));
     }
 
     void app::resize_quad_tree_to_window()
     {
         const sf::View &v = m_window.getView();
-        const glm::vec2 pos = AS_VEC2(v.getCenter()),
+        const glm::vec2 pos = glm::vec2(v.getCenter().x, v.getCenter().y),
                         size = {v.getSize().x, -v.getSize().y};
         const geo::aabb2D qt_size = {-PIXEL_TO_WORLD * (0.5f * size - pos),
                                      PIXEL_TO_WORLD * (0.5f * size + pos)};
@@ -422,7 +416,8 @@ namespace ppx
             sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
             return;
 
-        const glm::vec2 size = AS_VEC2(m_window.getView().getSize());
+        const sf::View &v = m_window.getView();
+        const glm::vec2 size = glm::vec2(v.getSize().x, v.getSize().y);
         const float speed = 0.75f * raw_delta_time().asSeconds() * glm::length(size);
         glm::vec2 vel(0.f);
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
@@ -444,9 +439,9 @@ namespace ppx
         const float factor = std::clamp(delta, -0.05f, 0.05f); // delta * 0.006f;
 
         const sf::View &v = m_window.getView();
-        const glm::vec2 dir = (pixel_mouse() - AS_VEC2(v.getCenter())) * factor,
-                        size = AS_VEC2(v.getSize()) * (1.f - factor);
-        transform_camera(VEC2_AS(dir), VEC2_AS(size));
+        const glm::vec2 dir = (pixel_mouse() - glm::vec2(v.getCenter().x, v.getCenter().y)) * factor,
+                        size = glm::vec2(v.getSize().x, v.getSize().y) * (1.f - factor);
+        transform_camera(dir, size);
     }
 
     glm::vec2 app::world_mouse() const { return pixel_mouse() * PIXEL_TO_WORLD; }
