@@ -403,8 +403,8 @@ namespace ppx
         const sf::View &v = m_window.getView();
         const glm::vec2 pos = glm::vec2(v.getCenter().x, v.getCenter().y),
                         size = {v.getSize().x, -v.getSize().y};
-        const geo::aabb2D qt_size = {-PIXEL_TO_WORLD * (0.5f * size - pos),
-                                     PIXEL_TO_WORLD * (0.5f * size + pos)};
+        const geo::aabb2D qt_size = {-PIXEL_TO_WORLD * (size - pos), // Not halving the size to give some margin
+                                     PIXEL_TO_WORLD * (size + pos)};
         m_engine.collider().quad_tree().aabb(qt_size);
         m_engine.collider().rebuild_quad_tree();
     }
