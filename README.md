@@ -41,7 +41,7 @@ Once all dependencies have been fetched using [fetch_dependencies.py](https://gi
 5. Create an entry point project with a `premake5` file, where the `main.cpp` will be located. Link all libraries and specify the kind of the executable as `ConsoleApp`. Don't forget to specify the different configurations for the project.
 6. Create a `premake5` file at the root of the repository describing the `premake` workspace and including all dependency projects.
 7. Build the entire project by running the `make` command in your terminal. You can specify the configuration by using `make config=the_configuration`.
-8. To use poly-physx-app, include the [app.hpp](https://github.com/ismawno/poly-physx-app/include/app.hpp) header. Implement your custom app by inheriting from the `app` class.
+8. To use poly-physx-app, include the [app.hpp](https://github.com/ismawno/poly-physx-app/include/ppx/app.hpp) header. Implement your custom app by inheriting from the `app` class.
 
 For more information on how to use poly-physx-app, please refer to the documentation.
 
