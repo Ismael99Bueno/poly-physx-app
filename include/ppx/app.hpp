@@ -1,10 +1,10 @@
 #ifndef APP_HPP
 #define APP_HPP
 
-#include "engine2D.hpp"
-#include "layer.hpp"
-#include "menu_layer.hpp"
-#include "tableaus.hpp"
+#include "ppx/engine2D.hpp"
+#include "ppx/layer.hpp"
+#include "ppx/menu_layer.hpp"
+#include "rk/tableaus.hpp"
 #include <string>
 #include <vector>
 #include <functional>

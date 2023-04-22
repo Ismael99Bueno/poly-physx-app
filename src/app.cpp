@@ -1,7 +1,7 @@
-#include "app.hpp"
-#include "spring_line.hpp"
-#include "thick_line.hpp"
-#include "rigid_bar2D.hpp"
+#include "ppx/app.hpp"
+#include "prm/spring_line.hpp"
+#include "prm/thick_line.hpp"
+#include "ppx/rigid_bar2D.hpp"
 #include "imgui.h"
 #include "imgui-SFML.h"
 #include <filesystem>
