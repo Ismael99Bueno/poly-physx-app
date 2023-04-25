@@ -26,8 +26,8 @@ namespace ppx
 
         const auto add_shape = [this](const entity2D_ptr &e)
         {
-            sf::ConvexShape &shape = m_shapes.push_back(sf::ConvexShape());
-            const geo::polygon &poly = e->shape();
+            sf::ConvexShape &shape = m_shapes.emplace_back(sf::ConvexShape());
+            const geo::polygon &poly = e->shape<geo::polygon>();
 
             shape.setPointCount(poly.size());
             for (std::size_t i = 0; i < poly.size(); i++)
@@ -273,7 +273,7 @@ namespace ppx
             const entity2D_ptr e = m_engine[i];
 
             on_entity_draw(e, shape);
-            draw_entity(e->shape().vertices(), shape);
+            draw_entity(e->shape<geo::polygon>().vertices(), shape);
         }
     }
 
