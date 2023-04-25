@@ -119,15 +119,8 @@ namespace ppx
             (*it)->on_detach();
     }
 
-    void app::draw_entity(const std::vector<glm::vec2> vertices,
-                          sf::ConvexShape &shape, const sf::Color &color)
-    {
-        shape.setFillColor(color);
-        draw_entity(vertices, shape);
-    }
-
-    void app::draw_entity(const std::vector<glm::vec2> vertices,
-                          sf::ConvexShape &shape)
+    void app::draw_polygon(const std::vector<glm::vec2> vertices,
+                           sf::ConvexShape &shape)
     {
         if (shape.getPointCount() != vertices.size())
             shape.setPointCount(vertices.size());
@@ -273,7 +266,7 @@ namespace ppx
             const entity2D_ptr e = m_engine[i];
 
             on_entity_draw(e, shape);
-            draw_entity(e->shape<geo::polygon>().vertices(), shape);
+            draw_polygon(e->shape<geo::polygon>().vertices(), shape);
         }
     }
 

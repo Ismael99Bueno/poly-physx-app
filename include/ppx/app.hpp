@@ -33,11 +33,11 @@ namespace ppx
         void push_layer(layer *l);
         void pop_layer(const layer *l);
 
-        void draw_entity(const std::vector<glm::vec2> vertices,
-                         sf::ConvexShape &shape,
-                         const sf::Color &color);
-        void draw_entity(const std::vector<glm::vec2> vertices,
-                         sf::ConvexShape &shape);
+        template <class... Args>
+        void draw(Args &&...args) { m_window.draw(std::forward<Args>(args)...); }
+
+        void draw_polygon(const std::vector<glm::vec2> vertices,
+                          sf::ConvexShape &shape);
 
         void draw_spring(const glm::vec2 &p1, const glm::vec2 &p2, const sf::Color &color);
         void draw_rigid_bar(const glm::vec2 &p1, const glm::vec2 &p2, const sf::Color &color);
