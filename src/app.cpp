@@ -26,7 +26,7 @@ namespace ppx
 
         const auto add_shape = [this](const entity2D_ptr &e)
         {
-            sf::ConvexShape &shape = m_shapes.emplace_back(sf::ConvexShape());
+            sf::ConvexShape &shape = m_shapes.push_back(sf::ConvexShape());
             const geo::polygon &poly = e->shape();
 
             shape.setPointCount(poly.size());
@@ -108,7 +108,7 @@ namespace ppx
 
     void app::push_layer(layer *l)
     {
-        m_layers.emplace_back(l);
+        m_layers.push_back(l);
         l->on_attach(this);
     }
 
