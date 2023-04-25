@@ -26,26 +26,44 @@ namespace ppx
 
         const auto add_shape = [this](const entity2D_ptr &e)
         {
-            sf::ConvexShape &shape = m_shapes.emplace_back();
-            const geo::polygon &poly = e->shape<geo::polygon>();
+            if (e->type() == entity2D::CIRCLE)
+            {
+                const geo::circle &c = e->shape<geo::circle>();
+                sf::CircleShape shape(c.radius());
+                shape.setFillColor(m_entity_color);
+                m_circles[e] = shape;
+                return;
+            }
 
-            shape.setPointCount(poly.size());
+            const geo::polygon &poly = e->shape<geo::polygon>();
+            sf::ConvexShape shape(poly.size());
             for (std::size_t i = 0; i < poly.size(); i++)
             {
                 const glm::vec2 point = poly[i] * WORLD_TO_PIXEL;
                 shape.setPoint(i, {point.x, point.y});
             }
             shape.setFillColor(m_entity_color);
-            shape.setOutlineColor(sf::Color::Red);
+            m_polygons[e] = shape;
         };
-        const auto remove_shape = [this](const std::size_t index)
+        const auto remove_shape = [this](const entity2D &e)
         {
-            m_shapes[index] = m_shapes.back();
-            m_shapes.pop_back();
+            if (e.type() == entity2D::POLYGON)
+                for (auto it = m_polygons.begin(); it != m_polygons.end(); ++it)
+                    if (it->first.id() == e.id())
+                    {
+                        m_polygons.erase(it);
+                        return;
+                    }
+            for (auto it = m_circles.begin(); it != m_circles.end(); ++it)
+                if (it->first.id() == e.id())
+                {
+                    m_circles.erase(it);
+                    return;
+                }
         };
 
         m_engine.callbacks().on_entity_addition(add_shape);
-        m_engine.callbacks().on_late_entity_removal(remove_shape);
+        m_engine.callbacks().on_early_entity_removal(remove_shape);
 
         if (!ImGui::SFML::Init(m_window))
         {
@@ -152,7 +170,7 @@ namespace ppx
         out.write("window_style", m_style);
         std::size_t index = 0;
         const std::string section = "entity";
-        for (const sf::ConvexShape &shape : m_shapes)
+        for (const auto &[id, shape] : m_polygons)
         {
             out.begin_section(section + std::to_string(index++));
             out.write("r", (int)shape.getFillColor().r);
@@ -196,7 +214,7 @@ namespace ppx
 
         std::size_t index = 0;
         const std::string section = "entity";
-        for (sf::ConvexShape &shape : m_shapes)
+        for (auto &[id, shape] : m_polygons)
         {
             in.begin_section(section + std::to_string(index++));
             shape.setFillColor({(sf::Uint8)in.readui32("r"), (sf::Uint8)in.readui32("g"), (sf::Uint8)in.readui32("b")});
@@ -260,13 +278,16 @@ namespace ppx
     void app::draw_entities()
     {
         PERF_FUNCTION()
-        for (std::size_t i = 0; i < m_shapes.size(); i++)
+        for (auto &[e, shape] : m_polygons)
         {
-            sf::ConvexShape &shape = m_shapes[i];
-            const entity2D_ptr e = m_engine[i];
-
             on_entity_draw(e, shape);
             draw_polygon(e->shape<geo::polygon>().vertices(), shape);
+        }
+        for (auto &[e, shape] : m_circles)
+        {
+            // shape.setRadius(e->shape<geo::circle>().radius()); // Maybe this is unnecessary
+            on_entity_draw(e, shape);
+            m_window.draw(shape);
         }
     }
 
@@ -448,10 +469,25 @@ namespace ppx
     const engine2D &app::engine() const { return m_engine; }
     engine2D &app::engine() { return m_engine; }
 
-    const std::vector<sf::ConvexShape> &app::shapes() const { return m_shapes; }
-    utils::vector_view<sf::ConvexShape> app::shapes() { return m_shapes; }
+    const std::unordered_map<entity2D_ptr, sf::ConvexShape> &app::polygons() const { return m_polygons; }
+    const std::unordered_map<entity2D_ptr, sf::CircleShape> &app::circles() const { return m_circles; }
+    utils::container_view<std::unordered_map<entity2D_ptr, sf::ConvexShape>> app::polygons() { return m_polygons; }
+    utils::container_view<std::unordered_map<entity2D_ptr, sf::CircleShape>> app::circles() { return m_circles; }
 
-    const sf::Color &app::entity_color() const { return m_entity_color; }
+    sf::Shape &app::operator[](const std::size_t entity_index)
+    {
+        const entity2D_ptr e = m_engine[entity_index];
+        DBG_ASSERT(m_polygons.find(e) != m_polygons.end() && m_circles.find(e) != m_circles.end(), "Entity with index %zu not found in any of the shapes!\n", entity_index)
+
+        if (m_polygons.find(e) != m_polygons.end())
+            return m_polygons.at(e);
+        return m_circles.at(e);
+    }
+
+    const sf::Color &app::entity_color() const
+    {
+        return m_entity_color;
+    }
     const sf::Color &app::springs_color() const { return m_springs_color; }
     const sf::Color &app::rigid_bars_color() const { return m_rigid_bars_color; }
 

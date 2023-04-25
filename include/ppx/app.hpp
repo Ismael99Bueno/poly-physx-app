@@ -61,8 +61,11 @@ namespace ppx
         const engine2D &engine() const;
         engine2D &engine();
 
-        const std::vector<sf::ConvexShape> &shapes() const;
-        utils::vector_view<sf::ConvexShape> shapes();
+        const std::unordered_map<entity2D_ptr, sf::ConvexShape> &polygons() const;
+        const std::unordered_map<entity2D_ptr, sf::CircleShape> &circles() const;
+        utils::container_view<std::unordered_map<entity2D_ptr, sf::ConvexShape>> polygons();
+        utils::container_view<std::unordered_map<entity2D_ptr, sf::CircleShape>> circles();
+        sf::Shape &operator[](std::size_t entity_index);
 
         const sf::Color &entity_color() const;
         const sf::Color &springs_color() const;
@@ -114,7 +117,10 @@ namespace ppx
         sf::RenderWindow m_window;
         engine2D m_engine;
         std::vector<layer *> m_layers;
-        std::vector<sf::ConvexShape> m_shapes;
+
+        std::unordered_map<entity2D_ptr, sf::ConvexShape> m_polygons;
+        std::unordered_map<entity2D_ptr, sf::CircleShape> m_circles;
+
         bool m_paused = false, m_aligned_dt = true;
         sf::Uint32 m_style = sf::Style::Default;
         menu_layer m_menu_layer;
@@ -134,7 +140,7 @@ namespace ppx
         virtual void on_update() {}
         virtual void on_late_update() {}
         virtual void on_render() {}
-        virtual void on_entity_draw(const entity2D_ptr &e, sf::ConvexShape &shape) {}
+        virtual void on_entity_draw(const entity2D_ptr &e, sf::Shape &shape) {}
         virtual void on_event(sf::Event &event) {}
         virtual void on_end() {}
 

@@ -81,7 +81,7 @@ def main() -> None:
             "debug-tools",
             "profile-tools",
             "ini-parser",
-            "vector-view",
+            "container-view",
             "sfml-primitives",
         ],
         args.exec,
