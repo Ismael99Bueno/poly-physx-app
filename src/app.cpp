@@ -26,7 +26,7 @@ namespace ppx
 
         const auto add_shape = [this](const entity2D_ptr &e)
         {
-            sf::ConvexShape &shape = m_shapes.emplace_back(sf::ConvexShape());
+            sf::ConvexShape &shape = m_shapes.emplace_back();
             const geo::polygon &poly = e->shape<geo::polygon>();
 
             shape.setPointCount(poly.size());
