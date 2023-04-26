@@ -61,11 +61,9 @@ namespace ppx
         const engine2D &engine() const;
         engine2D &engine();
 
-        const std::unordered_map<entity2D_ptr, sf::ConvexShape> &polygons() const;
-        const std::unordered_map<entity2D_ptr, sf::CircleShape> &circles() const;
-        utils::container_view<std::unordered_map<entity2D_ptr, sf::ConvexShape>> polygons();
-        utils::container_view<std::unordered_map<entity2D_ptr, sf::CircleShape>> circles();
-        sf::Shape &operator[](std::size_t entity_index);
+        const std::vector<std::unique_ptr<sf::Shape>> &shapes() const;
+        utils::container_view<std::vector<std::unique_ptr<sf::Shape>>> shapes();
+        sf::Shape &operator[](std::size_t index) const;
 
         const sf::Color &entity_color() const;
         const sf::Color &springs_color() const;
@@ -118,8 +116,7 @@ namespace ppx
         engine2D m_engine;
         std::vector<layer *> m_layers;
 
-        std::unordered_map<entity2D_ptr, sf::ConvexShape> m_polygons;
-        std::unordered_map<entity2D_ptr, sf::CircleShape> m_circles;
+        std::vector<std::unique_ptr<sf::Shape>> m_shapes;
 
         bool m_paused = false, m_aligned_dt = true;
         sf::Uint32 m_style = sf::Style::Default;

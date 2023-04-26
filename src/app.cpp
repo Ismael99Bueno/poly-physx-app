@@ -29,41 +29,30 @@ namespace ppx
             if (e->type() == entity2D::CIRCLE)
             {
                 const geo::circle &c = e->shape<geo::circle>();
-                sf::CircleShape shape(c.radius());
-                shape.setFillColor(m_entity_color);
-                m_circles[e] = shape;
+                m_shapes.emplace_back(std::make_unique<sf::CircleShape>(c.radius()))->setFillColor(m_entity_color);
                 return;
             }
 
             const geo::polygon &poly = e->shape<geo::polygon>();
             sf::ConvexShape shape(poly.size());
+
             for (std::size_t i = 0; i < poly.size(); i++)
             {
                 const glm::vec2 point = poly[i] * WORLD_TO_PIXEL;
                 shape.setPoint(i, {point.x, point.y});
             }
             shape.setFillColor(m_entity_color);
-            m_polygons[e] = shape;
+            m_shapes.emplace_back(std::make_unique<sf::ConvexShape>(shape));
         };
-        const auto remove_shape = [this](const entity2D &e)
+
+        const auto remove_shape = [this](const std::size_t index)
         {
-            if (e.type() == entity2D::POLYGON)
-                for (auto it = m_polygons.begin(); it != m_polygons.end(); ++it)
-                    if (it->first.id() == e.id())
-                    {
-                        m_polygons.erase(it);
-                        return;
-                    }
-            for (auto it = m_circles.begin(); it != m_circles.end(); ++it)
-                if (it->first.id() == e.id())
-                {
-                    m_circles.erase(it);
-                    return;
-                }
+            m_shapes[index] = std::move(m_shapes.back());
+            m_shapes.pop_back();
         };
 
         m_engine.callbacks().on_entity_addition(add_shape);
-        m_engine.callbacks().on_early_entity_removal(remove_shape);
+        m_engine.callbacks().on_late_entity_removal(remove_shape);
 
         if (!ImGui::SFML::Init(m_window))
         {
@@ -170,8 +159,9 @@ namespace ppx
         out.write("window_style", m_style);
         std::size_t index = 0;
         const std::string section = "entity";
-        for (const auto &[id, shape] : m_polygons)
+        for (std::size_t i = 0; i < m_engine.size(); i++)
         {
+            const sf::Shape &shape = *(m_shapes[i]);
             out.begin_section(section + std::to_string(index++));
             out.write("r", (int)shape.getFillColor().r);
             out.write("g", (int)shape.getFillColor().g);
@@ -214,10 +204,10 @@ namespace ppx
 
         std::size_t index = 0;
         const std::string section = "entity";
-        for (auto &[id, shape] : m_polygons)
+        for (const auto &shape : m_shapes)
         {
             in.begin_section(section + std::to_string(index++));
-            shape.setFillColor({(sf::Uint8)in.readui32("r"), (sf::Uint8)in.readui32("g"), (sf::Uint8)in.readui32("b")});
+            shape->setFillColor({(sf::Uint8)in.readui32("r"), (sf::Uint8)in.readui32("g"), (sf::Uint8)in.readui32("b")});
             in.end_section();
         }
 
@@ -278,16 +268,13 @@ namespace ppx
     void app::draw_entities()
     {
         PERF_FUNCTION()
-        for (auto &[e, shape] : m_polygons)
+        for (std::size_t i = 0; i < m_shapes.size(); i++)
         {
+            sf::ConvexShape &shape = dynamic_cast<sf::ConvexShape &>(*m_shapes[i]); // CHANGE THIS
+            const entity2D_ptr e = m_engine[i];
+
             on_entity_draw(e, shape);
             draw_polygon(e->shape<geo::polygon>().vertices(), shape);
-        }
-        for (auto &[e, shape] : m_circles)
-        {
-            // shape.setRadius(e->shape<geo::circle>().radius()); // Maybe this is unnecessary
-            on_entity_draw(e, shape);
-            m_window.draw(shape);
         }
     }
 
@@ -469,20 +456,10 @@ namespace ppx
     const engine2D &app::engine() const { return m_engine; }
     engine2D &app::engine() { return m_engine; }
 
-    const std::unordered_map<entity2D_ptr, sf::ConvexShape> &app::polygons() const { return m_polygons; }
-    const std::unordered_map<entity2D_ptr, sf::CircleShape> &app::circles() const { return m_circles; }
-    utils::container_view<std::unordered_map<entity2D_ptr, sf::ConvexShape>> app::polygons() { return m_polygons; }
-    utils::container_view<std::unordered_map<entity2D_ptr, sf::CircleShape>> app::circles() { return m_circles; }
+    const std::vector<std::unique_ptr<sf::Shape>> &app::shapes() const { return m_shapes; }
+    utils::container_view<std::vector<std::unique_ptr<sf::Shape>>> app::shapes() { return m_shapes; }
 
-    sf::Shape &app::operator[](const std::size_t entity_index)
-    {
-        const entity2D_ptr e = m_engine[entity_index];
-        DBG_ASSERT(m_polygons.find(e) != m_polygons.end() && m_circles.find(e) != m_circles.end(), "Entity with index %zu not found in any of the shapes!\n", entity_index)
-
-        if (m_polygons.find(e) != m_polygons.end())
-            return m_polygons.at(e);
-        return m_circles.at(e);
-    }
+    sf::Shape &app::operator[](std::size_t index) const { return *m_shapes[index]; }
 
     const sf::Color &app::entity_color() const
     {
