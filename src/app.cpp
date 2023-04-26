@@ -9,6 +9,10 @@
 #include <glm/gtx/norm.hpp>
 
 #define FONTS_DIR "fonts/"
+#ifndef M_PI
+#define M_PI 3.14159265358979323846f
+#endif
+#define TO_DEGREES (180.0f / (float)M_PI)
 
 namespace ppx
 {
@@ -32,17 +36,8 @@ namespace ppx
                 m_shapes.emplace_back(std::make_unique<sf::CircleShape>(c.radius()))->setFillColor(m_entity_color);
                 return;
             }
-
-            const geo::polygon &poly = e->shape<geo::polygon>();
-            sf::ConvexShape shape(poly.size());
-
-            for (std::size_t i = 0; i < poly.size(); i++)
-            {
-                const glm::vec2 point = poly[i] * WORLD_TO_PIXEL;
-                shape.setPoint(i, {point.x, point.y});
-            }
-            shape.setFillColor(m_entity_color);
-            m_shapes.emplace_back(std::make_unique<sf::ConvexShape>(shape));
+            const sf::ConvexShape shape = convex_shape_from_polygon(e->shape<geo::polygon>());
+            m_shapes.emplace_back(std::make_unique<sf::ConvexShape>(shape))->setFillColor(m_entity_color);
         };
 
         const auto remove_shape = [this](const std::size_t index)
@@ -126,19 +121,6 @@ namespace ppx
             (*it)->on_detach();
     }
 
-    void app::draw_polygon(const std::vector<glm::vec2> vertices,
-                           sf::ConvexShape &shape)
-    {
-        if (shape.getPointCount() != vertices.size())
-            shape.setPointCount(vertices.size());
-        for (std::size_t j = 0; j < shape.getPointCount(); j++)
-        {
-            const glm::vec2 point = vertices[j] * WORLD_TO_PIXEL;
-            shape.setPoint(j, {point.x, point.y});
-        }
-        m_window.draw(shape);
-    }
-
     void app::draw_spring(const glm::vec2 &p1, const glm::vec2 &p2, const sf::Color &color)
     {
         prm::spring_line sp_line(p1, p2, color);
@@ -204,9 +186,11 @@ namespace ppx
 
         std::size_t index = 0;
         const std::string section = "entity";
-        for (const auto &shape : m_shapes)
+        for (auto &shape : m_shapes)
         {
-            in.begin_section(section + std::to_string(index++));
+            in.begin_section(section + std::to_string(index)); // CLEANUP THIS
+            const sf::ConvexShape temp_shape = convex_shape_from_polygon(m_engine[index++]->shape<geo::polygon>());
+            shape = std::make_unique<sf::ConvexShape>(temp_shape);
             shape->setFillColor({(sf::Uint8)in.readui32("r"), (sf::Uint8)in.readui32("g"), (sf::Uint8)in.readui32("b")});
             in.end_section();
         }
@@ -238,6 +222,16 @@ namespace ppx
 
     void app::draw_spring(const glm::vec2 &p1, const glm::vec2 &p2) { draw_spring(p1, p2, m_springs_color); }
     void app::draw_rigid_bar(const glm::vec2 &p1, const glm::vec2 &p2) { draw_rigid_bar(p1, p2, m_rigid_bars_color); }
+
+    void app::update_convex_shapes_from_polygons()
+    {
+        for (std::size_t i = 0; i < m_engine.size(); i++)
+        {
+            sf::ConvexShape shape = convex_shape_from_polygon(m_engine[i]->shape<geo::polygon>());
+            shape.setFillColor(m_shapes[i]->getFillColor());
+            m_shapes[i] = std::make_unique<sf::ConvexShape>(shape);
+        }
+    }
 
     void app::layer_start()
     {
@@ -274,7 +268,11 @@ namespace ppx
             const entity2D_ptr e = m_engine[i];
 
             on_entity_draw(e, shape);
-            draw_polygon(e->shape<geo::polygon>().vertices(), shape);
+            const geo::polygon &poly = e->shape<geo::polygon>();
+            const glm::vec2 centre = poly.centroid() * WORLD_TO_PIXEL;
+            shape.setPosition(centre.x, centre.y);
+            shape.setRotation(poly.rotation() * TO_DEGREES);
+            m_window.draw(shape);
         }
     }
 
@@ -345,6 +343,24 @@ namespace ppx
     {
         const rk::integrator &integ = m_engine.integrator();
         m_dt = std::clamp(raw_delta_time().asSeconds(), integ.min_dt(), integ.max_dt());
+    }
+
+    sf::ConvexShape app::convex_shape_from_polygon(geo::polygon poly) const
+    {
+        poly.rotation(0.f);
+
+        sf::ConvexShape shape(poly.size());
+        const glm::vec2 centroid = poly.centroid() * WORLD_TO_PIXEL,
+                        origin = centroid - poly[0] * WORLD_TO_PIXEL;
+        shape.setOrigin(origin.x, origin.y);
+
+        for (std::size_t i = 0; i < poly.size(); i++)
+        {
+            const glm::vec2 point = (poly[i] - poly[0]) * WORLD_TO_PIXEL;
+            shape.setPoint(i, {point.x, point.y});
+        }
+        shape.setPosition(centroid.x, centroid.y);
+        return shape;
     }
 
     glm::vec2 app::pixel_mouse() const

@@ -36,14 +36,14 @@ namespace ppx
         template <class... Args>
         void draw(Args &&...args) { m_window.draw(std::forward<Args>(args)...); }
 
-        void draw_polygon(const std::vector<glm::vec2> vertices,
-                          sf::ConvexShape &shape);
-
         void draw_spring(const glm::vec2 &p1, const glm::vec2 &p2, const sf::Color &color);
         void draw_rigid_bar(const glm::vec2 &p1, const glm::vec2 &p2, const sf::Color &color);
 
         void draw_spring(const glm::vec2 &p1, const glm::vec2 &p2);
         void draw_rigid_bar(const glm::vec2 &p1, const glm::vec2 &p2);
+
+        void update_convex_shapes_from_polygons(); // consider implementing update a single shape
+        sf::ConvexShape convex_shape_from_polygon(geo::polygon poly) const;
 
         void transform_camera(const glm::vec2 &dir);
         void transform_camera(const glm::vec2 &dir, const glm::vec2 &size);
