@@ -362,6 +362,13 @@ namespace ppx
         shape.setPosition(centroid.x, centroid.y);
         return shape;
     }
+    sf::CircleShape app::circle_shape_from_radius(const float radius) const
+    {
+        const float scaled_radius = WORLD_TO_PIXEL * radius;
+        sf::CircleShape shape(scaled_radius);
+        shape.setOrigin(scaled_radius, scaled_radius);
+        return shape;
+    }
 
     glm::vec2 app::pixel_mouse() const
     {

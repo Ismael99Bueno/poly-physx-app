@@ -43,7 +43,9 @@ namespace ppx
         void draw_rigid_bar(const glm::vec2 &p1, const glm::vec2 &p2);
 
         void update_convex_shapes_from_polygons(); // consider implementing update a single shape
+
         sf::ConvexShape convex_shape_from_polygon(geo::polygon poly) const;
+        sf::CircleShape circle_shape_from_radius(float radius) const;
 
         void transform_camera(const glm::vec2 &dir);
         void transform_camera(const glm::vec2 &dir, const glm::vec2 &size);
