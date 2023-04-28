@@ -30,8 +30,16 @@ namespace ppx
         virtual ~app() = default;
 
         void run(std::function<bool(engine2D &, float &)> forward = &engine2D::raw_forward);
-        void push_layer(layer *l);
-        void pop_layer(const layer *l);
+
+        template <typename T, class... Args>
+        std::shared_ptr<T> push_layer(Args &&...args)
+        {
+            static_assert(std::is_convertible<T *, layer *>::value, "Layer must inherit from layer!");
+            const auto layer = std::make_shared<T>(std::forward<Args>(args)...);
+            m_layers.emplace_back(layer)->on_attach(this);
+            return layer;
+        }
+        void pop_layer(const std::shared_ptr<layer> &l);
 
         template <class... Args>
         void draw(Args &&...args) { m_window.draw(std::forward<Args>(args)...); }
@@ -116,13 +124,12 @@ namespace ppx
     private:
         sf::RenderWindow m_window;
         engine2D m_engine;
-        std::vector<layer *> m_layers;
+        std::vector<std::shared_ptr<layer>> m_layers;
 
         std::vector<std::unique_ptr<sf::Shape>> m_shapes;
 
         bool m_paused = false, m_aligned_dt = true;
         sf::Uint32 m_style = sf::Style::Default;
-        menu_layer m_menu_layer;
 
         sf::Time m_phys_time, m_draw_time,
             m_raw_phys_time, m_raw_draw_time;

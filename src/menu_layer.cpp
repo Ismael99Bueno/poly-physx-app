@@ -5,6 +5,8 @@
 
 namespace ppx
 {
+    menu_layer::menu_layer() : layer("menu_layer") {}
+
     void menu_layer::on_attach(app *papp) { m_app = papp; }
     void menu_layer::on_render()
     {

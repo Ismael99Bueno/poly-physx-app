@@ -22,7 +22,7 @@ namespace ppx
 
     {
         recreate_window(sf::Style::Default, {0.f, 0.f}, {WIDTH, -HEIGHT}, name);
-        push_layer(&m_menu_layer);
+        push_layer<menu_layer>();
 
         m_window.setVerticalSyncEnabled(false);
         m_engine.integrator().min_dt(1.e-5f);
@@ -108,13 +108,7 @@ namespace ppx
         layer_end();
     }
 
-    void app::push_layer(layer *l)
-    {
-        m_layers.push_back(l);
-        l->on_attach(this);
-    }
-
-    void app::pop_layer(const layer *l)
+    void app::pop_layer(const std::shared_ptr<layer> &l)
     {
         const auto it = m_layers.erase(std::remove(m_layers.begin(), m_layers.end(), l), m_layers.end());
         if (it != m_layers.end())
@@ -174,6 +168,13 @@ namespace ppx
 
         out.write("width", view.getSize().x);
         out.write("height", view.getSize().y);
+
+        for (const auto &l : m_layers)
+        {
+            out.begin_section(l->m_name);
+            l->write(out);
+            out.end_section();
+        }
     }
 
     void app::read(ini::input &in)
@@ -202,6 +203,13 @@ namespace ppx
             }
             shape->setFillColor({(sf::Uint8)in.readui32("r"), (sf::Uint8)in.readui32("g"), (sf::Uint8)in.readui32("b")});
             in.end_section();
+
+            for (const auto &l : m_layers)
+            {
+                in.begin_section(l->m_name);
+                l->read(in);
+                in.end_section();
+            }
         }
 
         framerate(in.readui32("framerate"));
@@ -244,15 +252,16 @@ namespace ppx
 
     void app::layer_start()
     {
-        for (layer *l : m_layers)
+        for (const auto &l : m_layers)
             l->on_start();
     }
 
     void app::layer_render()
     {
         PERF_FUNCTION()
-        for (layer *l : m_layers)
-            l->on_render();
+        for (const auto &l : m_layers)
+            if (l->p_enabled)
+                l->on_render();
     }
 
     void app::layer_event(sf::Event &event)
@@ -264,7 +273,7 @@ namespace ppx
 
     void app::layer_end()
     {
-        for (layer *l : m_layers)
+        for (const auto &l : m_layers)
             l->on_end();
     }
 

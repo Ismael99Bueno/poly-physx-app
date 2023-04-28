@@ -3,15 +3,21 @@
 
 #include <string>
 #include <SFML/Graphics.hpp>
+#include "ini/saveable.hpp"
 
 namespace ppx
 {
     class app;
-    class layer
+    class layer : public ini::saveable
     {
     public:
-        layer() = default;
+        layer(const char *name);
         virtual ~layer() = default;
+
+        virtual void write(ini::output &out) const override;
+        virtual void read(ini::input &in) override;
+
+        bool p_enabled = true;
 
     private:
         virtual void on_attach(app *papp) {}
@@ -20,6 +26,8 @@ namespace ppx
         virtual void on_event(sf::Event &event) {}
         virtual void on_detach() {}
         virtual void on_end() {}
+
+        const char *m_name;
 
         friend class app;
     };

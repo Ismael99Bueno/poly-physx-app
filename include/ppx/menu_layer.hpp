@@ -7,6 +7,9 @@ namespace ppx
 {
     class menu_layer final : public layer
     {
+    public:
+        menu_layer();
+
     private:
         app *m_app;
 
