@@ -1,7 +1,6 @@
-#include "ppx/menu_layer.hpp"
-#include "imgui.h"
-#include "imgui-SFML.h"
-#include "ppx/app.hpp"
+#include "ppx-app/pch.hpp"
+#include "ppx-app/menu_layer.hpp"
+#include "ppx-app/app.hpp"
 
 namespace ppx
 {

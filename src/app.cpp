@@ -1,12 +1,8 @@
-#include "ppx/app.hpp"
+#include "ppx-app/pch.hpp"
+#include "ppx-app/app.hpp"
 #include "prm/spring_line.hpp"
 #include "prm/thick_line.hpp"
 #include "ppx/rigid_bar2D.hpp"
-#include "imgui.h"
-#include "imgui-SFML.h"
-#include <filesystem>
-#include <glm/geometric.hpp>
-#include <glm/gtx/norm.hpp>
 
 #define FONTS_DIR "fonts/"
 #ifndef M_PI

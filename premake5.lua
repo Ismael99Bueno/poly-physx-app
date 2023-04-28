@@ -9,7 +9,9 @@ project "poly-physx-app"
    filter "system:windows"
       defines "SFML_STATIC"
    filter {}
-   
+
+   pchheader "include/ppx-app/pch.hpp"
+   pchsource "src/pch.cpp"
 
    targetdir("bin/" .. outputdir)
    objdir("build/" .. outputdir)

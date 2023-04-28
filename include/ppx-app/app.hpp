@@ -2,8 +2,8 @@
 #define APP_HPP
 
 #include "ppx/engine2D.hpp"
-#include "ppx/layer.hpp"
-#include "ppx/menu_layer.hpp"
+#include "ppx-app/layer.hpp"
+#include "ppx-app/menu_layer.hpp"
 #include "rk/tableaus.hpp"
 #include <string>
 #include <vector>
