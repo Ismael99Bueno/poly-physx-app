@@ -190,15 +190,15 @@ namespace ppx
         for (auto &shape : m_shapes)
         {
             in.begin_section(section + std::to_string(index)); // CLEANUP THIS
-            const entity2D_ptr e = m_engine[index++];
-            if (const auto *poly = e->shape_if<geo::polygon>())
+            const entity2D &e = m_engine.entities()[index++];
+            if (const auto *poly = e.shape_if<geo::polygon>())
             {
                 const sf::ConvexShape temp_shape = convex_shape_from(*poly);
                 shape = std::make_unique<sf::ConvexShape>(temp_shape);
             }
             else
             {
-                const sf::CircleShape temp_shape = circle_shape_from(e->shape<geo::circle>());
+                const sf::CircleShape temp_shape = circle_shape_from(e.shape<geo::circle>());
                 shape = std::make_unique<sf::CircleShape>(temp_shape);
             }
             shape->setFillColor({(sf::Uint8)in.readui32("r"), (sf::Uint8)in.readui32("g"), (sf::Uint8)in.readui32("b")});
@@ -244,7 +244,7 @@ namespace ppx
     {
         for (std::size_t i = 0; i < m_engine.size(); i++)
         {
-            sf::ConvexShape shape = convex_shape_from(m_engine[i]->shape<geo::polygon>());
+            sf::ConvexShape shape = convex_shape_from(m_engine.entities()[i].shape<geo::polygon>());
             shape.setFillColor(m_shapes[i]->getFillColor());
             m_shapes[i] = std::make_unique<sf::ConvexShape>(shape);
         }
