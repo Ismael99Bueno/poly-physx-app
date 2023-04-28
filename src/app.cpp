@@ -30,13 +30,13 @@ namespace ppx
 
         const auto add_shape = [this](const entity2D_ptr &e)
         {
-            if (e->type() == entity2D::CIRCLE)
+            if (const auto *c = e->shape_if<geo::circle>())
             {
-                const geo::circle &c = e->shape<geo::circle>();
-                m_shapes.emplace_back(std::make_unique<sf::CircleShape>(c.radius()))->setFillColor(m_entity_color);
+                const sf::CircleShape shape = circle_shape_from(*c);
+                m_shapes.emplace_back(std::make_unique<sf::CircleShape>(shape))->setFillColor(m_entity_color);
                 return;
             }
-            const sf::ConvexShape shape = convex_shape_from_polygon(e->shape<geo::polygon>());
+            const sf::ConvexShape shape = convex_shape_from(e->shape<geo::polygon>());
             m_shapes.emplace_back(std::make_unique<sf::ConvexShape>(shape))->setFillColor(m_entity_color);
         };
 
@@ -189,8 +189,17 @@ namespace ppx
         for (auto &shape : m_shapes)
         {
             in.begin_section(section + std::to_string(index)); // CLEANUP THIS
-            const sf::ConvexShape temp_shape = convex_shape_from_polygon(m_engine[index++]->shape<geo::polygon>());
-            shape = std::make_unique<sf::ConvexShape>(temp_shape);
+            const entity2D_ptr e = m_engine[index++];
+            if (const auto *poly = e->shape_if<geo::polygon>())
+            {
+                const sf::ConvexShape temp_shape = convex_shape_from(*poly);
+                shape = std::make_unique<sf::ConvexShape>(temp_shape);
+            }
+            else
+            {
+                const sf::CircleShape temp_shape = circle_shape_from(e->shape<geo::circle>());
+                shape = std::make_unique<sf::CircleShape>(temp_shape);
+            }
             shape->setFillColor({(sf::Uint8)in.readui32("r"), (sf::Uint8)in.readui32("g"), (sf::Uint8)in.readui32("b")});
             in.end_section();
         }
@@ -227,7 +236,7 @@ namespace ppx
     {
         for (std::size_t i = 0; i < m_engine.size(); i++)
         {
-            sf::ConvexShape shape = convex_shape_from_polygon(m_engine[i]->shape<geo::polygon>());
+            sf::ConvexShape shape = convex_shape_from(m_engine[i]->shape<geo::polygon>());
             shape.setFillColor(m_shapes[i]->getFillColor());
             m_shapes[i] = std::make_unique<sf::ConvexShape>(shape);
         }
@@ -264,15 +273,15 @@ namespace ppx
         PERF_FUNCTION()
         for (std::size_t i = 0; i < m_shapes.size(); i++)
         {
-            sf::ConvexShape &shape = dynamic_cast<sf::ConvexShape &>(*m_shapes[i]); // CHANGE THIS
             const entity2D_ptr e = m_engine[i];
 
-            on_entity_draw(e, shape);
-            const geo::polygon &poly = e->shape<geo::polygon>();
-            const glm::vec2 centre = poly.centroid() * WORLD_TO_PIXEL;
-            shape.setPosition(centre.x, centre.y);
-            shape.setRotation(poly.rotation() * TO_DEGREES);
-            m_window.draw(shape);
+            on_entity_draw(e, *m_shapes[i]);
+            const geo::shape2D &shape = e->shape();
+            const glm::vec2 centre = shape.centroid() * WORLD_TO_PIXEL;
+
+            m_shapes[i]->setPosition(centre.x, centre.y);
+            m_shapes[i]->setRotation(shape.rotation() * TO_DEGREES);
+            m_window.draw(*m_shapes[i]);
         }
     }
 
@@ -345,7 +354,7 @@ namespace ppx
         m_dt = std::clamp(raw_delta_time().asSeconds(), integ.min_dt(), integ.max_dt());
     }
 
-    sf::ConvexShape app::convex_shape_from_polygon(geo::polygon poly) const
+    sf::ConvexShape app::convex_shape_from(geo::polygon poly) const
     {
         poly.rotation(0.f);
 
@@ -362,11 +371,13 @@ namespace ppx
         shape.setPosition(centroid.x, centroid.y);
         return shape;
     }
-    sf::CircleShape app::circle_shape_from_radius(const float radius) const
+    sf::CircleShape app::circle_shape_from(const geo::circle &c) const
     {
-        const float scaled_radius = WORLD_TO_PIXEL * radius;
+        const float scaled_radius = WORLD_TO_PIXEL * c.radius();
         sf::CircleShape shape(scaled_radius);
         shape.setOrigin(scaled_radius, scaled_radius);
+        const glm::vec2 centroid = c.centroid() * WORLD_TO_PIXEL;
+        shape.setPosition(centroid.x, centroid.y);
         return shape;
     }
 
