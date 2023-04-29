@@ -273,7 +273,7 @@ namespace ppx
     {
         PERF_FUNCTION()
         for (const auto &l : m_layers)
-            if (l->p_visible && l->p_enabled)
+            if (l->p_enabled)
                 l->on_render();
     }
 
