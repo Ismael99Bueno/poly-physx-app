@@ -151,6 +151,8 @@ namespace ppx
         virtual void on_end() {}
 
         void layer_start();
+        void layer_update();
+        void layer_late_update();
         void layer_render();
         void layer_event(sf::Event &event);
         void layer_end();

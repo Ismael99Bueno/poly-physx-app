@@ -80,6 +80,7 @@ namespace ppx
 
                 m_window.clear();
                 on_update();
+                layer_update();
 
                 draw_entities();
                 draw_springs();
@@ -89,6 +90,7 @@ namespace ppx
                 layer_render();
 
                 on_late_update();
+                layer_late_update();
                 control_camera();
                 ImGui::SFML::Render(m_window);
                 m_window.display();
@@ -249,14 +251,29 @@ namespace ppx
     void app::layer_start()
     {
         for (const auto &l : m_layers)
-            l->on_start();
+            if (l->p_enabled)
+                l->on_start();
+    }
+
+    void app::layer_update()
+    {
+        for (const auto &l : m_layers)
+            if (l->p_enabled)
+                l->on_update();
+    }
+
+    void app::layer_late_update()
+    {
+        for (const auto &l : m_layers)
+            if (l->p_enabled)
+                l->on_late_update();
     }
 
     void app::layer_render()
     {
         PERF_FUNCTION()
         for (const auto &l : m_layers)
-            if (l->p_enabled)
+            if (l->p_visible && l->p_enabled)
                 l->on_render();
     }
 
