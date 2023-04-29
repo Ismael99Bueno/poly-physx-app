@@ -238,13 +238,24 @@ namespace ppx
     void app::draw_spring(const glm::vec2 &p1, const glm::vec2 &p2) { draw_spring(p1, p2, m_springs_color); }
     void app::draw_rigid_bar(const glm::vec2 &p1, const glm::vec2 &p2) { draw_rigid_bar(p1, p2, m_rigid_bars_color); }
 
-    void app::update_convex_shapes_from_polygons()
+    void app::update_convex_shapes()
     {
         for (std::size_t i = 0; i < m_engine.size(); i++)
         {
-            sf::ConvexShape shape = convex_shape_from(m_engine.entities()[i].shape<geo::polygon>());
-            shape.setFillColor(m_shapes[i]->getFillColor());
-            m_shapes[i] = std::make_unique<sf::ConvexShape>(shape);
+            const ppx::entity2D &e = m_engine.entities()[i];
+            if (const auto *poly = e.shape_if<geo::polygon>())
+            {
+                sf::ConvexShape shape = convex_shape_from(*poly);
+                shape.setFillColor(m_shapes[i]->getFillColor());
+                m_shapes[i] = std::make_unique<sf::ConvexShape>(shape);
+            }
+            else
+            {
+                const auto &c = e.shape<geo::circle>();
+                sf::CircleShape shape = circle_shape_from(c);
+                shape.setFillColor(m_shapes[i]->getFillColor());
+                m_shapes[i] = std::make_unique<sf::CircleShape>(shape);
+            }
         }
     }
 
