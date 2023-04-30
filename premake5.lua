@@ -1,20 +1,33 @@
 project "poly-physx-app"
-   staticruntime "off"
-   kind "StaticLib"
+staticruntime "off"
+kind "StaticLib"
 
-   language "C++"
-   cppdialect "C++17"
-   filter "system:macosx"
-      buildoptions {"-Wall", "-Wextra", "-Wpedantic", "-Wconversion", "-Wno-unused-parameter"}
-   filter "system:windows"
-      defines "SFML_STATIC"
-   filter {}
+language "C++"
+cppdialect "C++17"
 
-   pchheader "ppx-app/pch.hpp"
-   pchsource "src/pch.cpp"
+filter "system:macosx"
+buildoptions {
+   "-Wall",
+   "-Wextra",
+   "-Wpedantic",
+   "-Wconversion",
+   "-Wno-unused-parameter"
+}
+filter "system:windows"
+defines "SFML_STATIC"
+filter {}
 
-   targetdir("bin/" .. outputdir)
-   objdir("build/" .. outputdir)
+pchheader "ppx-app/pch.hpp"
+pchsource "src/pch.cpp"
 
-   files {"src/**.cpp", "include/**.hpp"}
-   includedirs {"../**/include", "../vendor/glm"}
+targetdir("bin/" .. outputdir)
+objdir("build/" .. outputdir)
+
+files {
+   "src/**.cpp",
+   "include/**.hpp"
+}
+includedirs {
+   "../**/include",
+   "../vendor/glm"
+}
