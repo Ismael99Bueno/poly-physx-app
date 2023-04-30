@@ -201,13 +201,6 @@ namespace ppx
             }
             shape->setFillColor({(sf::Uint8)in.readui32("r"), (sf::Uint8)in.readui32("g"), (sf::Uint8)in.readui32("b")});
             in.end_section();
-
-            for (const auto &l : m_layers)
-            {
-                in.begin_section(l->m_name);
-                l->read(in);
-                in.end_section();
-            }
         }
 
         framerate(in.readui32("framerate"));
@@ -233,6 +226,13 @@ namespace ppx
 
         if (m_engine.collider().coldet() == collider2D::QUAD_TREE)
             resize_quad_tree_to_window();
+
+        for (const auto &l : m_layers)
+        {
+            in.begin_section(l->m_name);
+            l->read(in);
+            in.end_section();
+        }
     }
 
     void app::draw_spring(const glm::vec2 &p1, const glm::vec2 &p2) { draw_spring(p1, p2, m_springs_color); }
