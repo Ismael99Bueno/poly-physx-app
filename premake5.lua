@@ -6,15 +6,16 @@ language "C++"
 cppdialect "C++17"
 
 filter "system:macosx"
-buildoptions {
-   "-Wall",
-   "-Wextra",
-   "-Wpedantic",
-   "-Wconversion",
-   "-Wno-unused-parameter"
-}
+   buildoptions {
+      "-Wall",
+      "-Wextra",
+      "-Wpedantic",
+      "-Wconversion",
+      "-Wno-unused-parameter"
+   }
+
 filter "system:windows"
-defines "SFML_STATIC"
+   defines "SFML_STATIC"
 filter {}
 
 pchheader "ppx-app/pch.hpp"
@@ -28,6 +29,17 @@ files {
    "include/**.hpp"
 }
 includedirs {
-   "../**/include",
-   "../vendor/glm"
+   "include",
+   "%{wks.location}/poly-physx/include",
+   "%{wks.location}/shapes-2D/include",
+   "%{wks.location}/rk-integrator/include",
+   "%{wks.location}/debug-tools/include",
+   "%{wks.location}/profile-tools/include",
+   "%{wks.location}/ini-parser/include",
+   "%{wks.location}/container-view/include",
+   "%{wks.location}/sfml-primitives/include",
+   "%{wks.location}/vendor/glm",
+   "%{wks.location}/vendor/imgui/include",
+   "%{wks.location}/vendor/imgui-sfml/include",
+   "%{wks.location}/vendor/SFML/include"
 }
