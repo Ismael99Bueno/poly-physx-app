@@ -95,8 +95,8 @@ namespace ppx
         std::uint32_t framerate() const;
         void framerate(std::uint32_t framerate);
 
-        bool aligned_timestep() const;
-        void aligned_timestep(bool aligned_dt);
+        bool sync_timestep() const;
+        void sync_timestep(bool aligned_dt);
 
         const sf::RenderWindow &window() const;
         sf::RenderWindow &window();
@@ -128,7 +128,7 @@ namespace ppx
 
         std::vector<std::unique_ptr<sf::Shape>> m_shapes;
 
-        bool m_paused = false, m_aligned_dt = true;
+        bool m_paused = false, m_sync_dt = true;
         sf::Uint32 m_style = sf::Style::Default;
 
         sf::Time m_phys_time, m_draw_time,
@@ -161,7 +161,7 @@ namespace ppx
         void draw_springs();
         void draw_rigid_bars();
         void handle_events();
-        void align_dt();
+        void sync_dt();
 
         void add_fonts() const;
         void control_camera();

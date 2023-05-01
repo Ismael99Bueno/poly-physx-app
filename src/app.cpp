@@ -21,8 +21,8 @@ namespace ppx
         push_layer<menu_layer>();
 
         m_window.setVerticalSyncEnabled(false);
-        m_engine.integrator().min_dt(1.e-5f);
-        m_engine.integrator().max_dt(0.008f);
+        m_engine.integrator().min_dt(0.0002f);
+        m_engine.integrator().max_dt(0.01666f);
 
         const auto add_shape = [this](const entity2D_ptr &e)
         {
@@ -99,8 +99,8 @@ namespace ppx
                 m_draw_time = (1.f - m_time_smoothness) * m_raw_draw_time +
                               m_time_smoothness * m_draw_time;
             }
-            if (m_aligned_dt)
-                align_dt();
+            if (m_sync_dt)
+                sync_dt();
         }
         on_end();
         layer_end();
@@ -146,7 +146,7 @@ namespace ppx
         out.write("framerate", m_framerate);
         out.write("time_smoothness", m_time_smoothness);
         out.write("integ_per_frame", m_integrations_per_frame);
-        out.write("aligned_dt", m_aligned_dt);
+        out.write("aligned_dt", m_sync_dt);
         out.write("timestep", m_dt);
         out.begin_section("springs_color");
         out.write("r", (int)m_springs_color.r);
@@ -205,7 +205,7 @@ namespace ppx
 
         framerate(in.readui32("framerate"));
         m_integrations_per_frame = in.readui32("integ_per_frame");
-        m_aligned_dt = (bool)in.readi16("aligned_dt");
+        m_sync_dt = (bool)in.readi16("aligned_dt");
         m_time_smoothness = in.readf32("time_smoothness");
         m_dt = in.readf32("timestep");
         in.begin_section("springs_color");
@@ -381,7 +381,7 @@ namespace ppx
         }
     }
 
-    void app::align_dt()
+    void app::sync_dt()
     {
         const rk::integrator &integ = m_engine.integrator();
         m_dt = std::clamp(raw_delta_time().asSeconds(), integ.min_dt(), integ.max_dt());
@@ -579,8 +579,8 @@ namespace ppx
         m_window.setFramerateLimit(framerate);
     }
 
-    bool app::aligned_timestep() const { return m_aligned_dt; }
-    void app::aligned_timestep(const bool aligned_dt) { m_aligned_dt = aligned_dt; }
+    bool app::sync_timestep() const { return m_sync_dt; }
+    void app::sync_timestep(const bool aligned_dt) { m_sync_dt = aligned_dt; }
 
     const sf::RenderWindow &app::window() const { return m_window; }
     sf::RenderWindow &app::window() { return m_window; }
