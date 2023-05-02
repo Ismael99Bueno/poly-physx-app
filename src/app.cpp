@@ -124,10 +124,10 @@ namespace ppx
         m_window.draw(tl);
     }
 
-    void app::write(ini::output &out) const
+    void app::serialize(ini::serializer &out) const
     {
         out.begin_section("engine");
-        m_engine.write(out);
+        m_engine.serialize(out);
         out.end_section();
 
         out.write("window_style", m_style);
@@ -170,15 +170,15 @@ namespace ppx
         for (const auto &l : m_layers)
         {
             out.begin_section(l->m_name);
-            l->write(out);
+            l->serialize(out);
             out.end_section();
         }
     }
 
-    void app::read(ini::input &in)
+    void app::deserialize(ini::deserializer &in)
     {
         in.begin_section("engine");
-        m_engine.read(in);
+        m_engine.deserialize(in);
         in.end_section();
 
         recreate_window(in.readui32("window_style"));
@@ -230,7 +230,7 @@ namespace ppx
         for (const auto &l : m_layers)
         {
             in.begin_section(l->m_name);
-            l->read(in);
+            l->deserialize(in);
             in.end_section();
         }
     }

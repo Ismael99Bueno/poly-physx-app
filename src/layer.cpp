@@ -5,12 +5,12 @@ namespace ppx
 {
     layer::layer(const char *name) : m_name(name) {}
 
-    void layer::write(ini::output &out) const
+    void layer::serialize(ini::serializer &out) const
     {
         out.write("enabled", p_enabled);
         out.write("visible", p_visible);
     }
-    void layer::read(ini::input &in)
+    void layer::deserialize(ini::deserializer &in)
     {
         p_enabled = (bool)in.readi16("enabled");
         p_visible = (bool)in.readi16("visible");

@@ -3,19 +3,19 @@
 
 #include <string>
 #include <SFML/Graphics.hpp>
-#include "ini/saveable.hpp"
+#include "ini/serializable.hpp"
 
 namespace ppx
 {
     class app;
-    class layer : public ini::saveable
+    class layer : public ini::serializable
     {
     public:
         layer(const char *name);
         virtual ~layer() = default;
 
-        virtual void write(ini::output &out) const override;
-        virtual void read(ini::input &in) override;
+        virtual void serialize(ini::serializer &out) const override;
+        virtual void deserialize(ini::deserializer &in) override;
 
         bool p_enabled = true, p_visible = true;
 

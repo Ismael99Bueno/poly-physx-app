@@ -21,7 +21,7 @@
 
 namespace ppx
 {
-    class app : public ini::saveable
+    class app : public ini::serializable
     {
     public:
         app(const rk::butcher_tableau &table = rk::rk4,
@@ -65,8 +65,8 @@ namespace ppx
         void recreate_window(sf::Uint32 style, const char *name = "poly-physx");
         void resize_quad_tree_to_window();
 
-        virtual void write(ini::output &out) const override;
-        virtual void read(ini::input &in) override;
+        virtual void serialize(ini::serializer &out) const override;
+        virtual void deserialize(ini::deserializer &in) override;
 
         const engine2D &engine() const;
         engine2D &engine();
