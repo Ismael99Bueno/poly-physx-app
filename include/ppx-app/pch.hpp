@@ -10,5 +10,6 @@
 #include <filesystem>
 #include <glm/geometric.hpp>
 #include <glm/gtx/norm.hpp>
+#include <yaml-cpp/yaml.h>
 
 #endif

@@ -21,7 +21,7 @@
 
 namespace ppx
 {
-    class app : public ini::serializable
+    class app
     {
     public:
         app(const rk::butcher_tableau &table = rk::rk4,
@@ -50,7 +50,7 @@ namespace ppx
         void draw_spring(const glm::vec2 &p1, const glm::vec2 &p2);
         void draw_rigid_bar(const glm::vec2 &p1, const glm::vec2 &p2);
 
-        void update_convex_shapes(); // consider implementing update a single shape
+        void update_shapes(); // consider implementing update a single shape
 
         sf::ConvexShape convex_shape_from(geo::polygon poly) const;
         sf::CircleShape circle_shape_from(const geo::circle &c) const;
@@ -64,9 +64,6 @@ namespace ppx
                              const char *name = "poly-physx");
         void recreate_window(sf::Uint32 style, const char *name = "poly-physx");
         void resize_quad_tree_to_window();
-
-        virtual void serialize(ini::serializer &out) const override;
-        virtual void deserialize(ini::deserializer &in) override;
 
         const engine2D &engine() const;
         engine2D &engine();
@@ -166,8 +163,41 @@ namespace ppx
         void add_fonts() const;
         void control_camera();
         void zoom(float delta);
+#ifdef HAS_YAML_CPP
+        friend YAML::Emitter &operator<<(YAML::Emitter &, const app &);
+        friend struct YAML::convert<app>;
+#endif
     };
 
+#ifdef HAS_YAML_CPP
+    YAML::Emitter &operator<<(YAML::Emitter &out, const app &papp);
+#endif
 }
+
+#ifdef HAS_YAML_CPP
+namespace sf
+{
+    YAML::Emitter &operator<<(YAML::Emitter &out, const Color &color);
+}
+#endif
+
+#ifdef HAS_YAML_CPP
+namespace YAML
+{
+    template <>
+    struct convert<ppx::app>
+    {
+        static Node encode(const ppx::app &papp);
+        static bool decode(const Node &node, ppx::app &papp);
+    };
+
+    template <>
+    struct convert<sf::Color>
+    {
+        static Node encode(const sf::Color &color);
+        static bool decode(const Node &node, sf::Color &color);
+    };
+}
+#endif
 
 #endif

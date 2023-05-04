@@ -5,14 +5,47 @@ namespace ppx
 {
     layer::layer(const char *name) : m_name(name) {}
 
-    void layer::serialize(ini::serializer &out) const
+#ifdef HAS_YAML_CPP
+    void layer::write(YAML::Emitter &out) const
     {
-        out.write("enabled", p_enabled);
-        out.write("visible", p_visible);
+        out << YAML::Key << "enabled" << YAML::Value << p_enabled;
+        out << YAML::Key << "visible" << YAML::Value << p_visible;
     }
-    void layer::deserialize(ini::deserializer &in)
+    YAML::Node layer::encode() const
     {
-        p_enabled = (bool)in.readi16("enabled");
-        p_visible = (bool)in.readi16("visible");
+        YAML::Node node;
+        node["enabled"] = p_enabled;
+        node["visible"] = p_visible;
+        return node;
     }
+    bool layer::decode(const YAML::Node &node)
+    {
+        if (!node.IsMap() || node.size() < 2)
+            return false;
+        p_enabled = node["enabled"].as<bool>();
+        p_visible = node["visible"].as<bool>();
+        return true;
+    }
+#endif
+#ifdef HAS_YAML_CPP
+    YAML::Emitter &operator<<(YAML::Emitter &out, const layer &ly)
+    {
+        ly.write(out);
+        return out;
+    }
+#endif
 }
+
+#ifdef HAS_YAML_CPP
+namespace YAML
+{
+    Node convert<ppx::layer>::encode(const ppx::layer &ly)
+    {
+        return ly.encode();
+    }
+    bool convert<ppx::layer>::decode(const Node &node, ppx::layer &ly)
+    {
+        return ly.decode(node);
+    };
+}
+#endif

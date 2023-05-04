@@ -3,21 +3,23 @@
 
 #include <string>
 #include <SFML/Graphics.hpp>
-#include "ini/serializable.hpp"
+#include <yaml-cpp/yaml.h>
 
 namespace ppx
 {
     class app;
-    class layer : public ini::serializable
+    class layer
     {
     public:
         layer(const char *name);
         virtual ~layer() = default;
 
-        virtual void serialize(ini::serializer &out) const override;
-        virtual void deserialize(ini::deserializer &in) override;
-
         bool p_enabled = true, p_visible = true;
+#ifdef HAS_YAML_CPP
+        virtual void write(YAML::Emitter &out) const;
+        virtual YAML::Node encode() const;
+        virtual bool decode(const YAML::Node &node);
+#endif
 
     private:
         virtual void on_attach(app *papp) {}
@@ -32,7 +34,26 @@ namespace ppx
         const char *m_name;
 
         friend class app;
+#ifdef HAS_YAML_CPP
+        friend YAML::Emitter &operator<<(YAML::Emitter &, const app &);
+        friend struct YAML::convert<app>;
+#endif
+    };
+#ifdef HAS_YAML_CPP
+    YAML::Emitter &operator<<(YAML::Emitter &out, const layer &ly);
+#endif
+}
+
+#ifdef HAS_YAML_CPP
+namespace YAML
+{
+    template <>
+    struct convert<ppx::layer>
+    {
+        static Node encode(const ppx::layer &ly);
+        static bool decode(const Node &node, ppx::layer &ly);
     };
 }
+#endif
 
 #endif

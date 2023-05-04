@@ -124,121 +124,121 @@ namespace ppx
         m_window.draw(tl);
     }
 
-    void app::serialize(ini::serializer &out) const
-    {
-        out.begin_section("engine");
-        m_engine.serialize(out);
-        out.end_section();
+    // void app::serialize(ini::serializer &out) const
+    // {
+    //     out.begin_section("engine");
+    //     m_engine.serialize(out);
+    //     out.end_section();
 
-        out.write("window_style", m_style);
-        std::size_t index = 0;
-        const std::string section = "entity";
-        for (std::size_t i = 0; i < m_engine.size(); i++)
-        {
-            const sf::Shape &shape = *(m_shapes[i]);
-            out.begin_section(section + std::to_string(index++));
-            out.write("r", (int)shape.getFillColor().r);
-            out.write("g", (int)shape.getFillColor().g);
-            out.write("b", (int)shape.getFillColor().b);
-            out.end_section();
-        }
+    //     out.write("window_style", m_style);
+    //     std::size_t index = 0;
+    //     const std::string section = "entity";
+    //     for (std::size_t i = 0; i < m_engine.size(); i++)
+    //     {
+    //         const sf::Shape &shape = *(m_shapes[i]);
+    //         out.begin_section(section + std::to_string(index++));
+    //         out.write("r", (int)shape.getFillColor().r);
+    //         out.write("g", (int)shape.getFillColor().g);
+    //         out.write("b", (int)shape.getFillColor().b);
+    //         out.end_section();
+    //     }
 
-        out.write("framerate", m_framerate);
-        out.write("time_smoothness", m_time_smoothness);
-        out.write("integ_per_frame", m_integrations_per_frame);
-        out.write("aligned_dt", m_sync_dt);
-        out.write("timestep", m_dt);
-        out.begin_section("springs_color");
-        out.write("r", (int)m_springs_color.r);
-        out.write("g", (int)m_springs_color.g);
-        out.write("b", (int)m_springs_color.b);
-        out.end_section();
-        out.begin_section("rigid_bars_color");
-        out.write("r", (int)m_rigid_bars_color.r);
-        out.write("g", (int)m_rigid_bars_color.g);
-        out.write("b", (int)m_rigid_bars_color.b);
-        out.end_section();
-        out.write("paused", m_paused);
+    //     out.write("framerate", m_framerate);
+    //     out.write("time_smoothness", m_time_smoothness);
+    //     out.write("integ_per_frame", m_integrations_per_frame);
+    //     out.write("aligned_dt", m_sync_dt);
+    //     out.write("timestep", m_dt);
+    //     out.begin_section("springs_color");
+    //     out.write("r", (int)m_springs_color.r);
+    //     out.write("g", (int)m_springs_color.g);
+    //     out.write("b", (int)m_springs_color.b);
+    //     out.end_section();
+    //     out.begin_section("rigid_bars_color");
+    //     out.write("r", (int)m_rigid_bars_color.r);
+    //     out.write("g", (int)m_rigid_bars_color.g);
+    //     out.write("b", (int)m_rigid_bars_color.b);
+    //     out.end_section();
+    //     out.write("paused", m_paused);
 
-        const sf::View &view = m_window.getView();
-        out.write("camx", view.getCenter().x);
-        out.write("camy", view.getCenter().y);
+    //     const sf::View &view = m_window.getView();
+    //     out.write("camx", view.getCenter().x);
+    //     out.write("camy", view.getCenter().y);
 
-        out.write("width", view.getSize().x);
-        out.write("height", view.getSize().y);
+    //     out.write("width", view.getSize().x);
+    //     out.write("height", view.getSize().y);
 
-        for (const auto &l : m_layers)
-        {
-            out.begin_section(l->m_name);
-            l->serialize(out);
-            out.end_section();
-        }
-    }
+    //     for (const auto &l : m_layers)
+    //     {
+    //         out.begin_section(l->m_name);
+    //         l->serialize(out);
+    //         out.end_section();
+    //     }
+    // }
 
-    void app::deserialize(ini::deserializer &in)
-    {
-        in.begin_section("engine");
-        m_engine.deserialize(in);
-        in.end_section();
+    // void app::deserialize(ini::deserializer &in)
+    // {
+    //     in.begin_section("engine");
+    //     m_engine.deserialize(in);
+    //     in.end_section();
 
-        recreate_window(in.readui32("window_style"));
+    //     recreate_window(in.readui32("window_style"));
 
-        std::size_t index = 0;
-        const std::string section = "entity";
-        for (auto &shape : m_shapes)
-        {
-            in.begin_section(section + std::to_string(index)); // CLEANUP THIS
-            const entity2D &e = m_engine.entities()[index++];
-            if (const auto *poly = e.shape_if<geo::polygon>())
-            {
-                const sf::ConvexShape temp_shape = convex_shape_from(*poly);
-                shape = std::make_unique<sf::ConvexShape>(temp_shape);
-            }
-            else
-            {
-                const sf::CircleShape temp_shape = circle_shape_from(e.shape<geo::circle>());
-                shape = std::make_unique<sf::CircleShape>(temp_shape);
-            }
-            shape->setFillColor({(sf::Uint8)in.readui32("r"), (sf::Uint8)in.readui32("g"), (sf::Uint8)in.readui32("b")});
-            in.end_section();
-        }
+    //     std::size_t index = 0;
+    //     const std::string section = "entity";
+    //     for (auto &shape : m_shapes)
+    //     {
+    //         in.begin_section(section + std::to_string(index)); // CLEANUP THIS
+    //         const entity2D &e = m_engine.entities()[index++];
+    //         if (const auto *poly = e.shape_if<geo::polygon>())
+    //         {
+    //             const sf::ConvexShape temp_shape = convex_shape_from(*poly);
+    //             shape = std::make_unique<sf::ConvexShape>(temp_shape);
+    //         }
+    //         else
+    //         {
+    //             const sf::CircleShape temp_shape = circle_shape_from(e.shape<geo::circle>());
+    //             shape = std::make_unique<sf::CircleShape>(temp_shape);
+    //         }
+    //         shape->setFillColor({(sf::Uint8)in.readui32("r"), (sf::Uint8)in.readui32("g"), (sf::Uint8)in.readui32("b")});
+    //         in.end_section();
+    //     }
 
-        framerate(in.readui32("framerate"));
-        m_integrations_per_frame = in.readui32("integ_per_frame");
-        m_sync_dt = (bool)in.readi16("aligned_dt");
-        m_time_smoothness = in.readf32("time_smoothness");
-        m_dt = in.readf32("timestep");
-        in.begin_section("springs_color");
-        m_springs_color = {(sf::Uint8)in.readui32("r"), (sf::Uint8)in.readui32("g"), (sf::Uint8)in.readui32("b")};
-        in.end_section();
-        in.begin_section("rigid_bars_color");
-        m_rigid_bars_color = {(sf::Uint8)in.readui32("r"), (sf::Uint8)in.readui32("g"), (sf::Uint8)in.readui32("b")};
-        in.end_section();
-        m_paused = (bool)in.readi16("paused");
+    //     framerate(in.readui32("framerate"));
+    //     m_integrations_per_frame = in.readui32("integ_per_frame");
+    //     m_sync_dt = (bool)in.readi16("aligned_dt");
+    //     m_time_smoothness = in.readf32("time_smoothness");
+    //     m_dt = in.readf32("timestep");
+    //     in.begin_section("springs_color");
+    //     m_springs_color = {(sf::Uint8)in.readui32("r"), (sf::Uint8)in.readui32("g"), (sf::Uint8)in.readui32("b")};
+    //     in.end_section();
+    //     in.begin_section("rigid_bars_color");
+    //     m_rigid_bars_color = {(sf::Uint8)in.readui32("r"), (sf::Uint8)in.readui32("g"), (sf::Uint8)in.readui32("b")};
+    //     in.end_section();
+    //     m_paused = (bool)in.readi16("paused");
 
-        sf::View view = m_window.getView();
-        const float camx = in.readf32("camx"), camy = in.readf32("camy"),
-                    width = in.readf32("width"), height = in.readf32("height");
+    //     sf::View view = m_window.getView();
+    //     const float camx = in.readf32("camx"), camy = in.readf32("camy"),
+    //                 width = in.readf32("width"), height = in.readf32("height");
 
-        view.setCenter(camx, camy);
-        view.setSize(width, height);
-        m_window.setView(view);
+    //     view.setCenter(camx, camy);
+    //     view.setSize(width, height);
+    //     m_window.setView(view);
 
-        if (m_engine.collider().coldet() == collider2D::QUAD_TREE)
-            resize_quad_tree_to_window();
+    //     if (m_engine.collider().coldet() == collider2D::QUAD_TREE)
+    //         resize_quad_tree_to_window();
 
-        for (const auto &l : m_layers)
-        {
-            in.begin_section(l->m_name);
-            l->deserialize(in);
-            in.end_section();
-        }
-    }
+    //     for (const auto &l : m_layers)
+    //     {
+    //         in.begin_section(l->m_name);
+    //         l->deserialize(in);
+    //         in.end_section();
+    //     }
+    // }
 
     void app::draw_spring(const glm::vec2 &p1, const glm::vec2 &p2) { draw_spring(p1, p2, m_springs_color); }
     void app::draw_rigid_bar(const glm::vec2 &p1, const glm::vec2 &p2) { draw_rigid_bar(p1, p2, m_rigid_bars_color); }
 
-    void app::update_convex_shapes()
+    void app::update_shapes()
     {
         for (std::size_t i = 0; i < m_engine.size(); i++)
         {
@@ -310,9 +310,9 @@ namespace ppx
 
             on_entity_draw(e, *m_shapes[i]);
             const geo::shape2D &shape = e->shape();
-            const glm::vec2 centre = shape.centroid() * WORLD_TO_PIXEL;
+            const glm::vec2 center = shape.centroid() * WORLD_TO_PIXEL;
 
-            m_shapes[i]->setPosition(centre.x, centre.y);
+            m_shapes[i]->setPosition(center.x, center.y);
             m_shapes[i]->setRotation(shape.rotation() * TO_DEGREES);
             m_window.draw(*m_shapes[i]);
         }
@@ -595,4 +595,135 @@ namespace ppx
 
     float app::time_measure_smoothness() const { return m_time_smoothness; }
     void app::time_measure_smoothness(const float smoothness) { m_time_smoothness = smoothness; }
+
+#ifdef HAS_YAML_CPP
+    YAML::Emitter &operator<<(YAML::Emitter &out, const app &papp)
+    {
+        out << YAML::BeginMap;
+        out << YAML::Key << "Engine" << YAML::Value << papp.engine();
+        out << YAML::Key << "Timestep" << YAML::Value << papp.timestep();
+        out << YAML::Key << "Window style" << YAML::Value << papp.style();
+        out << YAML::Key << "Layers" << YAML::Value << YAML::BeginMap;
+        for (const auto &l : papp.m_layers)
+            out << YAML::Key << l->m_name << YAML::Value << YAML::BeginMap << *l << YAML::EndMap;
+        out << YAML::EndMap;
+
+        out << YAML::Key << "Shape colors" << YAML::Value << YAML::BeginSeq;
+        for (const auto &shape : papp.shapes())
+            out << shape->getFillColor();
+        out << YAML::EndSeq;
+
+        out << YAML::Key << "Paused" << YAML::Value << papp.paused();
+        out << YAML::Key << "Sync timestep" << YAML::Value << papp.sync_timestep();
+        out << YAML::Key << "Time smoothness" << YAML::Value << papp.time_measure_smoothness();
+        out << YAML::Key << "Entity color" << YAML::Value << papp.entity_color();
+        out << YAML::Key << "Springs color" << YAML::Value << papp.springs_color();
+        out << YAML::Key << "Rigid bars color" << YAML::Value << papp.rigid_bars_color();
+        out << YAML::Key << "Integrations per frame" << YAML::Value << papp.integrations_per_frame();
+        out << YAML::Key << "Framerate" << YAML::Value << papp.framerate();
+        const sf::View &view = papp.window().getView();
+        const glm::vec2 center = {view.getCenter().x, view.getCenter().y},
+                        size = {view.getSize().x, view.getSize().y};
+        out << YAML::Key << "Camera center" << YAML::Value << center;
+        out << YAML::Key << "Camera size" << YAML::Value << size;
+        out << YAML::EndMap;
+        return out;
+    }
+#endif
 }
+
+#ifdef HAS_YAML_CPP
+namespace sf
+{
+    YAML::Emitter &operator<<(YAML::Emitter &out, const Color &color)
+    {
+        out << YAML::Flow;
+        out << YAML::BeginSeq << (int)color.r << (int)color.g << (int)color.b << YAML::EndSeq;
+        return out;
+    }
+}
+#endif
+
+#ifdef HAS_YAML_CPP
+namespace YAML
+{
+    Node convert<ppx::app>::encode(const ppx::app &papp)
+    {
+        Node node;
+        node["Engine"] = papp.engine();
+        node["Timestep"] = papp.timestep();
+        node["Window style"] = papp.style();
+        for (const auto &l : papp.m_layers)
+            node["Layers"][l->m_name] = *l;
+        for (const auto &shape : papp.shapes())
+            node["Shape colors"].push_back(shape->getFillColor());
+        node["Paused"] = papp.paused();
+        node["Sync timestep"] = papp.sync_timestep();
+        node["Time smoothness"] = papp.time_measure_smoothness();
+        node["Entity color"] = papp.entity_color();
+        node["Springs color"] = papp.springs_color();
+        node["Rigid bars color"] = papp.rigid_bars_color();
+        node["Integrations per frame"] = papp.integrations_per_frame();
+        node["Framerate"] = papp.framerate();
+        const sf::View &view = papp.window().getView();
+        const glm::vec2 center = {view.getCenter().x, view.getCenter().y},
+                        size = {view.getSize().x, view.getSize().y};
+        node["Camera center"] = center;
+        node["Camera size"] = size;
+        return node;
+    }
+    bool convert<ppx::app>::decode(const Node &node, ppx::app &papp)
+    {
+        if (!node.IsMap() || node.size() != 15)
+            return false;
+
+        papp.m_shapes.clear();
+        node["Engine"].as<ppx::engine2D>(papp.engine());
+        papp.timestep(node["Timestep"].as<float>());
+        papp.recreate_window(node["Window style"].as<std::uint32_t>());
+        for (const auto &l : papp.m_layers)
+            if (node["Layers"][l->m_name])
+                l->decode(node["Layers"][l->m_name]);
+
+        for (std::size_t i = 0; i < papp.m_shapes.size(); i++)
+            papp.m_shapes[i]->setFillColor(node["Shape colors"][i].as<sf::Color>());
+        papp.update_shapes();
+
+        papp.paused(node["Paused"].as<bool>());
+        papp.sync_timestep(node["Sync timestep"].as<bool>());
+        papp.time_measure_smoothness(node["Time smoothness"].as<float>());
+        papp.entity_color(node["Entity color"].as<sf::Color>());
+        papp.springs_color(node["Springs color"].as<sf::Color>());
+        papp.rigid_bars_color(node["Rigid bars color"].as<sf::Color>());
+        papp.integrations_per_frame(node["Integrations per frame"].as<std::uint32_t>());
+        papp.framerate(node["Framerate"].as<std::uint32_t>());
+
+        const glm::vec2 center = node["Camera center"].as<glm::vec2>(),
+                        size = node["Camera size"].as<glm::vec2>();
+        sf::View view = papp.window().getView();
+        view.setCenter(center.x, center.y);
+        view.setSize(size.x, size.y);
+        papp.window().setView(view);
+        return true;
+    };
+
+    Node convert<sf::Color>::encode(const sf::Color &color)
+    {
+        Node node;
+        node.push_back((int)color.r);
+        node.push_back((int)color.g);
+        node.push_back((int)color.b);
+        return node;
+    }
+    bool convert<sf::Color>::decode(const Node &node, sf::Color &color)
+    {
+        if (!node.IsSequence() || node.size() != 3)
+            return false;
+        color.r = (sf::Uint8)node[0].as<int>();
+        color.g = (sf::Uint8)node[1].as<int>();
+        color.b = (sf::Uint8)node[2].as<int>();
+
+        return true;
+    };
+}
+#endif
