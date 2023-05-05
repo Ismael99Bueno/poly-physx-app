@@ -566,7 +566,6 @@ namespace YAML
         if (!node.IsMap() || node.size() != 15)
             return false;
 
-        papp.m_shapes.clear();
         node["Engine"].as<ppx::engine2D>(papp.engine());
         papp.timestep(node["Timestep"].as<float>());
         papp.recreate_window(node["Window style"].as<std::uint32_t>());
