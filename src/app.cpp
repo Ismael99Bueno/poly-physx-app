@@ -124,117 +124,6 @@ namespace ppx
         m_window.draw(tl);
     }
 
-    // void app::serialize(ini::serializer &out) const
-    // {
-    //     out.begin_section("engine");
-    //     m_engine.serialize(out);
-    //     out.end_section();
-
-    //     out.write("window_style", m_style);
-    //     std::size_t index = 0;
-    //     const std::string section = "entity";
-    //     for (std::size_t i = 0; i < m_engine.size(); i++)
-    //     {
-    //         const sf::Shape &shape = *(m_shapes[i]);
-    //         out.begin_section(section + std::to_string(index++));
-    //         out.write("r", (int)shape.getFillColor().r);
-    //         out.write("g", (int)shape.getFillColor().g);
-    //         out.write("b", (int)shape.getFillColor().b);
-    //         out.end_section();
-    //     }
-
-    //     out.write("framerate", m_framerate);
-    //     out.write("time_smoothness", m_time_smoothness);
-    //     out.write("integ_per_frame", m_integrations_per_frame);
-    //     out.write("aligned_dt", m_sync_dt);
-    //     out.write("timestep", m_dt);
-    //     out.begin_section("springs_color");
-    //     out.write("r", (int)m_springs_color.r);
-    //     out.write("g", (int)m_springs_color.g);
-    //     out.write("b", (int)m_springs_color.b);
-    //     out.end_section();
-    //     out.begin_section("rigid_bars_color");
-    //     out.write("r", (int)m_rigid_bars_color.r);
-    //     out.write("g", (int)m_rigid_bars_color.g);
-    //     out.write("b", (int)m_rigid_bars_color.b);
-    //     out.end_section();
-    //     out.write("paused", m_paused);
-
-    //     const sf::View &view = m_window.getView();
-    //     out.write("camx", view.getCenter().x);
-    //     out.write("camy", view.getCenter().y);
-
-    //     out.write("width", view.getSize().x);
-    //     out.write("height", view.getSize().y);
-
-    //     for (const auto &l : m_layers)
-    //     {
-    //         out.begin_section(l->name());
-    //         l->serialize(out);
-    //         out.end_section();
-    //     }
-    // }
-
-    // void app::deserialize(ini::deserializer &in)
-    // {
-    //     in.begin_section("engine");
-    //     m_engine.deserialize(in);
-    //     in.end_section();
-
-    //     recreate_window(in.readui32("window_style"));
-
-    //     std::size_t index = 0;
-    //     const std::string section = "entity";
-    //     for (auto &shape : m_shapes)
-    //     {
-    //         in.begin_section(section + std::to_string(index)); // CLEANUP THIS
-    //         const entity2D &e = m_engine.entities()[index++];
-    //         if (const auto *poly = e.shape_if<geo::polygon>())
-    //         {
-    //             const sf::ConvexShape temp_shape = convex_shape_from(*poly);
-    //             shape = std::make_unique<sf::ConvexShape>(temp_shape);
-    //         }
-    //         else
-    //         {
-    //             const sf::CircleShape temp_shape = circle_shape_from(e.shape<geo::circle>());
-    //             shape = std::make_unique<sf::CircleShape>(temp_shape);
-    //         }
-    //         shape->setFillColor({(sf::Uint8)in.readui32("r"), (sf::Uint8)in.readui32("g"), (sf::Uint8)in.readui32("b")});
-    //         in.end_section();
-    //     }
-
-    //     framerate(in.readui32("framerate"));
-    //     m_integrations_per_frame = in.readui32("integ_per_frame");
-    //     m_sync_dt = (bool)in.readi16("aligned_dt");
-    //     m_time_smoothness = in.readf32("time_smoothness");
-    //     m_dt = in.readf32("timestep");
-    //     in.begin_section("springs_color");
-    //     m_springs_color = {(sf::Uint8)in.readui32("r"), (sf::Uint8)in.readui32("g"), (sf::Uint8)in.readui32("b")};
-    //     in.end_section();
-    //     in.begin_section("rigid_bars_color");
-    //     m_rigid_bars_color = {(sf::Uint8)in.readui32("r"), (sf::Uint8)in.readui32("g"), (sf::Uint8)in.readui32("b")};
-    //     in.end_section();
-    //     m_paused = (bool)in.readi16("paused");
-
-    //     sf::View view = m_window.getView();
-    //     const float camx = in.readf32("camx"), camy = in.readf32("camy"),
-    //                 width = in.readf32("width"), height = in.readf32("height");
-
-    //     view.setCenter(camx, camy);
-    //     view.setSize(width, height);
-    //     m_window.setView(view);
-
-    //     if (m_engine.collider().coldet() == collider2D::QUAD_TREE)
-    //         resize_quad_tree_to_window();
-
-    //     for (const auto &l : m_layers)
-    //     {
-    //         in.begin_section(l->name());
-    //         l->deserialize(in);
-    //         in.end_section();
-    //     }
-    // }
-
     void app::draw_spring(const glm::vec2 &p1, const glm::vec2 &p2) { draw_spring(p1, p2, m_springs_color); }
     void app::draw_rigid_bar(const glm::vec2 &p1, const glm::vec2 &p2) { draw_rigid_bar(p1, p2, m_rigid_bars_color); }
 
@@ -713,6 +602,7 @@ namespace YAML
         node.push_back((int)color.r);
         node.push_back((int)color.g);
         node.push_back((int)color.b);
+        node.SetStyle(YAML::EmitterStyle::Flow);
         return node;
     }
     bool convert<sf::Color>::decode(const Node &node, sf::Color &color)
