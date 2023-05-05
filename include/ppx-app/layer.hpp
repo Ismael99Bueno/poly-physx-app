@@ -32,6 +32,7 @@ namespace ppx
         virtual void on_end() {}
 
         const char *m_name;
+        const char *name() const;
 
         friend class app;
 #ifdef HAS_YAML_CPP

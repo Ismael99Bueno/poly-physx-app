@@ -169,7 +169,7 @@ namespace ppx
 
     //     for (const auto &l : m_layers)
     //     {
-    //         out.begin_section(l->m_name);
+    //         out.begin_section(l->name());
     //         l->serialize(out);
     //         out.end_section();
     //     }
@@ -229,7 +229,7 @@ namespace ppx
 
     //     for (const auto &l : m_layers)
     //     {
-    //         in.begin_section(l->m_name);
+    //         in.begin_section(l->name());
     //         l->deserialize(in);
     //         in.end_section();
     //     }
@@ -605,7 +605,7 @@ namespace ppx
         out << YAML::Key << "Window style" << YAML::Value << papp.style();
         out << YAML::Key << "Layers" << YAML::Value << YAML::BeginMap;
         for (const auto &l : papp.m_layers)
-            out << YAML::Key << l->m_name << YAML::Value << YAML::BeginMap << *l << YAML::EndMap;
+            out << YAML::Key << l->name() << YAML::Value << *l;
         out << YAML::EndMap;
 
         out << YAML::Key << "Shape colors" << YAML::Value << YAML::BeginSeq;
@@ -654,7 +654,7 @@ namespace YAML
         node["Timestep"] = papp.timestep();
         node["Window style"] = papp.style();
         for (const auto &l : papp.m_layers)
-            node["Layers"][l->m_name] = *l;
+            node["Layers"][l->name()] = *l;
         for (const auto &shape : papp.shapes())
             node["Shape colors"].push_back(shape->getFillColor());
         node["Paused"] = papp.paused();
@@ -682,8 +682,8 @@ namespace YAML
         papp.timestep(node["Timestep"].as<float>());
         papp.recreate_window(node["Window style"].as<std::uint32_t>());
         for (const auto &l : papp.m_layers)
-            if (node["Layers"][l->m_name])
-                l->decode(node["Layers"][l->m_name]);
+            if (node["Layers"][l->name()])
+                node["Layers"][l->name()].as<ppx::layer>(*l);
 
         for (std::size_t i = 0; i < papp.m_shapes.size(); i++)
             papp.m_shapes[i]->setFillColor(node["Shape colors"][i].as<sf::Color>());
