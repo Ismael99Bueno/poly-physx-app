@@ -15,6 +15,9 @@ namespace ppx
         virtual ~layer() = default;
 
         bool p_enabled = true, p_visible = true;
+        const char *name() const;
+
+    protected:
 #ifdef HAS_YAML_CPP
         virtual void write(YAML::Emitter &out) const;
         virtual YAML::Node encode() const;
@@ -32,12 +35,11 @@ namespace ppx
         virtual void on_end() {}
 
         const char *m_name;
-        const char *name() const;
 
         friend class app;
 #ifdef HAS_YAML_CPP
-        friend YAML::Emitter &operator<<(YAML::Emitter &, const app &);
-        friend struct YAML::convert<app>;
+        friend YAML::Emitter &operator<<(YAML::Emitter &, const layer &);
+        friend struct YAML::convert<layer>;
 #endif
     };
 #ifdef HAS_YAML_CPP
