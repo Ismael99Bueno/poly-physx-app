@@ -413,7 +413,7 @@ namespace ppx
     engine2D &app::engine() { return m_engine; }
 
     const std::vector<std::unique_ptr<sf::Shape>> &app::shapes() const { return m_shapes; }
-    utils::vector_view<std::unique_ptr<sf::Shape>> app::shapes() { return m_shapes; }
+    cvw::vector<std::unique_ptr<sf::Shape>> app::shapes() { return m_shapes; }
 
     sf::Shape &app::operator[](std::size_t index) const { return *m_shapes[index]; }
 

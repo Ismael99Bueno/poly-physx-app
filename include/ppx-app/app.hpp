@@ -69,7 +69,7 @@ namespace ppx
         engine2D &engine();
 
         const std::vector<std::unique_ptr<sf::Shape>> &shapes() const;
-        utils::vector_view<std::unique_ptr<sf::Shape>> shapes();
+        cvw::vector<std::unique_ptr<sf::Shape>> shapes();
         sf::Shape &operator[](std::size_t index) const;
 
         const sf::Color &entity_color() const;
