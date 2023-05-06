@@ -212,8 +212,8 @@ namespace ppx
         PERF_FUNCTION()
         for (const spring2D &sp : m_engine.springs())
         {
-            const glm::vec2 p1 = (sp.e1()->pos() + sp.joint1()) * WORLD_TO_PIXEL,
-                            p2 = (sp.e2()->pos() + sp.joint2()) * WORLD_TO_PIXEL;
+            const glm::vec2 p1 = (sp.e1()->pos() + sp.anchor1()) * WORLD_TO_PIXEL,
+                            p2 = (sp.e2()->pos() + sp.anchor2()) * WORLD_TO_PIXEL;
             draw_spring(p1, p2);
         }
     }
@@ -226,8 +226,8 @@ namespace ppx
             const auto rb = std::dynamic_pointer_cast<rigid_bar2D>(ctr);
             if (!rb)
                 continue;
-            const glm::vec2 p1 = (rb->e1()->pos() + rb->joint1()) * WORLD_TO_PIXEL,
-                            p2 = (rb->e2()->pos() + rb->joint2()) * WORLD_TO_PIXEL;
+            const glm::vec2 p1 = (rb->e1()->pos() + rb->anchor1()) * WORLD_TO_PIXEL,
+                            p2 = (rb->e2()->pos() + rb->anchor2()) * WORLD_TO_PIXEL;
             draw_rigid_bar(p1, p2);
         }
     }
