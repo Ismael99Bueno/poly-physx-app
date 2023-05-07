@@ -34,7 +34,7 @@ namespace ppx
         template <typename T, class... Args>
         std::shared_ptr<T> push_layer(Args &&...args)
         {
-            static_assert(std::is_convertible<T *, layer *>::value, "Layer must inherit from layer!");
+            static_assert(std::is_base_of<layer, T>::value, "Layer must inherit from layer!");
             const auto layer = std::make_shared<T>(std::forward<Args>(args)...);
             m_layers.emplace_back(layer)->on_attach(this);
             return layer;
