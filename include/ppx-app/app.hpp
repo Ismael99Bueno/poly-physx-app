@@ -15,7 +15,7 @@
 #define WORLD_TO_PIXEL 10.f
 #define PIXEL_TO_WORLD 0.1f
 #define NO_FPS_LIMIT 0
-#define DEFAULT_FPS NO_FPS_LIMIT
+#define DEFAULT_FPS 120
 #define DEFAULT_ENTITY_COLOR sf::Color(123, 143, 161)
 #define DEFAULT_ATTACH_COLOR sf::Color(207, 185, 151)
 
