@@ -278,16 +278,14 @@ namespace ppx
 
     sf::ConvexShape app::convex_shape_from(geo::polygon poly) const
     {
-        poly.rotation(0.f);
-
         sf::ConvexShape shape(poly.size());
         const glm::vec2 centroid = poly.centroid() * WORLD_TO_PIXEL,
-                        origin = centroid - poly[0] * WORLD_TO_PIXEL;
+                        origin = -poly.local(0) * WORLD_TO_PIXEL;
         shape.setOrigin(origin.x, origin.y);
 
         for (std::size_t i = 0; i < poly.size(); i++)
         {
-            const glm::vec2 point = (poly[i] - poly[0]) * WORLD_TO_PIXEL;
+            const glm::vec2 point = (poly.local(i) - poly.local(0)) * WORLD_TO_PIXEL;
             shape.setPoint(i, {point.x, point.y});
         }
         shape.setPosition(centroid.x, centroid.y);
