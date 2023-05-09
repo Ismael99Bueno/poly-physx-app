@@ -22,7 +22,7 @@ namespace ppx
 
         m_window.setVerticalSyncEnabled(false);
         m_engine.integrator().min_dt(0.0002f);
-        m_engine.integrator().max_dt(0.01666f);
+        m_engine.integrator().max_dt(0.006f);
 
         const auto add_shape = [this](const entity2D_ptr &e)
         {
