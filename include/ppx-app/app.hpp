@@ -17,7 +17,7 @@
 #define NO_FPS_LIMIT 0
 #define DEFAULT_FPS 120
 #define DEFAULT_ENTITY_COLOR sf::Color(123, 143, 161)
-#define DEFAULT_ATTACH_COLOR sf::Color(207, 185, 151)
+#define DEFAULT_JOINT_COLOR sf::Color(207, 185, 151)
 
 namespace ppx
 {
@@ -133,8 +133,8 @@ namespace ppx
 
         float m_time_smoothness = 0.f;
         sf::Color m_entity_color = DEFAULT_ENTITY_COLOR,
-                  m_springs_color = DEFAULT_ATTACH_COLOR,
-                  m_rigid_bars_color = DEFAULT_ATTACH_COLOR;
+                  m_springs_color = DEFAULT_JOINT_COLOR,
+                  m_rigid_bars_color = DEFAULT_JOINT_COLOR;
 
         std::uint32_t m_integrations_per_frame = 1, m_framerate;
         float m_dt = 1e-3f;
