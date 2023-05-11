@@ -52,7 +52,7 @@ namespace ppx
 
         void update_shapes(); // consider implementing update a single shape
 
-        sf::ConvexShape convex_shape_from(geo::polygon poly) const;
+        sf::ConvexShape convex_shape_from(const geo::polygon &poly) const;
         sf::CircleShape circle_shape_from(const geo::circle &c) const;
 
         void transform_camera(const glm::vec2 &dir);

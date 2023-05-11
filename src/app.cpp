@@ -276,7 +276,7 @@ namespace ppx
         m_dt = std::clamp(raw_delta_time().asSeconds(), integ.min_dt(), integ.max_dt());
     }
 
-    sf::ConvexShape app::convex_shape_from(geo::polygon poly) const
+    sf::ConvexShape app::convex_shape_from(const geo::polygon &poly) const
     {
         sf::ConvexShape shape(poly.size());
         const glm::vec2 centroid = poly.centroid() * WORLD_TO_PIXEL,
