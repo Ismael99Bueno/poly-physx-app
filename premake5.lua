@@ -42,4 +42,5 @@ includedirs {
    "%{wks.location}/vendor/imgui/include",
    "%{wks.location}/vendor/imgui-sfml/include",
    "%{wks.location}/vendor/SFML/include"
+   "%{wks.location}/vendor/spdlog/include",
 }
