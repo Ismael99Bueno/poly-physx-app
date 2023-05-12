@@ -33,7 +33,7 @@ includedirs {
    "%{wks.location}/poly-physx/include",
    "%{wks.location}/shapes-2D/include",
    "%{wks.location}/rk-integrator/include",
-   "%{wks.location}/debug-tools/include",
+   "%{wks.location}/debug-log-tools/include",
    "%{wks.location}/profile-tools/include",
    "%{wks.location}/vendor/yaml-cpp/include",
    "%{wks.location}/container-view/include",
