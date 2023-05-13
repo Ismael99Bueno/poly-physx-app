@@ -47,7 +47,7 @@ namespace ppx
 
         if (!ImGui::SFML::Init(m_window))
         {
-            perror("ImGui initialization failed\n");
+            DBG_CRITICAL("ImGui initialization failed");
             exit(EXIT_FAILURE);
         }
         add_fonts();
@@ -445,7 +445,7 @@ namespace ppx
         io.Fonts->Build();
         if (!ImGui::SFML::UpdateFontTexture())
         {
-            perror("ImGui font initialization failed\n");
+            DBG_CRITICAL("ImGui font initialization failed");
             exit(EXIT_FAILURE);
         }
     }
