@@ -3,7 +3,9 @@
 
 #include <string>
 #include <SFML/Graphics.hpp>
+#ifdef HAS_YAML_CPP
 #include <yaml-cpp/yaml.h>
+#endif
 
 namespace ppx
 {

@@ -10,7 +10,9 @@
 #include <filesystem>
 #include <glm/geometric.hpp>
 #include <glm/gtx/norm.hpp>
+#ifdef HAS_YAML_CPP
 #include <yaml-cpp/yaml.h>
+#endif
 #include "ppx/pch.hpp"
 
 #endif
