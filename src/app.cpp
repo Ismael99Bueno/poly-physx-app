@@ -289,6 +289,7 @@ namespace ppx
             shape.setPoint(i, {point.x, point.y});
         }
         shape.setPosition(centroid.x, centroid.y);
+        shape.setRotation(poly.rotation() * TO_DEGREES);
         return shape;
     }
     sf::CircleShape app::circle_shape_from(const geo::circle &c) const
