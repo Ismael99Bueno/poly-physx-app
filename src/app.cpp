@@ -17,7 +17,7 @@ namespace ppx
              const char *name) : m_engine(table, allocations)
 
     {
-        recreate_window(sf::Style::Default, {0.f, 0.f}, {WIDTH, -HEIGHT}, name);
+        recreate_window(sf::Style::Default, {0.f, 0.f}, {PPX_WIDTH, -PPX_HEIGHT}, name);
         push_layer<menu_layer>();
 
         m_window.setVerticalSyncEnabled(false);
@@ -51,7 +51,7 @@ namespace ppx
             exit(EXIT_FAILURE);
         }
         add_fonts();
-        framerate(DEFAULT_FPS);
+        framerate(PPX_DEFAULT_FPS);
     }
 
     void app::run(std::function<bool(engine2D &, float &)> forward)
@@ -199,7 +199,7 @@ namespace ppx
 
             on_entity_draw(e, *m_shapes[i]);
             const geo::shape2D &shape = e->shape();
-            const glm::vec2 center = shape.centroid() * WORLD_TO_PIXEL;
+            const glm::vec2 center = shape.centroid() * PPX_WORLD_TO_PIXEL;
 
             m_shapes[i]->setPosition(center.x, center.y);
             m_shapes[i]->setRotation(shape.rotation() * TO_DEGREES);
@@ -212,8 +212,8 @@ namespace ppx
         PERF_FUNCTION()
         for (const spring2D &sp : m_engine.springs())
         {
-            const glm::vec2 p1 = (sp.e1()->pos() + sp.anchor1()) * WORLD_TO_PIXEL,
-                            p2 = (sp.e2()->pos() + sp.anchor2()) * WORLD_TO_PIXEL;
+            const glm::vec2 p1 = (sp.e1()->pos() + sp.anchor1()) * PPX_WORLD_TO_PIXEL,
+                            p2 = (sp.e2()->pos() + sp.anchor2()) * PPX_WORLD_TO_PIXEL;
             draw_spring(p1, p2);
         }
     }
@@ -226,8 +226,8 @@ namespace ppx
             const auto rb = std::dynamic_pointer_cast<rigid_bar2D>(ctr);
             if (!rb)
                 continue;
-            const glm::vec2 p1 = (rb->e1()->pos() + rb->anchor1()) * WORLD_TO_PIXEL,
-                            p2 = (rb->e2()->pos() + rb->anchor2()) * WORLD_TO_PIXEL;
+            const glm::vec2 p1 = (rb->e1()->pos() + rb->anchor1()) * PPX_WORLD_TO_PIXEL,
+                            p2 = (rb->e2()->pos() + rb->anchor2()) * PPX_WORLD_TO_PIXEL;
             draw_rigid_bar(p1, p2);
         }
     }
@@ -279,13 +279,13 @@ namespace ppx
     sf::ConvexShape app::convex_shape_from(const geo::polygon &poly) const
     {
         sf::ConvexShape shape(poly.size());
-        const glm::vec2 centroid = poly.centroid() * WORLD_TO_PIXEL,
-                        origin = -poly.locals()[0] * WORLD_TO_PIXEL;
+        const glm::vec2 centroid = poly.centroid() * PPX_WORLD_TO_PIXEL,
+                        origin = -poly.locals()[0] * PPX_WORLD_TO_PIXEL;
         shape.setOrigin(origin.x, origin.y);
 
         for (std::size_t i = 0; i < poly.size(); i++)
         {
-            const glm::vec2 point = (poly.locals()[i] - poly.locals()[0]) * WORLD_TO_PIXEL;
+            const glm::vec2 point = (poly.locals()[i] - poly.locals()[0]) * PPX_WORLD_TO_PIXEL;
             shape.setPoint(i, {point.x, point.y});
         }
         shape.setPosition(centroid.x, centroid.y);
@@ -293,10 +293,10 @@ namespace ppx
     }
     sf::CircleShape app::circle_shape_from(const geo::circle &c) const
     {
-        const float scaled_radius = WORLD_TO_PIXEL * c.radius();
+        const float scaled_radius = PPX_WORLD_TO_PIXEL * c.radius();
         sf::CircleShape shape(scaled_radius);
         shape.setOrigin(scaled_radius, scaled_radius);
-        const glm::vec2 centroid = c.centroid() * WORLD_TO_PIXEL;
+        const glm::vec2 centroid = c.centroid() * PPX_WORLD_TO_PIXEL;
         shape.setPosition(centroid.x, centroid.y);
         return shape;
     }
@@ -360,8 +360,8 @@ namespace ppx
         const sf::View &v = m_window.getView();
         const glm::vec2 pos = glm::vec2(v.getCenter().x, v.getCenter().y),
                         size = {v.getSize().x, -v.getSize().y};
-        const geo::aabb2D qt_size = {-PIXEL_TO_WORLD * (size - pos), // Not halving the size to give some margin
-                                     PIXEL_TO_WORLD * (size + pos)};
+        const geo::aabb2D qt_size = {-PPX_PIXEL_TO_WORLD * (size - pos), // Not halving the size to give some margin
+                                     PPX_PIXEL_TO_WORLD * (size + pos)};
         m_engine.collider().quad_tree().aabb(qt_size);
         m_engine.collider().rebuild_quad_tree();
     }
@@ -401,8 +401,8 @@ namespace ppx
         transform_camera(dir, size);
     }
 
-    glm::vec2 app::world_mouse() const { return pixel_mouse() * PIXEL_TO_WORLD; }
-    glm::vec2 app::world_mouse_delta() const { return pixel_mouse_delta() * PIXEL_TO_WORLD; }
+    glm::vec2 app::world_mouse() const { return pixel_mouse() * PPX_PIXEL_TO_WORLD; }
+    glm::vec2 app::world_mouse_delta() const { return pixel_mouse_delta() * PPX_PIXEL_TO_WORLD; }
 
     sf::Uint32 app::style() const { return m_style; }
     void app::style(const sf::Uint32 style) { m_style = style; }

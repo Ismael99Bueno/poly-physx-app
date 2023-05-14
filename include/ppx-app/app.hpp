@@ -10,14 +10,14 @@
 #include <functional>
 #include <SFML/Graphics.hpp>
 
-#define WIDTH 1920.f
-#define HEIGHT 1280.f
-#define WORLD_TO_PIXEL 10.f
-#define PIXEL_TO_WORLD 0.1f
-#define NO_FPS_LIMIT 0
-#define DEFAULT_FPS 120
-#define DEFAULT_ENTITY_COLOR sf::Color(123, 143, 161)
-#define DEFAULT_JOINT_COLOR sf::Color(207, 185, 151)
+#define PPX_WIDTH 1920.f
+#define PPX_HEIGHT 1280.f
+#define PPX_WORLD_TO_PIXEL 10.f
+#define PPX_PIXEL_TO_WORLD 0.1f
+#define PPX_NO_FPS_LIMIT 0
+#define PPX_DEFAULT_FPS 120
+#define PPX_DEFAULT_ENTITY_COLOR sf::Color(123, 143, 161)
+#define PPX_DEFAULT_JOINT_COLOR sf::Color(207, 185, 151)
 
 namespace ppx
 {
@@ -132,9 +132,9 @@ namespace ppx
             m_raw_phys_time, m_raw_draw_time;
 
         float m_time_smoothness = 0.f;
-        sf::Color m_entity_color = DEFAULT_ENTITY_COLOR,
-                  m_springs_color = DEFAULT_JOINT_COLOR,
-                  m_rigid_bars_color = DEFAULT_JOINT_COLOR;
+        sf::Color m_entity_color = PPX_DEFAULT_ENTITY_COLOR,
+                  m_springs_color = PPX_DEFAULT_JOINT_COLOR,
+                  m_rigid_bars_color = PPX_DEFAULT_JOINT_COLOR;
 
         std::uint32_t m_integrations_per_frame = 1, m_framerate;
         float m_dt = 1e-3f;
