@@ -29,11 +29,11 @@ namespace ppx
             if (const auto *c = e->shape_if<geo::circle>())
             {
                 const sf::CircleShape shape = circle_shape_from(*c);
-                m_shapes.emplace_back(std::make_unique<sf::CircleShape>(shape))->setFillColor(m_entity_color);
+                m_shapes.emplace_back(make_scope<sf::CircleShape>(shape))->setFillColor(m_entity_color);
                 return;
             }
             const sf::ConvexShape shape = convex_shape_from(e->shape<geo::polygon>());
-            m_shapes.emplace_back(std::make_unique<sf::ConvexShape>(shape))->setFillColor(m_entity_color);
+            m_shapes.emplace_back(make_scope<sf::ConvexShape>(shape))->setFillColor(m_entity_color);
         };
 
         const auto remove_shape = [this](const std::size_t index)
@@ -106,7 +106,7 @@ namespace ppx
         layer_end();
     }
 
-    void app::pop_layer(const std::shared_ptr<layer> &l)
+    void app::pop_layer(const ref<layer> &l)
     {
         const auto it = m_layers.erase(std::remove(m_layers.begin(), m_layers.end(), l), m_layers.end());
         if (it != m_layers.end())
@@ -136,14 +136,14 @@ namespace ppx
             {
                 sf::ConvexShape shape = convex_shape_from(*poly);
                 shape.setFillColor(m_shapes[i]->getFillColor());
-                m_shapes[i] = std::make_unique<sf::ConvexShape>(shape);
+                m_shapes[i] = make_scope<sf::ConvexShape>(shape);
             }
             else
             {
                 const auto &c = e.shape<geo::circle>();
                 sf::CircleShape shape = circle_shape_from(c);
                 shape.setFillColor(m_shapes[i]->getFillColor());
-                m_shapes[i] = std::make_unique<sf::CircleShape>(shape);
+                m_shapes[i] = make_scope<sf::CircleShape>(shape);
             }
         }
     }
@@ -411,8 +411,8 @@ namespace ppx
     const engine2D &app::engine() const { return m_engine; }
     engine2D &app::engine() { return m_engine; }
 
-    const std::vector<std::unique_ptr<sf::Shape>> &app::shapes() const { return m_shapes; }
-    cvw::vector<std::unique_ptr<sf::Shape>> app::shapes() { return m_shapes; }
+    const std::vector<scope<sf::Shape>> &app::shapes() const { return m_shapes; }
+    cvw::vector<scope<sf::Shape>> app::shapes() { return m_shapes; }
 
     sf::Shape &app::operator[](std::size_t index) const { return *m_shapes[index]; }
 
