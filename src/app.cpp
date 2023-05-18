@@ -132,19 +132,16 @@ namespace ppx
         for (std::size_t i = 0; i < m_engine.size(); i++)
         {
             const ppx::entity2D &e = m_engine.entities()[i];
+            scope<sf::Shape> shape;
             if (const auto *poly = e.shape_if<geo::polygon>())
-            {
-                sf::ConvexShape shape = convex_shape_from(*poly);
-                shape.setFillColor(m_shapes[i]->getFillColor());
-                m_shapes[i] = make_scope<sf::ConvexShape>(shape);
-            }
+                shape = make_scope<sf::ConvexShape>(convex_shape_from(*poly));
             else
             {
                 const auto &c = e.shape<geo::circle>();
-                sf::CircleShape shape = circle_shape_from(c);
-                shape.setFillColor(m_shapes[i]->getFillColor());
-                m_shapes[i] = make_scope<sf::CircleShape>(shape);
+                shape = make_scope<sf::CircleShape>(circle_shape_from(c));
             }
+            shape->setFillColor(m_shapes[i]->getFillColor());
+            m_shapes[i] = std::move(shape);
         }
     }
 
