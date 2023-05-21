@@ -317,7 +317,7 @@ namespace ppx
         v.move({dir.x, dir.y});
         m_window.setView(v);
 
-        if (m_engine.collider().coldet() == collider2D::QUAD_TREE)
+        if (m_engine.collider().detection() == collider2D::QUAD_TREE)
             resize_quad_tree_to_window();
     }
 
@@ -328,7 +328,7 @@ namespace ppx
         v.move({dir.x, dir.y});
         m_window.setView(v);
 
-        if (m_engine.collider().coldet() == collider2D::QUAD_TREE)
+        if (m_engine.collider().detection() == collider2D::QUAD_TREE)
             resize_quad_tree_to_window();
     }
 
