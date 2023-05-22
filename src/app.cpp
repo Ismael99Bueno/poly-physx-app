@@ -361,7 +361,6 @@ namespace ppx
         const geo::aabb2D qt_size = {-PPX_PIXEL_TO_WORLD * (size - pos), // Not halving the size to give some margin
                                      PPX_PIXEL_TO_WORLD * (size + pos)};
         m_engine.collider().quad_tree().aabb(qt_size);
-        m_engine.collider().rebuild_quad_tree();
     }
 
     void app::control_camera()
