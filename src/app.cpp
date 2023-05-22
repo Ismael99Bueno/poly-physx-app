@@ -316,9 +316,6 @@ namespace ppx
         sf::View v = m_window.getView();
         v.move({dir.x, dir.y});
         m_window.setView(v);
-
-        if (m_engine.collider().detection() == collider2D::QUAD_TREE)
-            resize_quad_tree_to_window();
     }
 
     void app::transform_camera(const glm::vec2 &dir, const glm::vec2 &size)
@@ -327,9 +324,6 @@ namespace ppx
         v.setSize({size.x, size.y});
         v.move({dir.x, dir.y});
         m_window.setView(v);
-
-        if (m_engine.collider().detection() == collider2D::QUAD_TREE)
-            resize_quad_tree_to_window();
     }
 
     void app::recreate_window(const sf::Uint32 style,
@@ -351,16 +345,6 @@ namespace ppx
         const auto center = m_window.getView().getCenter(),
                    size = m_window.getView().getSize();
         recreate_window(style, glm::vec2(center.x, center.y), glm::vec2(size.x, size.y));
-    }
-
-    void app::resize_quad_tree_to_window()
-    {
-        const sf::View &v = m_window.getView();
-        const glm::vec2 pos = glm::vec2(v.getCenter().x, v.getCenter().y),
-                        size = {v.getSize().x, -v.getSize().y};
-        const geo::aabb2D qt_size = {-PPX_PIXEL_TO_WORLD * (size - pos), // Not halving the size to give some margin
-                                     PPX_PIXEL_TO_WORLD * (size + pos)};
-        m_engine.collider().quad_tree().aabb(qt_size);
     }
 
     void app::control_camera()

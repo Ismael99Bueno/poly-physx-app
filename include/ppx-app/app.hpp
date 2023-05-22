@@ -63,7 +63,6 @@ namespace ppx
                              const glm::vec2 &size,
                              const char *name = "poly-physx");
         void recreate_window(sf::Uint32 style, const char *name = "poly-physx");
-        void resize_quad_tree_to_window();
 
         const engine2D &engine() const;
         engine2D &engine();
