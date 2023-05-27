@@ -5,17 +5,17 @@
 
 namespace ppx
 {
-    class menu_layer final : public layer
-    {
-    public:
-        menu_layer();
+class menu_layer final : public layer
+{
+  public:
+    menu_layer();
 
-    private:
-        app *m_app;
+  private:
+    app *m_app;
 
-        void on_attach(app *papp) override;
-        void on_render() override;
-    };
-}
+    void on_attach(app *papp) override;
+    void on_render() override;
+};
+} // namespace ppx
 
 #endif
