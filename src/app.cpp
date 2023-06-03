@@ -221,7 +221,7 @@ void app::draw_rigid_bars()
     PERF_FUNCTION()
     for (const auto &ctr : m_engine.compeller().constraints())
     {
-        const auto rb = std::dynamic_pointer_cast<rigid_bar2D>(ctr);
+        const auto rb = dynamic_cast<const rigid_bar2D *>(ctr.get());
         if (!rb)
             continue;
         const glm::vec2 p1 = (rb->e1()->pos() + rb->anchor1()) * PPX_WORLD_TO_PIXEL,
