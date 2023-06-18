@@ -40,7 +40,7 @@ includedirs {
    "%{wks.location}/sfml-primitives/include",
    "%{wks.location}/allocators/include",
    "%{wks.location}/vendor/glm",
-   "%{wks.location}/vendor/imgui/include",
+   "%{wks.location}/vendor/imgui",
    "%{wks.location}/vendor/imgui-sfml/include",
    "%{wks.location}/vendor/SFML/include",
    "%{wks.location}/vendor/spdlog/include"
