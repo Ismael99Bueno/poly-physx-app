@@ -29,18 +29,18 @@ class app
 
     void run(std::function<bool(engine2D &, float &)> forward = &engine2D::raw_forward);
 
-    template <typename T, class... Args> ref<T> push_layer(Args &&...args)
+    template <typename T, class... LayerArgs> ref<T> push_layer(LayerArgs &&...args)
     {
         static_assert(std::is_base_of<layer, T>::value, "Layer must inherit from layer!");
-        const auto layer = make_ref<T>(std::forward<Args>(args)...);
+        const auto layer = make_ref<T>(std::forward<LayerArgs>(args)...);
         m_layers.emplace_back(layer)->on_attach(this);
         return layer;
     }
     void pop_layer(const ref<layer> &l);
 
-    template <class... Args> void draw(Args &&...args)
+    template <class... DrawArgs> void draw(DrawArgs &&...args)
     {
-        m_window.draw(std::forward<Args>(args)...);
+        m_window.draw(std::forward<DrawArgs>(args)...);
     }
 
     void draw_spring(const glm::vec2 &p1, const glm::vec2 &p2, const sf::Color &color);
