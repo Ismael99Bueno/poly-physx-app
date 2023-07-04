@@ -4,9 +4,7 @@
 #include <string>
 #include <vector>
 #include <functional>
-#include <SFML/Graphics.hpp>
 #include <imgui.h>
-#include <imgui-SFML.h>
 #include <filesystem>
 #include <glm/geometric.hpp>
 #include <glm/gtx/norm.hpp>

@@ -1,6 +1,6 @@
 project "poly-physx-app"
 staticruntime "off"
-kind "StaticLib"
+kind "ConsoleApp"
 
 language "C++"
 cppdialect "C++17"
@@ -14,8 +14,20 @@ filter "system:macosx"
       "-Wno-unused-parameter"
    }
 
-filter "system:windows"
-   defines "SFML_STATIC"
+   filter "kind:ConsoleApp"
+      libdirs "%{wks.location}/vendor/vulkan-sdk/macOS/lib"
+      links {
+         "shapes-2D",
+         "glfw",
+         "Cocoa.framework",
+         "IOKit.framework",
+         "CoreFoundation.framework",
+         "vulkan",
+         "imgui"
+      }
+      rpath = "-Wl,-rpath,".. rootpath .."vendor/vulkan-sdk/macOS/lib"
+      linkoptions {rpath}
+   filter {}
 filter {}
 
 pchheader "ppx-app/pch.hpp"
@@ -37,11 +49,8 @@ includedirs {
    "%{wks.location}/profile-tools/include",
    "%{wks.location}/vendor/yaml-cpp/include",
    "%{wks.location}/container-view/include",
-   "%{wks.location}/sfml-primitives/include",
    "%{wks.location}/allocators/include",
    "%{wks.location}/vendor/glm",
    "%{wks.location}/vendor/imgui",
-   "%{wks.location}/vendor/imgui-sfml/include",
-   "%{wks.location}/vendor/SFML/include",
    "%{wks.location}/vendor/spdlog/include"
 }
