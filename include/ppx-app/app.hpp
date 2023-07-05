@@ -19,6 +19,7 @@ class app : public lynx::app2D
 
   private:
     virtual void on_update(float ts) override;
+    virtual void on_render(float ts) override;
 
     virtual void on_entity_draw(const entity2D_ptr &e, lynx::shape2D &shape)
     {
@@ -28,7 +29,8 @@ class app : public lynx::app2D
     std::vector<scope<lynx::shape2D>> m_shapes;
     lynx::window2D *m_window;
 
-    void update_and_draw_entities();
+    void update_entities();
+    void draw_entities();
 };
 } // namespace ppx
 

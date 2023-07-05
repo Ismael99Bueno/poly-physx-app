@@ -40,20 +40,29 @@ app::app(const rk::butcher_tableau &table, const std::size_t allocations, const 
 void app::on_update(float ts)
 {
     m_engine.raw_forward(ts);
-    update_and_draw_entities();
+    update_entities();
 }
 
-void app::update_and_draw_entities()
+void app::on_render(const float ts)
+{
+    draw_entities();
+}
+
+void app::update_entities()
 {
     for (std::size_t i = 0; i < m_shapes.size(); i++)
     {
         const entity2D_ptr e = m_engine[i];
-
         m_shapes[i]->transform.position = e->pos();
         m_shapes[i]->transform.rotation = e->angpos();
         on_entity_draw(e, *m_shapes[i]);
-        m_window->draw(*m_shapes[i]);
     }
+}
+
+void app::draw_entities()
+{
+    for (const auto &shape : m_shapes)
+        m_window->draw(*shape);
 }
 
 engine2D &app::engine()
