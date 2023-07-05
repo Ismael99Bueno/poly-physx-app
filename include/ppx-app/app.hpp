@@ -20,6 +20,7 @@ class app : public lynx::app2D
   private:
     virtual void on_update(float ts) override;
     virtual void on_render(float ts) override;
+    virtual bool on_event(const lynx::event &event) override;
 
     virtual void on_entity_draw(const entity2D_ptr &e, lynx::shape2D &shape)
     {
@@ -28,9 +29,16 @@ class app : public lynx::app2D
     engine2D m_engine;
     std::vector<scope<lynx::shape2D>> m_shapes;
     lynx::window2D *m_window;
+    lynx::orthographic2D *m_camera;
+    bool m_paused = false;
 
     void update_entities();
-    void draw_entities();
+    void draw_entities() const;
+
+    void zoom(float offset);
+    void move_camera();
+
+    glm::vec2 mouse_position() const;
 };
 } // namespace ppx
 

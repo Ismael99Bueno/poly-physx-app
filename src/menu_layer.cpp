@@ -2,6 +2,7 @@
 #include "ppx-app/menu_layer.hpp"
 #include "lynx/app/app.hpp"
 #include "lynx/app/window.hpp"
+#include "lynx/geometry/camera.hpp"
 
 namespace ppx
 {
@@ -27,5 +28,9 @@ void menu_layer::on_imgui_render()
         }
         ImGui::EndMainMenuBar();
     }
+    const glm::vec2 mpos = m_window->camera<lynx::orthographic2D>()->screen_to_world(lynx::input::mouse_position());
+    ImGui::Begin("Test");
+    ImGui::Text("Mpos: %f %f", mpos.x, mpos.y);
+    ImGui::End();
 }
 } // namespace ppx
