@@ -1,4 +1,5 @@
 #include "ppx-app/app.hpp"
+#include "lynx/rendering/buffer.hpp"
 #include "ppx-app/menu_layer.hpp"
 
 int main()

@@ -6,6 +6,9 @@
 #include "lynx/app/app.hpp"
 #include "lynx/drawing/shape.hpp"
 
+#define PPX_DEFAULT_ENTITY_COLOR glm::vec4(123.f, 143.f, 161.f, 255.f) / 255.f
+#define PPX_DEFAULT_JOINT_COLOR glm::vec4(207.f, 185.f, 151.f, 255.f) / 255.f
+
 namespace ppx
 {
 class app : public lynx::app2D
@@ -16,6 +19,9 @@ class app : public lynx::app2D
 
     engine2D &engine();
     const engine2D &engine() const;
+
+    glm::vec4 entity_color = PPX_DEFAULT_ENTITY_COLOR;
+    glm::vec4 joint_color = PPX_DEFAULT_JOINT_COLOR;
 
   private:
     virtual void on_update(float ts) override;

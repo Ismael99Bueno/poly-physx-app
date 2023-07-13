@@ -2,6 +2,7 @@
 #include "ppx-app/app.hpp"
 #include "ppx-app/menu_layer.hpp"
 #include "lynx/geometry/camera.hpp"
+#include "lynx/rendering/buffer.hpp"
 
 namespace ppx
 {
@@ -20,12 +21,12 @@ app::app(const rk::butcher_tableau &table, const std::size_t allocations, const 
     const auto add_shape = [this](const entity2D_ptr &e) {
         if (const auto *c = e->shape_if<geo::circle>())
         {
-            m_shapes.emplace_back(make_scope<lynx::ellipse2D>(c->radius()));
+            m_shapes.emplace_back(make_scope<lynx::ellipse2D>(c->radius(), entity_color));
             return;
         }
         const geo::polygon &poly = e->shape<geo::polygon>();
-        m_shapes.emplace_back(
-            make_scope<lynx::polygon2D>(std::vector<glm::vec2>(poly.locals().begin(), poly.locals().end())));
+        m_shapes.emplace_back(make_scope<lynx::polygon2D>(
+            std::vector<glm::vec2>(poly.locals().begin(), poly.locals().end()), entity_color));
     };
 
     const auto remove_shape = [this](const std::size_t index) {
