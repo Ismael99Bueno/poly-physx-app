@@ -1,6 +1,8 @@
 #include "ppx-app/pch.hpp"
 #include "ppx-app/app.hpp"
 #include "ppx-app/menu_layer.hpp"
+#include "ppx-app/thick_line.hpp"
+
 #include "lynx/geometry/camera.hpp"
 #include "lynx/rendering/buffer.hpp"
 
@@ -100,15 +102,15 @@ void app::move_camera()
 {
     glm::vec2 dpos{0.f};
     if (lynx::input::key_pressed(lynx::input::key::A))
-        dpos.x = -0.8f;
+        dpos.x = -1.f;
     if (lynx::input::key_pressed(lynx::input::key::D))
-        dpos.x = 0.8f;
+        dpos.x = 1.f;
     if (lynx::input::key_pressed(lynx::input::key::W))
-        dpos.y = 0.8f;
+        dpos.y = 1.f;
     if (lynx::input::key_pressed(lynx::input::key::S))
-        dpos.y = -0.8f;
+        dpos.y = -1.f;
     if (glm::length2(dpos) > std::numeric_limits<float>::epsilon())
-        m_camera->transform.position += glm::normalize(dpos);
+        m_camera->transform.position += glm::normalize(dpos) * abs(m_camera->size()) / 50.f;
 }
 
 void app::zoom(const float offset)
