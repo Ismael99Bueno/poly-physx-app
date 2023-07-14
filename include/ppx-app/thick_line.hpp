@@ -1,5 +1,5 @@
-#ifndef PPX_SPRING_LINE_HPP
-#define PPX_SPRING_LINE_HPP
+#ifndef PPX_THICK_LINE_HPP
+#define PPX_THICK_LINE_HPP
 
 #include "lynx/drawing/drawable.hpp"
 #include "lynx/drawing/shape.hpp"

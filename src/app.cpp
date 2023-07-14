@@ -19,6 +19,11 @@ app::app(const rk::butcher_tableau &table, const std::size_t allocations, const 
     m_engine.integrator().max_dt(0.006f);
     m_engine.integrator().limited_timestep(false);
 
+    add_engine_callbacks();
+}
+
+void app::add_engine_callbacks()
+{
     const auto add_shape = [this](const entity2D_ptr &e) {
         if (const auto *c = e->shape_if<geo::circle>())
         {
@@ -87,7 +92,7 @@ void app::update_entities()
         const entity2D_ptr e = m_engine[i];
         m_shapes[i]->transform.position = e->pos();
         m_shapes[i]->transform.rotation = e->angpos();
-        on_entity_draw(e, *m_shapes[i]);
+        on_entity_update(e, *m_shapes[i]);
     }
 }
 
