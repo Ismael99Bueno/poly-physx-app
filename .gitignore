@@ -19,3 +19,5 @@
 **.xcodeproj
 *.sln
 **.vcxproj*
+
+imgui.ini

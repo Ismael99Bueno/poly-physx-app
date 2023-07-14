@@ -1,7 +1,6 @@
 #include "ppx-app/pch.hpp"
 #include "ppx-app/app.hpp"
 #include "ppx-app/menu_layer.hpp"
-#include "ppx-app/thick_line.hpp"
 
 #include "lynx/geometry/camera.hpp"
 #include "lynx/rendering/buffer.hpp"
