@@ -27,11 +27,11 @@ void app::add_engine_callbacks()
     const auto add_shape = [this](const entity2D_ptr &e) {
         if (const auto *c = e->shape_if<geo::circle>())
         {
-            m_shapes.emplace_back(make_scope<lynx::ellipse2D>(c->radius(), entity_color));
+            m_shapes.emplace_back(kit::make_scope<lynx::ellipse2D>(c->radius(), entity_color));
             return;
         }
         const geo::polygon &poly = e->shape<geo::polygon>();
-        m_shapes.emplace_back(make_scope<lynx::polygon2D>(
+        m_shapes.emplace_back(kit::make_scope<lynx::polygon2D>(
             std::vector<glm::vec2>(poly.locals().begin(), poly.locals().end()), entity_color));
     };
 

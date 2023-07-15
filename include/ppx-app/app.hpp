@@ -10,6 +10,8 @@
 #include "lynx/app/app.hpp"
 #include "lynx/drawing/shape.hpp"
 
+#include "kit/memory/scope.hpp"
+
 #define PPX_DEFAULT_ENTITY_COLOR glm::vec4(123.f, 143.f, 161.f, 255.f) / 255.f
 #define PPX_DEFAULT_JOINT_COLOR glm::vec4(207.f, 185.f, 151.f, 255.f) / 255.f
 
@@ -37,7 +39,7 @@ class app : public lynx::app2D
     }
 
     engine2D m_engine;
-    std::vector<scope<lynx::shape2D>> m_shapes;
+    std::vector<kit::scope<lynx::shape2D>> m_shapes;
     std::vector<spring_line> m_spring_lines;
     std::vector<thick_line> m_thick_lines;
 

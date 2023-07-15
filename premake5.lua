@@ -15,17 +15,6 @@ filter "system:macosx"
    }
 
    filter "kind:ConsoleApp"
-      defines {
-         "HAS_GLM",
-         "HAS_YAML_CPP",
-         "HAS_IMPLOT",
-         "HAS_DEBUG_LOG_TOOLS",
-         "HAS_PROFILE_TOOLS",
-         "HAS_ALLOCATORS",
-         "PPX_MULTITHREADED",
-         "YAML_CPP_STATIC_DEFINE"
-      }
-
       libdirs "%{wks.location}/vendor/vulkan-sdk/macOS/lib"
       links {
          "glfw",
@@ -34,7 +23,7 @@ filter "system:macosx"
          "CoreFoundation.framework",
          "vulkan",
          "imgui",
-         "profile-tools",
+         "cpp-kit",
          "yaml-cpp",
          "rk-integrator",
          "shapes-2D",
@@ -62,11 +51,8 @@ includedirs {
    "%{wks.location}/lynx/include",
    "%{wks.location}/shapes-2D/include",
    "%{wks.location}/rk-integrator/include",
-   "%{wks.location}/debug-log-tools/include",
-   "%{wks.location}/profile-tools/include",
+   "%{wks.location}/cpp-kit/include",
    "%{wks.location}/vendor/yaml-cpp/include",
-   "%{wks.location}/container-view/include",
-   "%{wks.location}/allocators/include",
    "%{wks.location}/vendor/glfw/include",
    "%{wks.location}/vendor/glm",
    "%{wks.location}/vendor/imgui",
