@@ -1,5 +1,5 @@
-#ifndef PPX_APP_PCH
-#define PPX_APP_PCH
+#ifndef PPX_APP_PCH_HPP
+#define PPX_APP_PCH_HPP
 
 #include <string>
 #include <vector>
@@ -8,6 +8,6 @@
 #include <filesystem>
 #include <glm/geometric.hpp>
 #include <glm/gtx/norm.hpp>
-#include "ppx/pch.hpp"
+#include "ppx/internal/pch.hpp"
 
 #endif
