@@ -24,7 +24,7 @@ app::app(const rk::butcher_tableau &table, const std::size_t allocations, const 
 
 void app::add_engine_callbacks()
 {
-    const auto add_shape = [this](const entity2D_ptr &e) {
+    const kit::callback<const entity2D_ptr &> add_shape{[this](const entity2D_ptr &e) {
         if (const auto *c = e->shape_if<geo::circle>())
         {
             m_shapes.emplace_back(kit::make_scope<lynx::ellipse2D>(c->radius(), entity_color));
@@ -33,12 +33,12 @@ void app::add_engine_callbacks()
         const geo::polygon &poly = e->shape<geo::polygon>();
         m_shapes.emplace_back(kit::make_scope<lynx::polygon2D>(
             std::vector<glm::vec2>(poly.locals().begin(), poly.locals().end()), entity_color));
-    };
+    }};
 
-    const auto remove_shape = [this](const std::size_t index) {
+    const kit::callback<std::size_t> remove_shape{[this](const std::size_t index) {
         m_shapes[index] = std::move(m_shapes.back());
         m_shapes.pop_back();
-    };
+    }};
 
     m_engine.events().on_entity_addition += add_shape;
     m_engine.events().on_late_entity_removal += remove_shape;
