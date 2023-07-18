@@ -36,6 +36,7 @@ class thick_line : public lynx::drawable2D
     lynx::ellipse2D m_circle2;
 
     void update_width(float width);
+    void update_length();
     void update_orientation();
 };
 } // namespace ppx

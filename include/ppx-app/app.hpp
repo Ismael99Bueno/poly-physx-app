@@ -17,6 +17,7 @@
 
 namespace ppx
 {
+class revolute_joint2D;
 class app : public lynx::app2D
 {
   public:
@@ -34,21 +35,24 @@ class app : public lynx::app2D
     virtual void on_render(float ts) override;
     virtual bool on_event(const lynx::event &event) override;
 
-    virtual void on_entity_update(const entity2D_ptr &e, lynx::shape2D &shape)
+    virtual void on_entity_update(const entity2D &e, lynx::shape2D &shape)
     {
     }
 
     engine2D m_engine;
     std::vector<kit::scope<lynx::shape2D>> m_shapes;
     std::vector<spring_line> m_spring_lines;
-    std::vector<thick_line> m_thick_lines;
+    std::unordered_map<const revolute_joint2D *, thick_line> m_thick_lines;
 
     lynx::window2D *m_window;
     lynx::orthographic2D *m_camera;
     bool m_paused = false;
 
     void update_entities();
+    void update_joints();
+
     void draw_entities() const;
+    void draw_joints() const;
 
     void zoom(float offset);
     void move_camera();

@@ -5,6 +5,8 @@
 #include "lynx/geometry/camera.hpp"
 #include "lynx/rendering/buffer.hpp"
 
+#include "ppx/joints/revolute_joint2D.hpp"
+
 namespace ppx
 {
 app::app(const rk::butcher_tableau &table, const std::size_t allocations, const char *name)
@@ -24,7 +26,7 @@ app::app(const rk::butcher_tableau &table, const std::size_t allocations, const 
 
 void app::add_engine_callbacks()
 {
-    const kit::callback<const entity2D_ptr &> add_shape{[this](const entity2D_ptr &e) {
+    const kit::callback<const entity2D::ptr &> add_shape{[this](const entity2D::ptr &e) {
         if (const auto *c = e->shape_if<geo::circle>())
         {
             m_shapes.emplace_back(kit::make_scope<lynx::ellipse2D>(c->radius(), entity_color));
@@ -40,8 +42,41 @@ void app::add_engine_callbacks()
         m_shapes.pop_back();
     }};
 
+    const kit::callback<const spring2D::ptr &> add_spring{[this](const spring2D::ptr &sp) {
+        if (sp->has_anchors())
+            m_spring_lines.emplace_back(sp->e1()->pos() + sp->anchor1(), sp->e2()->pos() + sp->anchor2(), 6,
+                                        joint_color);
+        else
+            m_spring_lines.emplace_back(sp->e1()->pos(), sp->e2()->pos(), 6, joint_color);
+    }};
+    const kit::callback<const spring2D &> remove_spring{
+        [this](const spring2D &sp) { m_spring_lines.erase(m_spring_lines.begin() + (long)sp.index()); }};
+
+    const kit::callback<constraint_interface2D *> add_revolute{[this](constraint_interface2D *ctr) {
+        const auto *rj = dynamic_cast<revolute_joint2D *>(ctr);
+        if (!rj)
+            return;
+        if (rj->has_anchors())
+            m_thick_lines.emplace(
+                rj, thick_line(rj->e1()->pos() + rj->anchor1(), rj->e2()->pos() + rj->anchor2(), 1.f, joint_color));
+        else
+            m_thick_lines.emplace(rj, thick_line(rj->e1()->pos(), rj->e2()->pos(), 1.f, joint_color));
+    }};
+    const kit::callback<const constraint_interface2D &> remove_revolute{[this](const constraint_interface2D &ctr) {
+        const auto *rj = dynamic_cast<const revolute_joint2D *>(&ctr);
+        if (!rj)
+            return;
+        m_thick_lines.erase(rj);
+    }};
+
     m_engine.events().on_entity_addition += add_shape;
     m_engine.events().on_late_entity_removal += remove_shape;
+
+    m_engine.events().on_spring_addition += add_spring;
+    m_engine.events().on_spring_removal += remove_spring;
+
+    m_engine.events().on_constraint_addition += add_revolute;
+    m_engine.events().on_constraint_removal += remove_revolute;
 }
 
 void app::on_update(float ts)
@@ -49,12 +84,14 @@ void app::on_update(float ts)
     if (!m_paused)
         m_engine.raw_forward(ts);
     update_entities();
+    update_joints();
     move_camera();
 }
 
 void app::on_render(const float ts)
 {
     draw_entities();
+    draw_joints();
 }
 
 bool app::on_event(const lynx::event &event)
@@ -66,6 +103,10 @@ bool app::on_event(const lynx::event &event)
             break;
         switch (event.key)
         {
+        case lynx::input::key::F:
+            if (m_engine.size() > 0)
+                m_engine.remove_entity(m_engine.size() - 1);
+            break;
         case lynx::input::key::ESCAPE:
             shutdown();
             return false;
@@ -87,12 +128,46 @@ bool app::on_event(const lynx::event &event)
 
 void app::update_entities()
 {
-    for (std::size_t i = 0; i < m_shapes.size(); i++)
+    const auto entities = m_engine.entities();
+    for (std::size_t i = 0; i < entities.unwrap().size(); i++)
     {
-        const entity2D_ptr e = m_engine[i];
-        m_shapes[i]->transform.position = e->pos();
-        m_shapes[i]->transform.rotation = e->angpos();
+        const entity2D &e = entities[i];
+        m_shapes[i]->transform.position = e.pos();
+        m_shapes[i]->transform.rotation = e.angpos();
         on_entity_update(e, *m_shapes[i]);
+    }
+}
+void app::update_joints()
+{
+    const auto springs = m_engine.springs();
+    for (std::size_t i = 0; i < springs.unwrap().size(); i++)
+    {
+        const spring2D &sp = springs[i];
+        spring_line &spline = m_spring_lines[i];
+        if (sp.has_anchors())
+        {
+            spline.p1(sp.e1()->pos() + sp.anchor1());
+            spline.p2(sp.e2()->pos() + sp.anchor2());
+        }
+        else
+        {
+            spline.p1(sp.e1()->pos());
+            spline.p2(sp.e2()->pos());
+        }
+    }
+
+    for (auto &[rj, thline] : m_thick_lines)
+    {
+        if (rj->has_anchors())
+        {
+            thline.p1(rj->e1()->pos() + rj->anchor1());
+            thline.p2(rj->e2()->pos() + rj->anchor2());
+        }
+        else
+        {
+            thline.p1(rj->e1()->pos());
+            thline.p2(rj->e2()->pos());
+        }
     }
 }
 
@@ -100,6 +175,14 @@ void app::draw_entities() const
 {
     for (const auto &shape : m_shapes)
         m_window->draw(*shape);
+}
+
+void app::draw_joints() const
+{
+    for (const spring_line &spline : m_spring_lines)
+        m_window->draw(spline);
+    for (const auto &[rj, thline] : m_thick_lines)
+        m_window->draw(thline);
 }
 
 void app::move_camera()

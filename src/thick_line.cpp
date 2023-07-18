@@ -19,7 +19,12 @@ void thick_line::update_width(const float width)
     m_circle1.radius(0.5f * width);
     m_circle2.radius(0.5f * width);
 
-    m_rect.transform.scale = {glm::distance(m_circle1.transform.position, m_circle2.transform.position), width};
+    m_rect.transform.scale.y = width;
+}
+
+void thick_line::update_length()
+{
+    m_rect.transform.scale.x = glm::distance(m_circle1.transform.position, m_circle2.transform.position);
 }
 
 void thick_line::update_orientation()
@@ -52,11 +57,13 @@ const glm::vec2 &thick_line::p2() const
 void thick_line::p1(const glm::vec2 &p1)
 {
     m_circle1.transform.position = p1;
+    update_length();
     update_orientation();
 }
 void thick_line::p2(const glm::vec2 &p2)
 {
     m_circle2.transform.position = p2;
+    update_length();
     update_orientation();
 }
 
