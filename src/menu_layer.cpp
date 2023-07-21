@@ -6,17 +6,16 @@
 
 namespace ppx
 {
-menu_layer::menu_layer() : lynx::imgui_layer("Menu layer")
+menu_layer::menu_layer() : lynx::layer("Menu layer")
 {
 }
 
 void menu_layer::on_attach()
 {
-    lynx::imgui_layer::on_attach();
     m_window = parent()->window();
 }
 
-void menu_layer::on_imgui_render()
+void menu_layer::on_render(const float ts)
 {
     if (ImGui::BeginMainMenuBar())
     {

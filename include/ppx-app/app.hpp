@@ -12,6 +12,10 @@
 
 #include "kit/memory/scope.hpp"
 
+#ifdef KIT_USE_YAML_CPP
+#include <yaml-cpp/yaml.h>
+#endif
+
 #define PPX_DEFAULT_ENTITY_COLOR glm::vec4(123.f, 143.f, 161.f, 255.f) / 255.f
 #define PPX_DEFAULT_JOINT_COLOR glm::vec4(207.f, 185.f, 151.f, 255.f) / 255.f
 
@@ -78,7 +82,27 @@ class app : public lynx::app2D
     glm::vec2 mouse_position() const;
 
     void add_engine_callbacks();
+
+    // #ifdef KIT_USE_YAML_CPP
+    //     friend YAML::Emitter &operator<<(YAML::Emitter &, const app &);
+    //     friend struct YAML::convert<app>;
+    // #endif
 };
+
+// #ifdef KIT_USE_YAML_CPP
+// YAML::Emitter &operator<<(YAML::Emitter &out, const app &papp);
+// #endif
 } // namespace ppx
+
+// #ifdef KIT_USE_YAML_CPP
+// namespace YAML
+// {
+// template <> struct convert<ppx::app>
+// {
+//     static Node encode(const ppx::app &papp);
+//     static bool decode(const Node &node, ppx::app &papp);
+// };
+// #endif
+// }
 
 #endif

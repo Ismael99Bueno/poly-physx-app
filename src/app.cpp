@@ -267,4 +267,99 @@ kit::time app::draw_time() const
 {
     return m_draw_time;
 }
+
+// // HACER INTERFAZ NAMEABLE, TOGGLEABLE
+// #ifdef KIT_USE_YAML_CPP
+// YAML::Emitter &operator<<(YAML::Emitter &out, const app &papp)
+// {
+//     out << YAML::BeginMap;
+//     out << YAML::Key << "Engine" << YAML::Value << papp.engine();
+//     out << YAML::Key << "Timestep" << YAML::Value << papp.timestep();
+//     out << YAML::Key << "Layers" << YAML::Value << YAML::BeginMap;
+//     for (const auto &l : papp.layers())
+//         out << YAML::Key << l->name() << YAML::Value << *l;
+//     out << YAML::EndMap;
+
+//     out << YAML::Key << "Shape colors" << YAML::Value << YAML::BeginSeq;
+//     for (const auto &shape : papp.shapes())
+//         out << shape->getFillColor();
+//     out << YAML::EndSeq;
+
+//     out << YAML::Key << "Paused" << YAML::Value << papp.paused();
+//     out << YAML::Key << "Sync timestep" << YAML::Value << papp.sync_timestep();
+//     out << YAML::Key << "Time smoothness" << YAML::Value << papp.time_measure_smoothness();
+//     out << YAML::Key << "Entity color" << YAML::Value << papp.entity_color();
+//     out << YAML::Key << "Springs color" << YAML::Value << papp.springs_color();
+//     out << YAML::Key << "Rigid bars color" << YAML::Value << papp.rigid_bars_color();
+//     out << YAML::Key << "Integrations per frame" << YAML::Value << papp.integrations_per_frame();
+//     out << YAML::Key << "Framerate" << YAML::Value << papp.framerate();
+//     const sf::View &view = papp.window().getView();
+//     const glm::vec2 center = {view.getCenter().x, view.getCenter().y}, size = {view.getSize().x, view.getSize().y};
+//     out << YAML::Key << "Camera center" << YAML::Value << center;
+//     out << YAML::Key << "Camera size" << YAML::Value << size;
+//     out << YAML::EndMap;
+//     return out;
+// }
+// #endif
 } // namespace ppx
+
+// #ifdef KIT_USE_YAML_CPP
+// namespace YAML
+// {
+// Node convert<ppx::app>::encode(const ppx::app &papp)
+// {
+//     Node node;
+//     node["Engine"] = papp.engine();
+//     node["Timestep"] = papp.timestep();
+//     for (const auto &l : papp.m_layers)
+//         node["Layers"][l->name()] = *l;
+//     for (const auto &shape : papp.shapes())
+//         node["Shape colors"].push_back(shape->getFillColor());
+//     node["Paused"] = papp.paused();
+//     node["Sync timestep"] = papp.sync_timestep();
+//     node["Time smoothness"] = papp.time_measure_smoothness();
+//     node["Entity color"] = papp.entity_color();
+//     node["Springs color"] = papp.springs_color();
+//     node["Rigid bars color"] = papp.rigid_bars_color();
+//     node["Integrations per frame"] = papp.integrations_per_frame();
+//     node["Framerate"] = papp.framerate();
+//     const sf::View &view = papp.window().getView();
+//     const glm::vec2 center = {view.getCenter().x, view.getCenter().y}, size = {view.getSize().x, view.getSize().y};
+//     node["Camera center"] = center;
+//     node["Camera size"] = size;
+//     return node;
+// }
+// bool convert<ppx::app>::decode(const Node &node, ppx::app &papp)
+// {
+//     if (!node.IsMap() || node.size() != 15)
+//         return false;
+
+//     node["Engine"].as<ppx::engine2D>(papp.engine());
+//     papp.timestep(node["Timestep"].as<float>());
+//     papp.recreate_window(node["Window style"].as<std::uint32_t>());
+//     for (const auto &l : papp.m_layers)
+//         if (node["Layers"][l->name()])
+//             node["Layers"][l->name()].as<ppx::layer>(*l);
+
+//     for (std::size_t i = 0; i < papp.m_shapes.size(); i++)
+//         papp.m_shapes[i]->setFillColor(node["Shape colors"][i].as<sf::Color>());
+//     papp.update_shapes();
+
+//     papp.paused(node["Paused"].as<bool>());
+//     papp.sync_timestep(node["Sync timestep"].as<bool>());
+//     papp.time_measure_smoothness(node["Time smoothness"].as<float>());
+//     papp.entity_color(node["Entity color"].as<sf::Color>());
+//     papp.springs_color(node["Springs color"].as<sf::Color>());
+//     papp.rigid_bars_color(node["Rigid bars color"].as<sf::Color>());
+//     papp.integrations_per_frame(node["Integrations per frame"].as<std::uint32_t>());
+//     papp.framerate(node["Framerate"].as<std::uint32_t>());
+
+//     const glm::vec2 center = node["Camera center"].as<glm::vec2>(), size = node["Camera size"].as<glm::vec2>();
+//     sf::View view = papp.window().getView();
+//     view.setCenter(center.x, center.y);
+//     view.setSize(size.x, size.y);
+//     papp.window().setView(view);
+//     return true;
+// };
+// } // namespace YAML
+// #endif

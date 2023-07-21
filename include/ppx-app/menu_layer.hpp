@@ -5,14 +5,14 @@
 
 namespace ppx
 {
-class menu_layer : public lynx::imgui_layer
+class menu_layer : public lynx::layer
 {
   public:
     menu_layer();
 
   private:
     void on_attach() override;
-    void on_imgui_render() override;
+    void on_render(float ts) override;
 
     lynx::window *m_window;
 };
