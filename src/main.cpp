@@ -2,6 +2,7 @@
 #include "lynx/rendering/buffer.hpp"
 #include "ppx-app/menu_layer.hpp"
 #include "ppx/joints/revolute_joint2D.hpp"
+#include "kit/profile/clock.hpp"
 
 int main()
 {
@@ -23,9 +24,9 @@ int main()
     spspecs.e2 = e2;
     spspecs.has_anchors = true;
     spspecs.anchor2 = {3.f, 0.f};
+
     app.engine().compeller().add_constraint<ppx::revolute_joint2D>(spspecs);
 
     // e1->mass(30.f);
-
     app.run();
 }

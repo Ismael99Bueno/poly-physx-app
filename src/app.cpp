@@ -79,19 +79,30 @@ void app::add_engine_callbacks()
     m_engine.events().on_constraint_removal += remove_revolute;
 }
 
-void app::on_update(float ts)
+void app::on_update(const float ts)
 {
+    const kit::clock update_clock;
+    if (m_sync_timestep)
+        m_timestep = ts;
+
+    const kit::clock physics_clock;
     if (!m_paused)
-        m_engine.raw_forward(ts);
+        for (std::uint32_t i = 0; i < integrations_per_frame; i++)
+            m_engine.raw_forward(m_timestep);
+    m_physics_time = physics_clock.elapsed();
+
     update_entities();
     update_joints();
     move_camera();
+    m_update_time = update_clock.elapsed();
 }
 
 void app::on_render(const float ts)
 {
+    const kit::clock draw_clock;
     draw_entities();
     draw_joints();
+    m_draw_time = draw_clock.elapsed();
 }
 
 bool app::on_event(const lynx::event &event)
@@ -224,5 +235,36 @@ engine2D &app::engine()
 const engine2D &app::engine() const
 {
     return m_engine;
+}
+
+float app::timestep() const
+{
+    return m_timestep;
+}
+void app::timestep(float ts)
+{
+    m_timestep = ts;
+}
+
+bool app::sync_timestep() const
+{
+    return m_sync_timestep;
+}
+void app::sync_timestep(const bool sync)
+{
+    m_sync_timestep = sync;
+}
+
+kit::time app::update_time() const
+{
+    return m_update_time;
+}
+kit::time app::physics_time() const
+{
+    return m_physics_time;
+}
+kit::time app::draw_time() const
+{
+    return m_draw_time;
 }
 } // namespace ppx

@@ -27,8 +27,20 @@ class app : public lynx::app2D
     engine2D &engine();
     const engine2D &engine() const;
 
+    float timestep() const;
+    void timestep(float ts);
+
+    bool sync_timestep() const;
+    void sync_timestep(bool sync);
+
+    kit::time update_time() const;
+    kit::time physics_time() const;
+    kit::time draw_time() const;
+
     glm::vec4 entity_color = PPX_DEFAULT_ENTITY_COLOR;
     glm::vec4 joint_color = PPX_DEFAULT_JOINT_COLOR;
+
+    std::uint32_t integrations_per_frame = 1;
 
   private:
     virtual void on_update(float ts) override;
@@ -47,6 +59,12 @@ class app : public lynx::app2D
     lynx::window2D *m_window;
     lynx::orthographic2D *m_camera;
     bool m_paused = false;
+    bool m_sync_timestep = true;
+    float m_timestep = 1e-3f;
+
+    kit::time m_update_time;
+    kit::time m_physics_time;
+    kit::time m_draw_time;
 
     void update_entities();
     void update_joints();
