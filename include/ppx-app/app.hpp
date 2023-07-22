@@ -11,6 +11,7 @@
 #include "lynx/drawing/shape.hpp"
 
 #include "kit/memory/scope.hpp"
+#include "kit/interface/serializable.hpp"
 
 #ifdef KIT_USE_YAML_CPP
 #include <yaml-cpp/yaml.h>
@@ -22,7 +23,7 @@
 namespace ppx
 {
 class revolute_joint2D;
-class app : public lynx::app2D
+class app : public lynx::app2D, public kit::serializable
 {
   public:
     app(const rk::butcher_tableau &table = rk::rk4, std::size_t allocations = 100, const char *name = "poly-physx");
@@ -40,6 +41,11 @@ class app : public lynx::app2D
     kit::time update_time() const;
     kit::time physics_time() const;
     kit::time draw_time() const;
+
+#ifdef KIT_USE_YAML_CPP
+    virtual YAML::Node encode() const override;
+    virtual bool decode(const YAML::Node &node) override;
+#endif
 
     glm::vec4 entity_color = PPX_DEFAULT_ENTITY_COLOR;
     glm::vec4 joint_color = PPX_DEFAULT_JOINT_COLOR;
@@ -82,27 +88,8 @@ class app : public lynx::app2D
     glm::vec2 mouse_position() const;
 
     void add_engine_callbacks();
-
-    // #ifdef KIT_USE_YAML_CPP
-    //     friend YAML::Emitter &operator<<(YAML::Emitter &, const app &);
-    //     friend struct YAML::convert<app>;
-    // #endif
 };
 
-// #ifdef KIT_USE_YAML_CPP
-// YAML::Emitter &operator<<(YAML::Emitter &out, const app &papp);
-// #endif
 } // namespace ppx
-
-// #ifdef KIT_USE_YAML_CPP
-// namespace YAML
-// {
-// template <> struct convert<ppx::app>
-// {
-//     static Node encode(const ppx::app &papp);
-//     static bool decode(const Node &node, ppx::app &papp);
-// };
-// #endif
-// }
 
 #endif

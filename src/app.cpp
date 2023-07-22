@@ -268,6 +268,56 @@ kit::time app::draw_time() const
     return m_draw_time;
 }
 
+#ifdef KIT_USE_YAML_CPP
+YAML::Node app::encode() const
+{
+    YAML::Node node;
+    node["Engine"] = m_engine;
+    node["Timestep"] = m_timestep;
+    for (const auto &l : layers())
+        node["Layers"][l->name()] = l->encode();
+    for (const auto &shape : m_shapes)
+        node["Shape colors"].push_back(shape->color());
+    node["Paused"] = m_paused;
+    node["Sync timestep"] = m_sync_timestep;
+    node["Entity color"] = entity_color;
+    node["Joints color"] = joint_color;
+    node["Integrations per frame"] = integrations_per_frame;
+    node["Framerate"] = framerate_cap();
+    node["Camera position"] = m_camera->transform.position;
+    node["Camera scale"] = m_camera->transform.scale;
+    node["Camera rotation"] = m_camera->transform.rotation;
+    return node;
+}
+bool app::decode(const YAML::Node &node)
+{
+    if (!node.IsMap() || node.size() != 14)
+        return false;
+
+    m_shapes.clear();
+    node["Engine"].as<ppx::engine2D>(m_engine);
+    m_timestep = node["Timestep"].as<float>();
+    for (const auto &l : layers())
+        if (node["Layers"][l->name()])
+            node["Layers"][l->name()].as<kit::serializable>(*l);
+
+    for (std::size_t i = 0; i < m_shapes.size(); i++)
+        m_shapes[i]->color(node["Shape colors"][i].as<glm::vec4>());
+
+    m_paused = node["Paused"].as<bool>();
+    m_sync_timestep = node["Sync timestep"].as<bool>();
+    entity_color = node["Entity color"].as<glm::vec4>();
+    joint_color = node["Springs color"].as<glm::vec4>();
+    integrations_per_frame = node["Integrations per frame"].as<std::uint32_t>();
+    limit_framerate(node["Framerate"].as<std::uint32_t>());
+
+    m_camera->transform.position = node["Camera position"].as<glm::vec2>();
+    m_camera->transform.scale = node["Camera scale"].as<glm::vec2>();
+    m_camera->transform.rotation = node["Camera rotation"].as<float>();
+    return true;
+}
+#endif
+
 // // HACER INTERFAZ NAMEABLE, TOGGLEABLE
 // #ifdef KIT_USE_YAML_CPP
 // YAML::Emitter &operator<<(YAML::Emitter &out, const app &papp)
