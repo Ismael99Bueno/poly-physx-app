@@ -17,9 +17,9 @@ app::app(const rk::butcher_tableau &table, const std::size_t allocations, const 
     m_window = window();
     m_camera = m_window->set_camera<lynx::orthographic2D>(glm::vec2(m_window->swap_chain_aspect() * 50.f, -50.f));
 
-    m_engine.integrator().min_dt(0.0002f);
-    m_engine.integrator().max_dt(0.006f);
-    m_engine.integrator().limited_timestep(false);
+    m_engine.integrator.min_dt(0.0002f);
+    m_engine.integrator.max_dt(0.006f);
+    m_engine.integrator.limited_timestep(false);
 
     add_engine_callbacks();
 }
@@ -52,7 +52,7 @@ void app::add_engine_callbacks()
     const kit::callback<const spring2D &> remove_spring{
         [this](const spring2D &sp) { m_spring_lines.erase(m_spring_lines.begin() + (long)sp.index()); }};
 
-    const kit::callback<constraint_interface2D *> add_revolute{[this](constraint_interface2D *ctr) {
+    const kit::callback<constraint2D *> add_revolute{[this](constraint2D *ctr) {
         const auto *rj = dynamic_cast<revolute_joint2D *>(ctr);
         if (!rj)
             return;
@@ -62,21 +62,21 @@ void app::add_engine_callbacks()
         else
             m_thick_lines.emplace(rj, thick_line(rj->e1()->pos(), rj->e2()->pos(), 1.f, joint_color));
     }};
-    const kit::callback<const constraint_interface2D &> remove_revolute{[this](const constraint_interface2D &ctr) {
+    const kit::callback<const constraint2D &> remove_revolute{[this](const constraint2D &ctr) {
         const auto *rj = dynamic_cast<const revolute_joint2D *>(&ctr);
         if (!rj)
             return;
         m_thick_lines.erase(rj);
     }};
 
-    m_engine.events().on_entity_addition += add_shape;
-    m_engine.events().on_late_entity_removal += remove_shape;
+    m_engine.events.on_entity_addition += add_shape;
+    m_engine.events.on_late_entity_removal += remove_shape;
 
-    m_engine.events().on_spring_addition += add_spring;
-    m_engine.events().on_spring_removal += remove_spring;
+    m_engine.events.on_spring_addition += add_spring;
+    m_engine.events.on_spring_removal += remove_spring;
 
-    m_engine.events().on_constraint_addition += add_revolute;
-    m_engine.events().on_constraint_removal += remove_revolute;
+    m_engine.events.on_constraint_addition += add_revolute;
+    m_engine.events.on_constraint_removal += remove_revolute;
 }
 
 void app::on_update(const float ts)
@@ -275,7 +275,7 @@ YAML::Node app::encode() const
     node["Engine"] = m_engine;
     node["Timestep"] = m_timestep;
     for (const auto &l : layers())
-        node["Layers"][l->name()] = l->encode();
+        node["Layers"][l->id()] = *l;
     for (const auto &shape : m_shapes)
         node["Shape colors"].push_back(shape->color());
     node["Paused"] = m_paused;
@@ -298,8 +298,8 @@ bool app::decode(const YAML::Node &node)
     node["Engine"].as<ppx::engine2D>(m_engine);
     m_timestep = node["Timestep"].as<float>();
     for (const auto &l : layers())
-        if (node["Layers"][l->name()])
-            node["Layers"][l->name()].as<kit::serializable>(*l);
+        if (node["Layers"][l->id()])
+            node["Layers"][l->id()].as<lynx::layer>(*l);
 
     for (std::size_t i = 0; i < m_shapes.size(); i++)
         m_shapes[i]->color(node["Shape colors"][i].as<glm::vec4>());
@@ -318,98 +318,4 @@ bool app::decode(const YAML::Node &node)
 }
 #endif
 
-// // HACER INTERFAZ NAMEABLE, TOGGLEABLE
-// #ifdef KIT_USE_YAML_CPP
-// YAML::Emitter &operator<<(YAML::Emitter &out, const app &papp)
-// {
-//     out << YAML::BeginMap;
-//     out << YAML::Key << "Engine" << YAML::Value << papp.engine();
-//     out << YAML::Key << "Timestep" << YAML::Value << papp.timestep();
-//     out << YAML::Key << "Layers" << YAML::Value << YAML::BeginMap;
-//     for (const auto &l : papp.layers())
-//         out << YAML::Key << l->name() << YAML::Value << *l;
-//     out << YAML::EndMap;
-
-//     out << YAML::Key << "Shape colors" << YAML::Value << YAML::BeginSeq;
-//     for (const auto &shape : papp.shapes())
-//         out << shape->getFillColor();
-//     out << YAML::EndSeq;
-
-//     out << YAML::Key << "Paused" << YAML::Value << papp.paused();
-//     out << YAML::Key << "Sync timestep" << YAML::Value << papp.sync_timestep();
-//     out << YAML::Key << "Time smoothness" << YAML::Value << papp.time_measure_smoothness();
-//     out << YAML::Key << "Entity color" << YAML::Value << papp.entity_color();
-//     out << YAML::Key << "Springs color" << YAML::Value << papp.springs_color();
-//     out << YAML::Key << "Rigid bars color" << YAML::Value << papp.rigid_bars_color();
-//     out << YAML::Key << "Integrations per frame" << YAML::Value << papp.integrations_per_frame();
-//     out << YAML::Key << "Framerate" << YAML::Value << papp.framerate();
-//     const sf::View &view = papp.window().getView();
-//     const glm::vec2 center = {view.getCenter().x, view.getCenter().y}, size = {view.getSize().x, view.getSize().y};
-//     out << YAML::Key << "Camera center" << YAML::Value << center;
-//     out << YAML::Key << "Camera size" << YAML::Value << size;
-//     out << YAML::EndMap;
-//     return out;
-// }
-// #endif
 } // namespace ppx
-
-// #ifdef KIT_USE_YAML_CPP
-// namespace YAML
-// {
-// Node convert<ppx::app>::encode(const ppx::app &papp)
-// {
-//     Node node;
-//     node["Engine"] = papp.engine();
-//     node["Timestep"] = papp.timestep();
-//     for (const auto &l : papp.m_layers)
-//         node["Layers"][l->name()] = *l;
-//     for (const auto &shape : papp.shapes())
-//         node["Shape colors"].push_back(shape->getFillColor());
-//     node["Paused"] = papp.paused();
-//     node["Sync timestep"] = papp.sync_timestep();
-//     node["Time smoothness"] = papp.time_measure_smoothness();
-//     node["Entity color"] = papp.entity_color();
-//     node["Springs color"] = papp.springs_color();
-//     node["Rigid bars color"] = papp.rigid_bars_color();
-//     node["Integrations per frame"] = papp.integrations_per_frame();
-//     node["Framerate"] = papp.framerate();
-//     const sf::View &view = papp.window().getView();
-//     const glm::vec2 center = {view.getCenter().x, view.getCenter().y}, size = {view.getSize().x, view.getSize().y};
-//     node["Camera center"] = center;
-//     node["Camera size"] = size;
-//     return node;
-// }
-// bool convert<ppx::app>::decode(const Node &node, ppx::app &papp)
-// {
-//     if (!node.IsMap() || node.size() != 15)
-//         return false;
-
-//     node["Engine"].as<ppx::engine2D>(papp.engine());
-//     papp.timestep(node["Timestep"].as<float>());
-//     papp.recreate_window(node["Window style"].as<std::uint32_t>());
-//     for (const auto &l : papp.m_layers)
-//         if (node["Layers"][l->name()])
-//             node["Layers"][l->name()].as<ppx::layer>(*l);
-
-//     for (std::size_t i = 0; i < papp.m_shapes.size(); i++)
-//         papp.m_shapes[i]->setFillColor(node["Shape colors"][i].as<sf::Color>());
-//     papp.update_shapes();
-
-//     papp.paused(node["Paused"].as<bool>());
-//     papp.sync_timestep(node["Sync timestep"].as<bool>());
-//     papp.time_measure_smoothness(node["Time smoothness"].as<float>());
-//     papp.entity_color(node["Entity color"].as<sf::Color>());
-//     papp.springs_color(node["Springs color"].as<sf::Color>());
-//     papp.rigid_bars_color(node["Rigid bars color"].as<sf::Color>());
-//     papp.integrations_per_frame(node["Integrations per frame"].as<std::uint32_t>());
-//     papp.framerate(node["Framerate"].as<std::uint32_t>());
-
-//     const glm::vec2 center = node["Camera center"].as<glm::vec2>(), size = node["Camera size"].as<glm::vec2>();
-//     sf::View view = papp.window().getView();
-//     view.setCenter(center.x, center.y);
-//     view.setSize(size.x, size.y);
-//     papp.window().setView(view);
-//     return true;
-// };
-// } // namespace YAML
-// #endif

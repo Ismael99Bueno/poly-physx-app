@@ -11,7 +11,7 @@
 #include "lynx/drawing/shape.hpp"
 
 #include "kit/memory/scope.hpp"
-#include "kit/interface/serializable.hpp"
+#include "kit/interface/serialization.hpp"
 
 #ifdef KIT_USE_YAML_CPP
 #include <yaml-cpp/yaml.h>

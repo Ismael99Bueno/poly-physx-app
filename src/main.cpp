@@ -25,7 +25,7 @@ int main()
     spspecs.has_anchors = true;
     spspecs.anchor2 = {3.f, 0.f};
 
-    app.engine().compeller().add_constraint<ppx::revolute_joint2D>(spspecs);
+    app.engine().add_constraint<ppx::revolute_joint2D>(spspecs);
 
     // e1->mass(30.f);
     app.run();
