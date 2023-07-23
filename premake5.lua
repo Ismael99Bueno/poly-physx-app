@@ -1,6 +1,6 @@
 project "poly-physx-app"
 staticruntime "off"
-kind "ConsoleApp"
+kind "StaticLib"
 
 language "C++"
 cppdialect "C++17"
@@ -13,26 +13,6 @@ filter "system:macosx"
       "-Wconversion",
       "-Wno-unused-parameter"
    }
-
-   filter "kind:ConsoleApp"
-      libdirs "%{wks.location}/vendor/vulkan-sdk/macOS/lib"
-      links {
-         "glfw",
-         "Cocoa.framework",
-         "IOKit.framework",
-         "CoreFoundation.framework",
-         "vulkan",
-         "imgui",
-         "cpp-kit",
-         "yaml-cpp",
-         "rk-integrator",
-         "shapes-2D",
-         "poly-physx",
-         "lynx",
-      }
-      rpath = "-Wl,-rpath,".. rootpath .."vendor/vulkan-sdk/macOS/lib"
-      linkoptions {rpath}
-   filter {}
 filter {}
 
 pchheader "ppx-app/pch.hpp"
