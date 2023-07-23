@@ -280,7 +280,7 @@ YAML::Node app::encode() const
         node["Shape colors"].push_back(shape->color());
     node["Paused"] = m_paused;
     node["Sync timestep"] = m_sync_timestep;
-    node["Entity color"] = body_color;
+    node["Body color"] = body_color;
     node["Joints color"] = joint_color;
     node["Integrations per frame"] = integrations_per_frame;
     node["Framerate"] = framerate_cap();
@@ -291,7 +291,7 @@ YAML::Node app::encode() const
 }
 bool app::decode(const YAML::Node &node)
 {
-    if (!node.IsMap() || node.size() != 14)
+    if (!node.IsMap() || node.size() != 13)
         return false;
 
     m_shapes.clear();
@@ -306,8 +306,8 @@ bool app::decode(const YAML::Node &node)
 
     m_paused = node["Paused"].as<bool>();
     m_sync_timestep = node["Sync timestep"].as<bool>();
-    body_color = node["Entity color"].as<glm::vec4>();
-    joint_color = node["Springs color"].as<glm::vec4>();
+    body_color = node["Body color"].as<glm::vec4>();
+    joint_color = node["Joints color"].as<glm::vec4>();
     integrations_per_frame = node["Integrations per frame"].as<std::uint32_t>();
     limit_framerate(node["Framerate"].as<std::uint32_t>());
 
