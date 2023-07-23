@@ -2,7 +2,7 @@
 #define PPX_APP_HPP
 
 #include "rk/tableaus.hpp"
-#include "ppx/engine2D.hpp"
+#include "ppx/world2D.hpp"
 
 #include "ppx-app/thick_line.hpp"
 #include "ppx-app/spring_line.hpp"
@@ -29,8 +29,8 @@ class app : public lynx::app2D, public kit::serializable
     app(const rk::butcher_tableau &table = rk::rk4, std::size_t allocations = 100, const char *name = "poly-physx");
     virtual ~app() = default;
 
-    engine2D &engine();
-    const engine2D &engine() const;
+    world2D &world();
+    const world2D &world() const;
 
     float timestep() const;
     void timestep(float ts);
@@ -47,7 +47,7 @@ class app : public lynx::app2D, public kit::serializable
     virtual bool decode(const YAML::Node &node) override;
 #endif
 
-    glm::vec4 entity_color = PPX_DEFAULT_ENTITY_COLOR;
+    glm::vec4 body_color = PPX_DEFAULT_ENTITY_COLOR;
     glm::vec4 joint_color = PPX_DEFAULT_JOINT_COLOR;
 
     std::uint32_t integrations_per_frame = 1;
@@ -57,11 +57,11 @@ class app : public lynx::app2D, public kit::serializable
     virtual void on_render(float ts) override;
     virtual bool on_event(const lynx::event &event) override;
 
-    virtual void on_entity_update(const entity2D &e, lynx::shape2D &shape)
+    virtual void on_body_update(const body2D &body, lynx::shape2D &shape)
     {
     }
 
-    engine2D m_engine;
+    world2D m_world;
     std::vector<kit::scope<lynx::shape2D>> m_shapes;
     std::vector<spring_line> m_spring_lines;
     std::unordered_map<const revolute_joint2D *, thick_line> m_thick_lines;
@@ -87,7 +87,7 @@ class app : public lynx::app2D, public kit::serializable
 
     glm::vec2 mouse_position() const;
 
-    void add_engine_callbacks();
+    void add_world_callbacks();
 };
 
 } // namespace ppx

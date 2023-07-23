@@ -1,6 +1,7 @@
 #include "ppx-app/pch.hpp"
 #include "ppx-app/thick_line.hpp"
 #include "lynx/app/window.hpp"
+#include "lynx/rendering/buffer.hpp"
 
 namespace ppx
 {

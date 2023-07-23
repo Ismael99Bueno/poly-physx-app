@@ -10,31 +10,31 @@
 namespace ppx
 {
 app::app(const rk::butcher_tableau &table, const std::size_t allocations, const char *name)
-    : lynx::app2D(800, 600, name), m_engine(table, allocations)
+    : lynx::app2D(800, 600, name), m_world(table, allocations)
 {
     push_layer<menu_layer>();
 
     m_window = window();
     m_camera = m_window->set_camera<lynx::orthographic2D>(glm::vec2(m_window->swap_chain_aspect() * 50.f, -50.f));
 
-    m_engine.integrator.min_dt(0.0002f);
-    m_engine.integrator.max_dt(0.006f);
-    m_engine.integrator.limited_timestep(false);
+    m_world.integrator.min_dt(0.0002f);
+    m_world.integrator.max_dt(0.006f);
+    m_world.integrator.limited_timestep(false);
 
-    add_engine_callbacks();
+    add_world_callbacks();
 }
 
-void app::add_engine_callbacks()
+void app::add_world_callbacks()
 {
-    const kit::callback<const entity2D::ptr &> add_shape{[this](const entity2D::ptr &e) {
-        if (const auto *c = e->shape_if<geo::circle>())
+    const kit::callback<const body2D::ptr &> add_shape{[this](const body2D::ptr &body) {
+        if (const auto *c = body->shape_if<geo::circle>())
         {
-            m_shapes.emplace_back(kit::make_scope<lynx::ellipse2D>(c->radius(), entity_color));
+            m_shapes.emplace_back(kit::make_scope<lynx::ellipse2D>(c->radius(), body_color));
             return;
         }
-        const geo::polygon &poly = e->shape<geo::polygon>();
+        const geo::polygon &poly = body->shape<geo::polygon>();
         m_shapes.emplace_back(kit::make_scope<lynx::polygon2D>(
-            std::vector<glm::vec2>(poly.locals().begin(), poly.locals().end()), entity_color));
+            std::vector<glm::vec2>(poly.locals().begin(), poly.locals().end()), body_color));
     }};
 
     const kit::callback<std::size_t> remove_shape{[this](const std::size_t index) {
@@ -44,10 +44,10 @@ void app::add_engine_callbacks()
 
     const kit::callback<const spring2D::ptr &> add_spring{[this](const spring2D::ptr &sp) {
         if (sp->has_anchors())
-            m_spring_lines.emplace_back(sp->e1()->pos() + sp->anchor1(), sp->e2()->pos() + sp->anchor2(), 6,
-                                        joint_color);
+            m_spring_lines.emplace_back(sp->body1()->position() + sp->anchor1(),
+                                        sp->body2()->position() + sp->anchor2(), 6, joint_color);
         else
-            m_spring_lines.emplace_back(sp->e1()->pos(), sp->e2()->pos(), 6, joint_color);
+            m_spring_lines.emplace_back(sp->body1()->position(), sp->body2()->position(), 6, joint_color);
     }};
     const kit::callback<const spring2D &> remove_spring{
         [this](const spring2D &sp) { m_spring_lines.erase(m_spring_lines.begin() + (long)sp.index()); }};
@@ -57,10 +57,10 @@ void app::add_engine_callbacks()
         if (!rj)
             return;
         if (rj->has_anchors())
-            m_thick_lines.emplace(
-                rj, thick_line(rj->e1()->pos() + rj->anchor1(), rj->e2()->pos() + rj->anchor2(), 1.f, joint_color));
+            m_thick_lines.emplace(rj, thick_line(rj->body1()->position() + rj->anchor1(),
+                                                 rj->body2()->position() + rj->anchor2(), 1.f, joint_color));
         else
-            m_thick_lines.emplace(rj, thick_line(rj->e1()->pos(), rj->e2()->pos(), 1.f, joint_color));
+            m_thick_lines.emplace(rj, thick_line(rj->body1()->position(), rj->body2()->position(), 1.f, joint_color));
     }};
     const kit::callback<const constraint2D &> remove_revolute{[this](const constraint2D &ctr) {
         const auto *rj = dynamic_cast<const revolute_joint2D *>(&ctr);
@@ -69,14 +69,14 @@ void app::add_engine_callbacks()
         m_thick_lines.erase(rj);
     }};
 
-    m_engine.events.on_entity_addition += add_shape;
-    m_engine.events.on_late_entity_removal += remove_shape;
+    m_world.events.on_body_addition += add_shape;
+    m_world.events.on_late_body_removal += remove_shape;
 
-    m_engine.events.on_spring_addition += add_spring;
-    m_engine.events.on_spring_removal += remove_spring;
+    m_world.events.on_spring_addition += add_spring;
+    m_world.events.on_spring_removal += remove_spring;
 
-    m_engine.events.on_constraint_addition += add_revolute;
-    m_engine.events.on_constraint_removal += remove_revolute;
+    m_world.events.on_constraint_addition += add_revolute;
+    m_world.events.on_constraint_removal += remove_revolute;
 }
 
 void app::on_update(const float ts)
@@ -88,7 +88,7 @@ void app::on_update(const float ts)
     const kit::clock physics_clock;
     if (!m_paused)
         for (std::uint32_t i = 0; i < integrations_per_frame; i++)
-            m_engine.raw_forward(m_timestep);
+            m_world.raw_forward(m_timestep);
     m_physics_time = physics_clock.elapsed();
 
     update_entities();
@@ -115,8 +115,8 @@ bool app::on_event(const lynx::event &event)
         switch (event.key)
         {
         case lynx::input::key::F:
-            if (m_engine.size() > 0)
-                m_engine.remove_entity(m_engine.size() - 1);
+            if (m_world.size() > 0)
+                m_world.remove_body(m_world.size() - 1);
             break;
         case lynx::input::key::ESCAPE:
             shutdown();
@@ -139,31 +139,31 @@ bool app::on_event(const lynx::event &event)
 
 void app::update_entities()
 {
-    const auto entities = m_engine.entities();
-    for (std::size_t i = 0; i < entities.unwrap().size(); i++)
+    const auto bodies = m_world.bodies();
+    for (std::size_t i = 0; i < bodies.unwrap().size(); i++)
     {
-        const entity2D &e = entities[i];
-        m_shapes[i]->transform.position = e.pos();
-        m_shapes[i]->transform.rotation = e.angpos();
-        on_entity_update(e, *m_shapes[i]);
+        const body2D &body = bodies[i];
+        m_shapes[i]->transform.position = body.position();
+        m_shapes[i]->transform.rotation = body.rotation();
+        on_body_update(body, *m_shapes[i]);
     }
 }
 void app::update_joints()
 {
-    const auto springs = m_engine.springs();
+    const auto springs = m_world.springs();
     for (std::size_t i = 0; i < springs.unwrap().size(); i++)
     {
         const spring2D &sp = springs[i];
         spring_line &spline = m_spring_lines[i];
         if (sp.has_anchors())
         {
-            spline.p1(sp.e1()->pos() + sp.anchor1());
-            spline.p2(sp.e2()->pos() + sp.anchor2());
+            spline.p1(sp.body1()->position() + sp.anchor1());
+            spline.p2(sp.body2()->position() + sp.anchor2());
         }
         else
         {
-            spline.p1(sp.e1()->pos());
-            spline.p2(sp.e2()->pos());
+            spline.p1(sp.body1()->position());
+            spline.p2(sp.body2()->position());
         }
     }
 
@@ -171,13 +171,13 @@ void app::update_joints()
     {
         if (rj->has_anchors())
         {
-            thline.p1(rj->e1()->pos() + rj->anchor1());
-            thline.p2(rj->e2()->pos() + rj->anchor2());
+            thline.p1(rj->body1()->position() + rj->anchor1());
+            thline.p2(rj->body2()->position() + rj->anchor2());
         }
         else
         {
-            thline.p1(rj->e1()->pos());
-            thline.p2(rj->e2()->pos());
+            thline.p1(rj->body1()->position());
+            thline.p2(rj->body2()->position());
         }
     }
 }
@@ -228,13 +228,13 @@ glm::vec2 app::mouse_position() const
     return m_camera->screen_to_world(lynx::input::mouse_position());
 }
 
-engine2D &app::engine()
+world2D &app::world()
 {
-    return m_engine;
+    return m_world;
 }
-const engine2D &app::engine() const
+const world2D &app::world() const
 {
-    return m_engine;
+    return m_world;
 }
 
 float app::timestep() const
@@ -272,7 +272,7 @@ kit::time app::draw_time() const
 YAML::Node app::encode() const
 {
     YAML::Node node;
-    node["Engine"] = m_engine;
+    node["Engine"] = m_world;
     node["Timestep"] = m_timestep;
     for (const auto &l : layers())
         node["Layers"][l->id()] = *l;
@@ -280,7 +280,7 @@ YAML::Node app::encode() const
         node["Shape colors"].push_back(shape->color());
     node["Paused"] = m_paused;
     node["Sync timestep"] = m_sync_timestep;
-    node["Entity color"] = entity_color;
+    node["Entity color"] = body_color;
     node["Joints color"] = joint_color;
     node["Integrations per frame"] = integrations_per_frame;
     node["Framerate"] = framerate_cap();
@@ -295,7 +295,7 @@ bool app::decode(const YAML::Node &node)
         return false;
 
     m_shapes.clear();
-    node["Engine"].as<ppx::engine2D>(m_engine);
+    node["Engine"].as<ppx::world2D>(m_world);
     m_timestep = node["Timestep"].as<float>();
     for (const auto &l : layers())
         if (node["Layers"][l->id()])
@@ -306,7 +306,7 @@ bool app::decode(const YAML::Node &node)
 
     m_paused = node["Paused"].as<bool>();
     m_sync_timestep = node["Sync timestep"].as<bool>();
-    entity_color = node["Entity color"].as<glm::vec4>();
+    body_color = node["Entity color"].as<glm::vec4>();
     joint_color = node["Springs color"].as<glm::vec4>();
     integrations_per_frame = node["Integrations per frame"].as<std::uint32_t>();
     limit_framerate(node["Framerate"].as<std::uint32_t>());
