@@ -47,16 +47,16 @@ class app : public lynx::app2D, public kit::serializable
     virtual bool decode(const YAML::Node &node) override;
 #endif
 
+    virtual void on_update(float ts) override;
+    virtual void on_render(float ts) override;
+    virtual bool on_event(const lynx::event &event) override;
+
     glm::vec4 body_color = PPX_DEFAULT_ENTITY_COLOR;
     glm::vec4 joint_color = PPX_DEFAULT_JOINT_COLOR;
 
     std::uint32_t integrations_per_frame = 1;
 
   private:
-    virtual void on_update(float ts) override;
-    virtual void on_render(float ts) override;
-    virtual bool on_event(const lynx::event &event) override;
-
     virtual void on_body_update(const body2D &body, lynx::shape2D &shape)
     {
     }
@@ -82,8 +82,8 @@ class app : public lynx::app2D, public kit::serializable
     void draw_entities() const;
     void draw_joints() const;
 
-    void zoom(float offset);
-    void move_camera();
+    void zoom(float offset, float ts);
+    void move_camera(float ts);
 
     glm::vec2 mouse_position() const;
 

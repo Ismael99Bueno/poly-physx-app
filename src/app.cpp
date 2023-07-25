@@ -15,6 +15,7 @@ app::app(const rk::butcher_tableau &table, const std::size_t allocations, const 
     push_layer<menu_layer>();
 
     m_window = window();
+    // m_window->maintain_camera_aspect_ratio(true);
     m_camera = m_window->set_camera<lynx::orthographic2D>(glm::vec2(m_window->swap_chain_aspect() * 50.f, -50.f));
 
     m_world.integrator.min_dt(0.0002f);
@@ -49,8 +50,10 @@ void app::add_world_callbacks()
         else
             m_spring_lines.emplace_back(sp->body1()->position(), sp->body2()->position(), 6, joint_color);
     }};
-    const kit::callback<const spring2D &> remove_spring{
-        [this](const spring2D &sp) { m_spring_lines.erase(m_spring_lines.begin() + (long)sp.index()); }};
+    const kit::callback<const spring2D &> remove_spring{[this](const spring2D &sp) {
+        m_spring_lines[sp.index()] = m_spring_lines.back();
+        m_spring_lines.pop_back();
+    }};
 
     const kit::callback<constraint2D *> add_revolute{[this](constraint2D *ctr) {
         const auto *rj = dynamic_cast<revolute_joint2D *>(ctr);
@@ -83,7 +86,10 @@ void app::on_update(const float ts)
 {
     const kit::clock update_clock;
     if (m_sync_timestep)
-        m_timestep = ts;
+    {
+        static const float min_dt = 1.f / 120.f;
+        m_timestep = glm::min(ts, min_dt);
+    }
 
     const kit::clock physics_clock;
     if (!m_paused)
@@ -93,7 +99,7 @@ void app::on_update(const float ts)
 
     update_entities();
     update_joints();
-    move_camera();
+    move_camera(ts);
     m_update_time = update_clock.elapsed();
 }
 
@@ -114,10 +120,6 @@ bool app::on_event(const lynx::event &event)
             break;
         switch (event.key)
         {
-        case lynx::input::key::F:
-            if (m_world.size() > 0)
-                m_world.remove_body(m_world.size() - 1);
-            break;
         case lynx::input::key::ESCAPE:
             shutdown();
             return false;
@@ -130,7 +132,7 @@ bool app::on_event(const lynx::event &event)
     case lynx::event::SCROLLED:
         if (ImGui::GetIO().WantCaptureMouse)
             break;
-        zoom(event.scroll_offset.y);
+        zoom(event.scroll_offset.y, frame_time().as<kit::time::seconds, float>());
     default:
         return false;
     }
@@ -196,7 +198,7 @@ void app::draw_joints() const
         m_window->draw(thline);
 }
 
-void app::move_camera()
+void app::move_camera(const float ts)
 {
     glm::vec2 dpos{0.f};
     if (lynx::input::key_pressed(lynx::input::key::A))
@@ -208,12 +210,12 @@ void app::move_camera()
     if (lynx::input::key_pressed(lynx::input::key::S))
         dpos.y = -1.f;
     if (glm::length2(dpos) > std::numeric_limits<float>::epsilon())
-        m_camera->transform.position += glm::normalize(dpos) * abs(m_camera->size()) / 50.f;
+        m_camera->transform.position += 2.f * glm::normalize(dpos) * ts * abs(m_camera->size());
 }
 
-void app::zoom(const float offset)
+void app::zoom(const float offset, const float ts)
 {
-    const float factor = offset * 0.05f; // glm::clamp(offset, -0.05f, 0.05f);
+    const float factor = 4.f * offset * ts; // glm::clamp(offset, -0.05f, 0.05f);
     const glm::vec2 mpos = mouse_position();
     const glm::vec2 dpos = (mpos - m_camera->transform.position) * factor;
     const float size = m_camera->size() * (1.f - factor);
