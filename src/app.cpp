@@ -293,18 +293,21 @@ YAML::Node app::encode() const
 }
 bool app::decode(const YAML::Node &node)
 {
-    if (!node.IsMap() || node.size() != 13)
+    if (!node.IsMap() || node.size() < 11)
         return false;
 
     m_shapes.clear();
     node["Engine"].as<ppx::world2D>(m_world);
     m_timestep = node["Timestep"].as<float>();
-    for (const auto &l : layers())
-        if (node["Layers"][l->id()])
-            node["Layers"][l->id()].as<lynx::layer>(*l);
 
-    for (std::size_t i = 0; i < m_shapes.size(); i++)
-        m_shapes[i]->color(node["Shape colors"][i].as<glm::vec4>());
+    if (node["Layers"])
+        for (const auto &l : layers())
+            if (node["Layers"][l->id()])
+                node["Layers"][l->id()].as<lynx::layer>(*l);
+
+    if (node["Shape colors"])
+        for (std::size_t i = 0; i < m_shapes.size(); i++)
+            m_shapes[i]->color(node["Shape colors"][i].as<glm::vec4>());
 
     m_paused = node["Paused"].as<bool>();
     m_sync_timestep = node["Sync timestep"].as<bool>();
