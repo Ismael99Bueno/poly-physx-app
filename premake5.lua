@@ -36,5 +36,6 @@ includedirs {
    "%{wks.location}/vendor/glfw/include",
    "%{wks.location}/vendor/glm",
    "%{wks.location}/vendor/imgui",
+   "%{wks.location}/vendor/implot/include",
    "%{wks.location}/vendor/spdlog/include"
 }
