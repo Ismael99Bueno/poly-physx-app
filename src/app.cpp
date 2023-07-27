@@ -15,8 +15,9 @@ app::app(const rk::butcher_tableau &table, const std::size_t allocations, const 
     push_layer<menu_layer>();
 
     m_window = window();
-    // m_window->maintain_camera_aspect_ratio(true);
-    m_camera = m_window->set_camera<lynx::orthographic2D>(glm::vec2(m_window->pixel_aspect() * 50.f, -50.f));
+    m_window->maintain_camera_aspect_ratio(true);
+    m_camera = m_window->set_camera<lynx::orthographic2D>(m_window->pixel_aspect(), 50.f);
+    m_camera->flip_y_axis();
 
     m_world.integrator.min_dt(0.0002f);
     m_world.integrator.max_dt(0.006f);
@@ -210,24 +211,18 @@ void app::move_camera(const float ts)
     if (lynx::input::key_pressed(lynx::input::key::S))
         dpos.y = -1.f;
     if (glm::length2(dpos) > std::numeric_limits<float>::epsilon())
-        m_camera->transform.position += 2.f * glm::normalize(dpos) * ts * abs(m_camera->size());
+        m_camera->transform.position += 2.f * glm::normalize(dpos) * ts * m_camera->size();
 }
 
 void app::zoom(const float offset, const float ts)
 {
     const float factor = 4.f * offset * ts; // glm::clamp(offset, -0.05f, 0.05f);
-    const glm::vec2 mpos = mouse_position();
+    const glm::vec2 mpos = world_mouse_position();
     const glm::vec2 dpos = (mpos - m_camera->transform.position) * factor;
     const float size = m_camera->size() * (1.f - factor);
 
-    m_camera->transform.scale.x = -m_window->pixel_aspect() * size;
-    m_camera->transform.scale.y = size;
+    m_camera->size(size);
     m_camera->transform.position += dpos;
-}
-
-glm::vec2 app::mouse_position() const
-{
-    return m_camera->screen_to_world(lynx::input::mouse_position());
 }
 
 world2D &app::world()

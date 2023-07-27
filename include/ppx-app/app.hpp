@@ -87,8 +87,6 @@ class app : public lynx::app2D, public kit::serializable
     void zoom(float offset, float ts);
     void move_camera(float ts);
 
-    glm::vec2 mouse_position() const;
-
     void add_world_callbacks();
 };
 
