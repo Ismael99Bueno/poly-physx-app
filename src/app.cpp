@@ -16,7 +16,7 @@ app::app(const rk::butcher_tableau &table, const std::size_t allocations, const 
 
     m_window = window();
     // m_window->maintain_camera_aspect_ratio(true);
-    m_camera = m_window->set_camera<lynx::orthographic2D>(glm::vec2(m_window->swap_chain_aspect() * 50.f, -50.f));
+    m_camera = m_window->set_camera<lynx::orthographic2D>(glm::vec2(m_window->pixel_aspect() * 50.f, -50.f));
 
     m_world.integrator.min_dt(0.0002f);
     m_world.integrator.max_dt(0.006f);
@@ -220,7 +220,7 @@ void app::zoom(const float offset, const float ts)
     const glm::vec2 dpos = (mpos - m_camera->transform.position) * factor;
     const float size = m_camera->size() * (1.f - factor);
 
-    m_camera->transform.scale.x = -m_window->swap_chain_aspect() * size;
+    m_camera->transform.scale.x = -m_window->pixel_aspect() * size;
     m_camera->transform.scale.y = size;
     m_camera->transform.position += dpos;
 }
@@ -268,6 +268,12 @@ kit::time app::physics_time() const
 kit::time app::draw_time() const
 {
     return m_draw_time;
+}
+
+glm::vec2 app::world_mouse_position() const
+{
+    const glm::vec2 mpos = lynx::input::mouse_position();
+    return m_camera->screen_to_world(mpos);
 }
 
 #ifdef KIT_USE_YAML_CPP

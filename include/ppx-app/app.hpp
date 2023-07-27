@@ -42,6 +42,8 @@ class app : public lynx::app2D, public kit::serializable
     kit::time physics_time() const;
     kit::time draw_time() const;
 
+    glm::vec2 world_mouse_position() const;
+
 #ifdef KIT_USE_YAML_CPP
     virtual YAML::Node encode() const override;
     virtual bool decode(const YAML::Node &node) override;
