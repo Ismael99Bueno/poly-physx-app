@@ -54,19 +54,17 @@ class app : public lynx::app2D, public kit::serializable
 
     std::uint32_t integrations_per_frame = 1;
 
-  protected:
-    lynx::orthographic2D *m_camera;
-
   private:
     virtual void on_body_update(const body2D &body, lynx::shape2D &shape)
     {
     }
 
+    lynx::window2D *m_window;
+    lynx::orthographic2D *m_camera;
+
     std::vector<kit::scope<lynx::shape2D>> m_shapes;
     std::vector<spring_line> m_spring_lines;
     std::unordered_map<const revolute_joint2D *, thick_line> m_thick_lines;
-
-    lynx::window2D *m_window;
 
     kit::time m_update_time;
     kit::time m_physics_time;
