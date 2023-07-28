@@ -10,7 +10,7 @@
 namespace ppx
 {
 app::app(const rk::butcher_tableau &table, const std::size_t allocations, const char *name)
-    : lynx::app2D(800, 600, name), m_world(table, allocations)
+    : lynx::app2D(800, 600, name), world(table, allocations)
 {
     push_layer<menu_layer>();
 
@@ -19,9 +19,9 @@ app::app(const rk::butcher_tableau &table, const std::size_t allocations, const 
     m_camera = m_window->set_camera<lynx::orthographic2D>(m_window->pixel_aspect(), 50.f);
     m_camera->flip_y_axis();
 
-    m_world.integrator.min_dt(0.0002f);
-    m_world.integrator.max_dt(0.006f);
-    m_world.integrator.limited_timestep(false);
+    world.integrator.min_dt(0.0002f);
+    world.integrator.max_dt(0.006f);
+    world.integrator.limited_timestep(false);
 
     add_world_callbacks();
 }
@@ -73,29 +73,29 @@ void app::add_world_callbacks()
         m_thick_lines.erase(rj);
     }};
 
-    m_world.events.on_body_addition += add_shape;
-    m_world.events.on_late_body_removal += remove_shape;
+    world.events.on_body_addition += add_shape;
+    world.events.on_late_body_removal += remove_shape;
 
-    m_world.events.on_spring_addition += add_spring;
-    m_world.events.on_spring_removal += remove_spring;
+    world.events.on_spring_addition += add_spring;
+    world.events.on_spring_removal += remove_spring;
 
-    m_world.events.on_constraint_addition += add_revolute;
-    m_world.events.on_constraint_removal += remove_revolute;
+    world.events.on_constraint_addition += add_revolute;
+    world.events.on_constraint_removal += remove_revolute;
 }
 
 void app::on_update(const float ts)
 {
     const kit::clock update_clock;
-    if (m_sync_timestep)
+    if (sync_timestep)
     {
         static const float min_dt = 1.f / 120.f;
-        m_timestep = glm::min(ts, min_dt);
+        timestep = glm::min(ts, min_dt);
     }
 
     const kit::clock physics_clock;
-    if (!m_paused)
+    if (!paused)
         for (std::uint32_t i = 0; i < integrations_per_frame; i++)
-            m_world.raw_forward(m_timestep);
+            world.raw_forward(timestep);
     m_physics_time = physics_clock.elapsed();
 
     update_entities();
@@ -125,7 +125,7 @@ bool app::on_event(const lynx::event &event)
             shutdown();
             return false;
         case lynx::input::key::SPACE:
-            m_paused = !m_paused;
+            paused = !paused;
             return false;
         default:
             return false;
@@ -142,7 +142,7 @@ bool app::on_event(const lynx::event &event)
 
 void app::update_entities()
 {
-    const auto bodies = m_world.bodies();
+    const auto bodies = world.bodies();
     for (std::size_t i = 0; i < bodies.unwrap().size(); i++)
     {
         const body2D &body = bodies[i];
@@ -153,7 +153,7 @@ void app::update_entities()
 }
 void app::update_joints()
 {
-    const auto springs = m_world.springs();
+    const auto springs = world.springs();
     for (std::size_t i = 0; i < springs.unwrap().size(); i++)
     {
         const spring2D &sp = springs[i];
@@ -225,33 +225,6 @@ void app::zoom(const float offset, const float ts)
     m_camera->transform.position += dpos;
 }
 
-world2D &app::world()
-{
-    return m_world;
-}
-const world2D &app::world() const
-{
-    return m_world;
-}
-
-float app::timestep() const
-{
-    return m_timestep;
-}
-void app::timestep(float ts)
-{
-    m_timestep = ts;
-}
-
-bool app::sync_timestep() const
-{
-    return m_sync_timestep;
-}
-void app::sync_timestep(const bool sync)
-{
-    m_sync_timestep = sync;
-}
-
 kit::time app::update_time() const
 {
     return m_update_time;
@@ -275,14 +248,14 @@ glm::vec2 app::world_mouse_position() const
 YAML::Node app::encode() const
 {
     YAML::Node node;
-    node["Engine"] = m_world;
-    node["Timestep"] = m_timestep;
+    node["Engine"] = world;
+    node["Timestep"] = timestep;
     for (const auto &l : layers())
         node["Layers"][l->id()] = *l;
     for (const auto &shape : m_shapes)
         node["Shape colors"].push_back(shape->color());
-    node["Paused"] = m_paused;
-    node["Sync timestep"] = m_sync_timestep;
+    node["Paused"] = paused;
+    node["Sync timestep"] = sync_timestep;
     node["Body color"] = body_color;
     node["Joints color"] = joint_color;
     node["Integrations per frame"] = integrations_per_frame;
@@ -298,8 +271,8 @@ bool app::decode(const YAML::Node &node)
         return false;
 
     m_shapes.clear();
-    node["Engine"].as<ppx::world2D>(m_world);
-    m_timestep = node["Timestep"].as<float>();
+    node["Engine"].as<ppx::world2D>(world);
+    timestep = node["Timestep"].as<float>();
 
     if (node["Layers"])
         for (const auto &l : layers())
@@ -310,8 +283,8 @@ bool app::decode(const YAML::Node &node)
         for (std::size_t i = 0; i < m_shapes.size(); i++)
             m_shapes[i]->color(node["Shape colors"][i].as<glm::vec4>());
 
-    m_paused = node["Paused"].as<bool>();
-    m_sync_timestep = node["Sync timestep"].as<bool>();
+    paused = node["Paused"].as<bool>();
+    sync_timestep = node["Sync timestep"].as<bool>();
     body_color = node["Body color"].as<glm::vec4>();
     joint_color = node["Joints color"].as<glm::vec4>();
     integrations_per_frame = node["Integrations per frame"].as<std::uint32_t>();

@@ -29,14 +29,10 @@ class app : public lynx::app2D, public kit::serializable
     app(const rk::butcher_tableau &table = rk::rk4, std::size_t allocations = 100, const char *name = "poly-physx");
     virtual ~app() = default;
 
-    world2D &world();
-    const world2D &world() const;
-
-    float timestep() const;
-    void timestep(float ts);
-
-    bool sync_timestep() const;
-    void sync_timestep(bool sync);
+    world2D world;
+    float timestep = 1e-3f;
+    bool sync_timestep = true;
+    bool paused = false;
 
     kit::time update_time() const;
     kit::time physics_time() const;
@@ -58,21 +54,19 @@ class app : public lynx::app2D, public kit::serializable
 
     std::uint32_t integrations_per_frame = 1;
 
+  protected:
+    lynx::orthographic2D *m_camera;
+
   private:
     virtual void on_body_update(const body2D &body, lynx::shape2D &shape)
     {
     }
 
-    world2D m_world;
     std::vector<kit::scope<lynx::shape2D>> m_shapes;
     std::vector<spring_line> m_spring_lines;
     std::unordered_map<const revolute_joint2D *, thick_line> m_thick_lines;
 
     lynx::window2D *m_window;
-    lynx::orthographic2D *m_camera;
-    bool m_paused = false;
-    bool m_sync_timestep = true;
-    float m_timestep = 1e-3f;
 
     kit::time m_update_time;
     kit::time m_physics_time;
