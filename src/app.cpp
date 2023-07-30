@@ -3,7 +3,6 @@
 #include "ppx-app/menu_layer.hpp"
 
 #include "lynx/geometry/camera.hpp"
-#include "lynx/rendering/buffer.hpp"
 
 #include "ppx/joints/revolute_joint2D.hpp"
 
@@ -88,7 +87,7 @@ void app::on_update(const float ts)
     const kit::clock update_clock;
     if (sync_timestep)
     {
-        static const float min_dt = 1.f / 120.f;
+        static constexpr float min_dt = 1.f / 180.f;
         timestep = glm::min(ts, min_dt);
     }
 
