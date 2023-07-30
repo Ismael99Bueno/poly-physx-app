@@ -253,11 +253,11 @@ YAML::Node app::encode() const
     for (const auto &l : layers())
         node["Layers"][l->id()] = *l;
     for (const auto &shape : m_shapes)
-        node["Shape colors"].push_back(shape->color());
+        node["Shape colors"].push_back(shape->color().normalized);
     node["Paused"] = paused;
     node["Sync timestep"] = sync_timestep;
-    node["Body color"] = body_color;
-    node["Joints color"] = joint_color;
+    node["Body color"] = body_color.normalized;
+    node["Joints color"] = joint_color.normalized;
     node["Integrations per frame"] = integrations_per_frame;
     node["Framerate"] = framerate_cap();
     node["Camera position"] = m_camera->transform.position;
@@ -281,12 +281,12 @@ bool app::decode(const YAML::Node &node)
 
     if (node["Shape colors"])
         for (std::size_t i = 0; i < m_shapes.size(); i++)
-            m_shapes[i]->color(node["Shape colors"][i].as<glm::vec4>());
+            m_shapes[i]->color(lynx::color(node["Shape colors"][i].as<glm::vec4>()));
 
     paused = node["Paused"].as<bool>();
     sync_timestep = node["Sync timestep"].as<bool>();
-    body_color = node["Body color"].as<glm::vec4>();
-    joint_color = node["Joints color"].as<glm::vec4>();
+    body_color = lynx::color(node["Body color"].as<glm::vec4>());
+    joint_color = lynx::color(node["Joints color"].as<glm::vec4>());
     integrations_per_frame = node["Integrations per frame"].as<std::uint32_t>();
     limit_framerate(node["Framerate"].as<std::uint32_t>());
 

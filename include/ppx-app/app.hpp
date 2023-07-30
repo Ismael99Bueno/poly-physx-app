@@ -17,9 +17,6 @@
 #include <yaml-cpp/yaml.h>
 #endif
 
-#define PPX_DEFAULT_ENTITY_COLOR glm::vec4(123.f, 143.f, 161.f, 255.f) / 255.f
-#define PPX_DEFAULT_JOINT_COLOR glm::vec4(207.f, 185.f, 151.f, 255.f) / 255.f
-
 namespace ppx
 {
 class revolute_joint2D;
@@ -49,8 +46,8 @@ class app : public lynx::app2D, public kit::serializable
     virtual void on_render(float ts) override;
     virtual bool on_event(const lynx::event &event) override;
 
-    glm::vec4 body_color = PPX_DEFAULT_ENTITY_COLOR;
-    glm::vec4 joint_color = PPX_DEFAULT_JOINT_COLOR;
+    lynx::color body_color{123u, 143u, 161u};
+    lynx::color joint_color{207u, 185u, 151u};
 
     std::uint32_t integrations_per_frame = 1;
 

@@ -15,7 +15,7 @@ class spring_line : public lynx::drawable2D
 {
   public:
     spring_line(const glm::vec2 &p1, const glm::vec2 &p2, std::size_t supports_count = 6,
-                const glm::vec4 &color = glm::vec4(1.f));
+                const lynx::color &color = lynx::color::white);
 
     void draw(lynx::window2D &window) const override;
 

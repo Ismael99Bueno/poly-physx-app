@@ -5,7 +5,7 @@
 
 namespace ppx
 {
-thick_line::thick_line(const glm::vec2 &p1, const glm::vec2 &p2, const float width, const glm::vec4 &color)
+thick_line::thick_line(const glm::vec2 &p1, const glm::vec2 &p2, const float width, const lynx::color &color)
     : m_rect(color), m_circle1(color), m_circle2(color)
 {
     m_circle1.transform.position = p1;
@@ -68,11 +68,11 @@ void thick_line::p2(const glm::vec2 &p2)
     update_orientation();
 }
 
-const glm::vec4 &thick_line::color() const
+const lynx::color &thick_line::color() const
 {
     return m_rect.color();
 }
-void thick_line::color(const glm::vec4 &color)
+void thick_line::color(const lynx::color &color)
 {
     m_rect.color(color);
     m_circle1.color(color);

@@ -14,7 +14,8 @@ namespace ppx
 class thick_line : public lynx::drawable2D
 {
   public:
-    thick_line(const glm::vec2 &p1, const glm::vec2 &p2, float width = 1.f, const glm::vec4 &color = glm::vec4(1.f));
+    thick_line(const glm::vec2 &p1, const glm::vec2 &p2, float width = 1.f,
+               const lynx::color &color = lynx::color::white);
 
     void draw(lynx::window2D &window) const override;
 
@@ -24,8 +25,8 @@ class thick_line : public lynx::drawable2D
     void p1(const glm::vec2 &p1);
     void p2(const glm::vec2 &p2);
 
-    const glm::vec4 &color() const;
-    void color(const glm::vec4 &color);
+    const lynx::color &color() const;
+    void color(const lynx::color &color);
 
     float width() const;
     void width(float width);
