@@ -200,6 +200,8 @@ void app::draw_joints() const
 
 void app::move_camera(const float ts)
 {
+    if (ImGui::GetIO().WantCaptureKeyboard)
+        return;
     glm::vec2 dpos{0.f};
     if (lynx::input::key_pressed(lynx::input::key::A))
         dpos.x = -1.f;
