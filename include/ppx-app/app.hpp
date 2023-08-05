@@ -23,6 +23,9 @@ class revolute_joint2D;
 class app : public lynx::app2D, public kit::serializable
 {
   public:
+    inline static const lynx::color DEFAULT_BODY_COLOR{123u, 143u, 161u};
+    inline static const lynx::color DEFAULT_JOINT_COLOR{207u, 185u, 151u};
+
     app(const rk::butcher_tableau &table = rk::rk4, std::size_t allocations = 100, const char *name = "poly-physx");
     virtual ~app() = default;
 
@@ -46,8 +49,8 @@ class app : public lynx::app2D, public kit::serializable
     virtual void on_render(float ts) override;
     virtual bool on_event(const lynx::event &event) override;
 
-    lynx::color body_color{123u, 143u, 161u};
-    lynx::color joint_color{207u, 185u, 151u};
+    lynx::color body_color = DEFAULT_BODY_COLOR;
+    lynx::color joint_color = DEFAULT_JOINT_COLOR;
 
     std::uint32_t integrations_per_frame = 1;
 
