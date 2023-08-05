@@ -271,7 +271,6 @@ bool app::decode(const YAML::Node &node)
     if (!node.IsMap() || node.size() < 11)
         return false;
 
-    m_shapes.clear();
     node["Engine"].as<ppx::world2D>(world);
     timestep = node["Timestep"].as<float>();
 
