@@ -46,9 +46,9 @@ void app::add_world_callbacks()
     const kit::callback<const spring2D::ptr &> add_spring{[this](const spring2D::ptr &sp) {
         if (sp->has_anchors())
             m_spring_lines.emplace_back(sp->body1()->position() + sp->anchor1(),
-                                        sp->body2()->position() + sp->anchor2(), 6, joint_color);
+                                        sp->body2()->position() + sp->anchor2(), joint_color);
         else
-            m_spring_lines.emplace_back(sp->body1()->position(), sp->body2()->position(), 6, joint_color);
+            m_spring_lines.emplace_back(sp->body1()->position(), sp->body2()->position(), joint_color);
     }};
     const kit::callback<const spring2D &> remove_spring{[this](const spring2D &sp) {
         m_spring_lines[sp.index()] = m_spring_lines.back();
@@ -61,9 +61,9 @@ void app::add_world_callbacks()
             return;
         if (rj->has_anchors())
             m_thick_lines.emplace(rj, thick_line(rj->body1()->position() + rj->anchor1(),
-                                                 rj->body2()->position() + rj->anchor2(), 1.f, joint_color));
+                                                 rj->body2()->position() + rj->anchor2(), joint_color));
         else
-            m_thick_lines.emplace(rj, thick_line(rj->body1()->position(), rj->body2()->position(), 1.f, joint_color));
+            m_thick_lines.emplace(rj, thick_line(rj->body1()->position(), rj->body2()->position(), joint_color));
     }};
     const kit::callback<const constraint2D &> remove_revolute{[this](const constraint2D &ctr) {
         const auto *rj = dynamic_cast<const revolute_joint2D *>(&ctr);

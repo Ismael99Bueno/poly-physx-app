@@ -4,8 +4,8 @@
 
 namespace ppx
 {
-spring_line::spring_line(const glm::vec2 &p1, const glm::vec2 &p2, const std::size_t supports_count,
-                         const lynx::color &color)
+spring_line::spring_line(const glm::vec2 &p1, const glm::vec2 &p2, const lynx::color &color,
+                         const std::size_t supports_count)
     : m_supports_count(supports_count), m_line_strip(build_line_points(p1, p2), color)
 {
 }
@@ -73,6 +73,15 @@ void spring_line::p1(const glm::vec2 &p1)
 void spring_line::p2(const glm::vec2 &p2)
 {
     update_line_points(p1(), p2);
+}
+
+const lynx::color &spring_line::color() const
+{
+    return m_line_strip.color();
+}
+void spring_line::color(const lynx::color &color)
+{
+    m_line_strip.color(color);
 }
 
 std::size_t spring_line::supports_count() const

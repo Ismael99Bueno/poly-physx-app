@@ -4,7 +4,7 @@
 
 namespace ppx
 {
-thick_line::thick_line(const glm::vec2 &p1, const glm::vec2 &p2, const float width, const lynx::color &color)
+thick_line::thick_line(const glm::vec2 &p1, const glm::vec2 &p2, const lynx::color &color, const float width)
     : m_rect(color), m_circle1(color), m_circle2(color)
 {
     m_circle1.transform.position = p1;

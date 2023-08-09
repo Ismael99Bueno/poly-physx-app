@@ -11,19 +11,22 @@
 
 namespace ppx
 {
-class spring_line : public lynx::drawable2D
+class spring_line : public lynx::line2D
 {
   public:
-    spring_line(const glm::vec2 &p1, const glm::vec2 &p2, std::size_t supports_count = 6,
-                const lynx::color &color = lynx::color::white);
+    spring_line(const glm::vec2 &p1 = {0.f, 0.f}, const glm::vec2 &p2 = {1.f, 0.f},
+                const lynx::color &color = lynx::color::white, std::size_t supports_count = 6);
 
     void draw(lynx::window2D &window) const override;
 
-    const glm::vec2 &p1() const;
-    const glm::vec2 &p2() const;
+    const glm::vec2 &p1() const override;
+    const glm::vec2 &p2() const override;
 
-    void p1(const glm::vec2 &p1);
-    void p2(const glm::vec2 &p2);
+    void p1(const glm::vec2 &p1) override;
+    void p2(const glm::vec2 &p2) override;
+
+    const lynx::color &color() const override;
+    void color(const lynx::color &color) override;
 
     std::size_t supports_count() const;
     float supports_length() const;

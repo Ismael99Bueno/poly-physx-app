@@ -3,6 +3,7 @@
 
 #include "lynx/drawing/drawable.hpp"
 #include "lynx/drawing/shape.hpp"
+#include "lynx/drawing/line.hpp"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -11,22 +12,22 @@
 
 namespace ppx
 {
-class thick_line : public lynx::drawable2D
+class thick_line : public lynx::line2D
 {
   public:
-    thick_line(const glm::vec2 &p1, const glm::vec2 &p2, float width = 1.f,
-               const lynx::color &color = lynx::color::white);
+    thick_line(const glm::vec2 &p1 = {0.f, 0.f}, const glm::vec2 &p2 = {1.f, 0.f},
+               const lynx::color &color = lynx::color::white, float width = 1.f);
 
     void draw(lynx::window2D &window) const override;
 
-    const glm::vec2 &p1() const;
-    const glm::vec2 &p2() const;
+    const glm::vec2 &p1() const override;
+    const glm::vec2 &p2() const override;
 
-    void p1(const glm::vec2 &p1);
-    void p2(const glm::vec2 &p2);
+    void p1(const glm::vec2 &p1) override;
+    void p2(const glm::vec2 &p2) override;
 
-    const lynx::color &color() const;
-    void color(const lynx::color &color);
+    const lynx::color &color() const override;
+    void color(const lynx::color &color) override;
 
     float width() const;
     void width(float width);
