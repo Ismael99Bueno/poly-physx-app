@@ -1,10 +1,9 @@
 #include "ppx-app/pch.hpp"
 #include "ppx-app/app.hpp"
 #include "ppx-app/menu_layer.hpp"
-
 #include "lynx/geometry/camera.hpp"
-
 #include "ppx/joints/revolute_joint2D.hpp"
+#include "kit/utility/utils.hpp"
 
 namespace ppx
 {
@@ -211,7 +210,7 @@ void app::move_camera(const float ts)
         dpos.y = 1.f;
     if (lynx::input::key_pressed(lynx::input::key::S))
         dpos.y = -1.f;
-    if (glm::length2(dpos) > std::numeric_limits<float>::epsilon())
+    if (!kit::approaches_zero(glm::length2(dpos)))
         m_camera->transform.position += 2.f * glm::normalize(dpos) * ts * m_camera->size();
 }
 
