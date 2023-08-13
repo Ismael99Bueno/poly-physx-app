@@ -50,7 +50,7 @@ void app::add_world_callbacks()
             m_spring_lines.emplace_back(sp->body1()->position(), sp->body2()->position(), joint_color);
     }};
     const kit::callback<const spring2D &> remove_spring{[this](const spring2D &sp) {
-        m_spring_lines[sp.index()] = m_spring_lines.back();
+        m_spring_lines[sp.index] = m_spring_lines.back();
         m_spring_lines.pop_back();
     }};
 
@@ -251,7 +251,7 @@ YAML::Node app::encode() const
     node["Engine"] = world;
     node["Timestep"] = timestep;
     for (const auto &l : layers())
-        node["Layers"][l->id()] = *l;
+        node["Layers"][l->id] = *l;
     for (const auto &shape : m_shapes)
         node["Shape colors"].push_back(shape->color().normalized);
     node["Paused"] = paused;
@@ -275,8 +275,8 @@ bool app::decode(const YAML::Node &node)
 
     if (node["Layers"])
         for (const auto &l : layers())
-            if (node["Layers"][l->id()])
-                node["Layers"][l->id()].as<lynx::layer>(*l);
+            if (node["Layers"][l->id])
+                node["Layers"][l->id].as<lynx::layer>(*l);
 
     if (node["Shape colors"])
         for (std::size_t i = 0; i < m_shapes.size(); i++)
