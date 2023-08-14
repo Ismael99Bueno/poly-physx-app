@@ -29,7 +29,7 @@ void app::add_world_callbacks()
     const kit::callback<const body2D::ptr &> add_shape{[this](const body2D::ptr &body) {
         if (const auto *c = body->shape_if<geo::circle>())
         {
-            m_shapes.emplace_back(kit::make_scope<lynx::ellipse2D>(c->radius(), body_color));
+            m_shapes.emplace_back(kit::make_scope<lynx::ellipse2D>(c->radius, body_color));
             return;
         }
         const geo::polygon &poly = body->shape<geo::polygon>();
@@ -44,10 +44,11 @@ void app::add_world_callbacks()
 
     const kit::callback<const spring2D::ptr &> add_spring{[this](const spring2D::ptr &sp) {
         if (sp->has_anchors())
-            m_spring_lines.emplace_back(sp->body1()->position() + sp->anchor1(),
-                                        sp->body2()->position() + sp->anchor2(), joint_color);
+            m_spring_lines.emplace_back(sp->body1()->transform().position + sp->anchor1(),
+                                        sp->body2()->transform().position + sp->anchor2(), joint_color);
         else
-            m_spring_lines.emplace_back(sp->body1()->position(), sp->body2()->position(), joint_color);
+            m_spring_lines.emplace_back(sp->body1()->transform().position, sp->body2()->transform().position,
+                                        joint_color);
     }};
     const kit::callback<const spring2D &> remove_spring{[this](const spring2D &sp) {
         m_spring_lines[sp.index] = m_spring_lines.back();
@@ -59,10 +60,11 @@ void app::add_world_callbacks()
         if (!rj)
             return;
         if (rj->has_anchors())
-            m_thick_lines.emplace(rj, thick_line(rj->body1()->position() + rj->anchor1(),
-                                                 rj->body2()->position() + rj->anchor2(), joint_color));
+            m_thick_lines.emplace(rj, thick_line(rj->body1()->transform().position + rj->anchor1(),
+                                                 rj->body2()->transform().position + rj->anchor2(), joint_color));
         else
-            m_thick_lines.emplace(rj, thick_line(rj->body1()->position(), rj->body2()->position(), joint_color));
+            m_thick_lines.emplace(
+                rj, thick_line(rj->body1()->transform().position, rj->body2()->transform().position, joint_color));
     }};
     const kit::callback<const constraint2D &> remove_revolute{[this](const constraint2D &ctr) {
         const auto *rj = dynamic_cast<const revolute_joint2D *>(&ctr);
@@ -144,8 +146,7 @@ void app::update_entities()
     for (std::size_t i = 0; i < bodies.unwrap().size(); i++)
     {
         const body2D &body = bodies[i];
-        m_shapes[i]->transform.position = body.position();
-        m_shapes[i]->transform.rotation = body.rotation();
+        m_shapes[i]->transform = body.transform();
         on_body_update(body, *m_shapes[i]);
     }
 }
@@ -158,13 +159,13 @@ void app::update_joints()
         spring_line &spline = m_spring_lines[i];
         if (sp.has_anchors())
         {
-            spline.p1(sp.body1()->position() + sp.anchor1());
-            spline.p2(sp.body2()->position() + sp.anchor2());
+            spline.p1(sp.body1()->transform().position + sp.anchor1());
+            spline.p2(sp.body2()->transform().position + sp.anchor2());
         }
         else
         {
-            spline.p1(sp.body1()->position());
-            spline.p2(sp.body2()->position());
+            spline.p1(sp.body1()->transform().position);
+            spline.p2(sp.body2()->transform().position);
         }
     }
 
@@ -172,13 +173,13 @@ void app::update_joints()
     {
         if (rj->has_anchors())
         {
-            thline.p1(rj->body1()->position() + rj->anchor1());
-            thline.p2(rj->body2()->position() + rj->anchor2());
+            thline.p1(rj->body1()->transform().position + rj->anchor1());
+            thline.p2(rj->body2()->transform().position + rj->anchor2());
         }
         else
         {
-            thline.p1(rj->body1()->position());
-            thline.p2(rj->body2()->position());
+            thline.p1(rj->body1()->transform().position);
+            thline.p2(rj->body2()->transform().position);
         }
     }
 }
