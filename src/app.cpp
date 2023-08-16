@@ -123,10 +123,10 @@ bool app::on_event(const lynx::event &event)
         {
         case lynx::input::key::ESCAPE:
             shutdown();
-            return false;
+            return true;
         case lynx::input::key::SPACE:
             paused = !paused;
-            return false;
+            return true;
         default:
             return false;
         }
@@ -134,6 +134,7 @@ bool app::on_event(const lynx::event &event)
         if (ImGui::GetIO().WantCaptureMouse)
             break;
         zoom(event.scroll_offset.y, frame_time().as<kit::time::seconds, float>());
+        return true;
     default:
         return false;
     }
