@@ -1,4 +1,4 @@
-#include "ppx-app/pch.hpp"
+#include "ppx-app/internal/pch.hpp"
 #include "ppx-app/thick_line.hpp"
 #include "lynx/app/window.hpp"
 

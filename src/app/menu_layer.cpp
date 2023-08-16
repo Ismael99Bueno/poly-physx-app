@@ -1,5 +1,5 @@
-#include "ppx-app/pch.hpp"
-#include "ppx-app/menu_layer.hpp"
+#include "ppx-app/internal/pch.hpp"
+#include "ppx-app/app/menu_layer.hpp"
 #include "lynx/app/app.hpp"
 #include "lynx/app/window.hpp"
 #include "lynx/geometry/camera.hpp"

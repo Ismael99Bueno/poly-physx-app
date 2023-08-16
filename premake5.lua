@@ -15,7 +15,7 @@ filter "system:macosx"
    }
 filter {}
 
-pchheader "ppx-app/pch.hpp"
+pchheader "ppx-app/internal/pch.hpp"
 pchsource "src/pch.cpp"
 
 targetdir("bin/" .. outputdir)
