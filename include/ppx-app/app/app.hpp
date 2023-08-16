@@ -4,8 +4,8 @@
 #include "rk/tableaus.hpp"
 #include "ppx/world2D.hpp"
 
-#include "ppx-app/thick_line.hpp"
-#include "ppx-app/spring_line.hpp"
+#include "ppx-app/lines/thick_line.hpp"
+#include "ppx-app/lines/spring_line.hpp"
 
 #include "lynx/app/app.hpp"
 #include "lynx/drawing/shape.hpp"
