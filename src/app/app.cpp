@@ -29,12 +29,13 @@ void app::add_world_callbacks()
     const kit::callback<const body2D::ptr &> add_shape{[this](const body2D::ptr &body) {
         if (const auto *c = body->shape_if<geo::circle>())
         {
-            m_shapes.emplace_back(kit::make_scope<lynx::ellipse2D>(c->radius, body_color));
+            m_shapes.emplace_back(kit::make_scope<lynx::ellipse2D>(c->radius, body_color))
+                ->outline_color(body_outline_color);
             return;
         }
         const geo::polygon &poly = body->shape<geo::polygon>();
-        m_shapes.emplace_back(kit::make_scope<lynx::polygon2D>(
-            std::vector<glm::vec2>(poly.locals().begin(), poly.locals().end()), body_color));
+        m_shapes.emplace_back(kit::make_scope<lynx::polygon2D>(poly.locals(), body_color))
+            ->outline_color(body_outline_color);
     }};
 
     const kit::callback<std::size_t> remove_shape{[this](const std::size_t index) {
@@ -147,7 +148,10 @@ void app::update_entities()
     for (std::size_t i = 0; i < bodies.unwrap().size(); i++)
     {
         const body2D &body = bodies[i];
-        m_shapes[i]->transform = body.transform();
+        const kit::transform2D &transform = body.transform();
+
+        m_shapes[i]->transform.position = transform.position;
+        m_shapes[i]->transform.rotation = transform.rotation;
         on_body_update(body, *m_shapes[i]);
     }
 }
@@ -244,6 +248,10 @@ glm::vec2 app::world_mouse_position() const
 {
     const glm::vec2 mpos = lynx::input::mouse_position();
     return m_camera->screen_to_world(mpos);
+}
+const std::vector<kit::scope<lynx::shape2D>> &app::shapes() const
+{
+    return m_shapes;
 }
 
 #ifdef KIT_USE_YAML_CPP

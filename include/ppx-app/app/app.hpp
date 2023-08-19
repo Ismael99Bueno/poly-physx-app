@@ -25,6 +25,7 @@ class app : public lynx::app2D, public kit::serializable
   public:
     inline static const lynx::color DEFAULT_BODY_COLOR{123u, 143u, 161u};
     inline static const lynx::color DEFAULT_JOINT_COLOR{207u, 185u, 151u};
+    inline static const lynx::color DEFAULT_BODY_OUTLINE_COLOR{225u, 152u, 152u};
 
     app(const rk::butcher_tableau &table = rk::rk4, std::size_t allocations = 100, const char *name = "poly-physx");
     virtual ~app() = default;
@@ -39,6 +40,7 @@ class app : public lynx::app2D, public kit::serializable
     kit::time draw_time() const;
 
     glm::vec2 world_mouse_position() const;
+    const std::vector<kit::scope<lynx::shape2D>> &shapes() const;
 
 #ifdef KIT_USE_YAML_CPP
     virtual YAML::Node encode() const override;
@@ -51,6 +53,7 @@ class app : public lynx::app2D, public kit::serializable
 
     lynx::color body_color = DEFAULT_BODY_COLOR;
     lynx::color joint_color = DEFAULT_JOINT_COLOR;
+    lynx::color body_outline_color = DEFAULT_BODY_OUTLINE_COLOR;
 
     std::uint32_t integrations_per_frame = 1;
 
