@@ -45,8 +45,8 @@ void app::add_world_callbacks()
 
     const kit::callback<const spring2D::ptr &> add_spring{[this](const spring2D::ptr &sp) {
         if (sp->has_anchors())
-            m_spring_lines.emplace_back(sp->body1()->transform().position + sp->anchor1(),
-                                        sp->body2()->transform().position + sp->anchor2(), joint_color);
+            m_spring_lines.emplace_back(sp->body1()->transform().position + sp->rotated_anchor1(),
+                                        sp->body2()->transform().position + sp->rotated_anchor2(), joint_color);
         else
             m_spring_lines.emplace_back(sp->body1()->transform().position, sp->body2()->transform().position,
                                         joint_color);
@@ -61,17 +61,18 @@ void app::add_world_callbacks()
         if (!rj)
             return;
         if (rj->has_anchors())
-            m_thick_lines.emplace(rj, thick_line(rj->body1()->transform().position + rj->anchor1(),
-                                                 rj->body2()->transform().position + rj->anchor2(), joint_color));
+            m_revolute_lines.emplace(rj, thick_line(rj->body1()->transform().position + rj->rotated_anchor1(),
+                                                    rj->body2()->transform().position + rj->rotated_anchor2(),
+                                                    joint_color));
         else
-            m_thick_lines.emplace(
+            m_revolute_lines.emplace(
                 rj, thick_line(rj->body1()->transform().position, rj->body2()->transform().position, joint_color));
     }};
     const kit::callback<const constraint2D &> remove_revolute{[this](const constraint2D &ctr) {
         const auto *rj = dynamic_cast<const revolute_joint2D *>(&ctr);
         if (!rj)
             return;
-        m_thick_lines.erase(rj);
+        m_revolute_lines.erase(rj);
     }};
 
     world.events.on_body_addition += add_shape;
@@ -164,8 +165,8 @@ void app::update_joints()
         spring_line &spline = m_spring_lines[i];
         if (sp.has_anchors())
         {
-            spline.p1(sp.body1()->transform().position + sp.anchor1());
-            spline.p2(sp.body2()->transform().position + sp.anchor2());
+            spline.p1(sp.body1()->transform().position + sp.rotated_anchor1());
+            spline.p2(sp.body2()->transform().position + sp.rotated_anchor2());
         }
         else
         {
@@ -174,12 +175,12 @@ void app::update_joints()
         }
     }
 
-    for (auto &[rj, thline] : m_thick_lines)
+    for (auto &[rj, thline] : m_revolute_lines)
     {
         if (rj->has_anchors())
         {
-            thline.p1(rj->body1()->transform().position + rj->anchor1());
-            thline.p2(rj->body2()->transform().position + rj->anchor2());
+            thline.p1(rj->body1()->transform().position + rj->rotated_anchor1());
+            thline.p2(rj->body2()->transform().position + rj->rotated_anchor2());
         }
         else
         {
@@ -199,7 +200,7 @@ void app::draw_joints() const
 {
     for (const spring_line &spline : m_spring_lines)
         m_window->draw(spline);
-    for (const auto &[rj, thline] : m_thick_lines)
+    for (const auto &[rj, thline] : m_revolute_lines)
         m_window->draw(thline);
 }
 
@@ -252,6 +253,14 @@ glm::vec2 app::world_mouse_position() const
 const std::vector<kit::scope<lynx::shape2D>> &app::shapes() const
 {
     return m_shapes;
+}
+const std::vector<spring_line> &app::spring_lines() const
+{
+    return m_spring_lines;
+}
+const std::unordered_map<const revolute_joint2D *, thick_line> &app::revolute_lines() const
+{
+    return m_revolute_lines;
 }
 
 #ifdef KIT_USE_YAML_CPP
