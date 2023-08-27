@@ -13,6 +13,9 @@ thick_line::thick_line(const glm::vec2 &p1, const glm::vec2 &p2, const lynx::col
     update_width(width);
     update_orientation();
 }
+thick_line::thick_line(const lynx::color &color, const float width) : thick_line({0.f, 0.f}, {1.f, 0.f}, color, width)
+{
+}
 
 void thick_line::update_width(const float width)
 {

@@ -17,6 +17,7 @@ class thick_line : public lynx::line2D
   public:
     thick_line(const glm::vec2 &p1 = {0.f, 0.f}, const glm::vec2 &p2 = {1.f, 0.f},
                const lynx::color &color = lynx::color::white, float width = 1.f);
+    thick_line(const lynx::color &color, float width = 1.f);
 
     void draw(lynx::window2D &window) const override;
 

@@ -9,6 +9,10 @@ spring_line::spring_line(const glm::vec2 &p1, const glm::vec2 &p2, const lynx::c
     : m_supports_count(supports_count), m_line_strip(build_line_points(p1, p2), color)
 {
 }
+spring_line::spring_line(const lynx::color &color, const std::size_t supports_count)
+    : spring_line({0.f, 0.f}, {1.f, 0.f}, color, supports_count)
+{
+}
 
 std::vector<glm::vec2> spring_line::build_line_points(const glm::vec2 &p1, const glm::vec2 &p2)
 {
