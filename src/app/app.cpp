@@ -19,7 +19,6 @@ app::app(const rk::butcher_tableau &table, const std::size_t allocations, const 
 
     world.integrator.min_timestep = 0.0002f;
     world.integrator.max_timestep = 0.006f;
-    world.integrator.limited_timestep = false;
 
     add_world_callbacks();
 }
