@@ -17,9 +17,9 @@ app::app(const rk::butcher_tableau &table, const std::size_t allocations, const 
     m_camera = m_window->set_camera<lynx::orthographic2D>(m_window->pixel_aspect(), 50.f);
     m_camera->flip_y_axis();
 
-    world.integrator.min_dt(0.0002f);
-    world.integrator.max_dt(0.006f);
-    world.integrator.limited_timestep(false);
+    world.integrator.min_timestep = 0.0002f;
+    world.integrator.max_timestep = 0.006f;
+    world.integrator.limited_timestep = false;
 
     add_world_callbacks();
 }
@@ -90,8 +90,8 @@ void app::on_update(const float ts)
     const kit::clock update_clock;
     if (sync_timestep)
     {
-        static constexpr float min_dt = 1.f / 180.f;
-        timestep = glm::min(ts, min_dt);
+        static constexpr float min_timestep = 1.f / 180.f;
+        timestep = glm::min(ts, min_timestep);
     }
 
     const kit::clock physics_clock;
