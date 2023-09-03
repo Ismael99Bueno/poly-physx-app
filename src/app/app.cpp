@@ -88,17 +88,16 @@ void app::add_world_callbacks()
 void app::on_update(const float ts)
 {
     const kit::clock update_clock;
-    if (sync_timestep)
-    {
-        static constexpr float min_timestep = 1.f / 180.f;
-        timestep = glm::min(ts, min_timestep);
-    }
+    timestep = glm::clamp(sync_timestep ? ts : timestep, world.integrator.min_timestep, world.integrator.max_timestep);
 
-    const kit::clock physics_clock;
-    if (!paused)
-        for (std::uint32_t i = 0; i < integrations_per_frame; i++)
-            world.raw_forward(timestep);
-    m_physics_time = physics_clock.elapsed();
+    {
+        KIT_PERF_SCOPE("-Physics-")
+        const kit::clock physics_clock;
+        if (!paused)
+            for (std::uint32_t i = 0; i < integrations_per_frame; i++)
+                world.raw_forward(timestep);
+        m_physics_time = physics_clock.elapsed();
+    }
 
     update_entities();
     update_joints();
