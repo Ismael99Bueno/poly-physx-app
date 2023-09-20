@@ -7,12 +7,11 @@
 
 namespace ppx
 {
-app::app(const rk::butcher_tableau &table, const std::size_t allocations, const char *name)
-    : lynx::app2D(800, 600, name), world(table, allocations)
+app::app(const rk::butcher_tableau &table, const std::size_t allocations, const char *name) : world(table, allocations)
 {
+    m_window = set_window<lynx::window2D>(800, 600, name);
     push_layer<menu_layer>();
 
-    m_window = window();
     m_window->maintain_camera_aspect_ratio(true);
     m_camera = m_window->set_camera<lynx::orthographic2D>(m_window->pixel_aspect(), 50.f);
     m_camera->flip_y_axis();

@@ -19,7 +19,7 @@
 namespace ppx
 {
 class revolute_joint2D;
-class app : public lynx::app2D, public kit::serializable
+class app : public lynx::app, public kit::serializable
 {
   public:
     inline static const lynx::color DEFAULT_BODY_COLOR{123u, 143u, 161u};
