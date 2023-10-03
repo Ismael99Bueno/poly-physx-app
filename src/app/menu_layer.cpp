@@ -6,7 +6,7 @@
 
 namespace ppx
 {
-menu_layer::menu_layer() : lynx::layer("Menu layer")
+menu_layer::menu_layer() : lynx::layer2D("Menu layer")
 {
 }
 

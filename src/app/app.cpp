@@ -7,9 +7,10 @@
 
 namespace ppx
 {
-app::app(const rk::butcher_tableau &table, const std::size_t allocations, const char *name) : world(table, allocations)
+app::app(const rk::butcher_tableau &table, const std::size_t allocations, const char *name)
+    : lynx::app2D(800, 600, name), world(table, allocations)
 {
-    m_window = set_window<lynx::window2D>(800, 600, name);
+    m_window = window();
     push_layer<menu_layer>();
 
     m_window->maintain_camera_aspect_ratio(true);
@@ -111,25 +112,25 @@ void app::on_render(const float ts)
     m_draw_time = draw_clock.elapsed();
 }
 
-bool app::on_event(const lynx::event &event)
+bool app::on_event(const lynx::event2D &event)
 {
     switch (event.type)
     {
-    case lynx::event::KEY_PRESSED:
+    case lynx::event2D::KEY_PRESSED:
         if (ImGui::GetIO().WantCaptureKeyboard)
             break;
         switch (event.key)
         {
-        case lynx::input::key::ESCAPE:
+        case lynx::input2D::key::ESCAPE:
             shutdown();
             return true;
-        case lynx::input::key::SPACE:
+        case lynx::input2D::key::SPACE:
             paused = !paused;
             return true;
         default:
             return false;
         }
-    case lynx::event::SCROLLED:
+    case lynx::event2D::SCROLLED:
         if (ImGui::GetIO().WantCaptureMouse)
             break;
         zoom(event.scroll_offset.y, frame_time().as<kit::time::seconds, float>());
@@ -206,13 +207,13 @@ void app::move_camera(const float ts)
     if (ImGui::GetIO().WantCaptureKeyboard)
         return;
     glm::vec2 dpos{0.f};
-    if (lynx::input::key_pressed(lynx::input::key::A))
+    if (lynx::input2D::key_pressed(lynx::input2D::key::A))
         dpos.x = -1.f;
-    if (lynx::input::key_pressed(lynx::input::key::D))
+    if (lynx::input2D::key_pressed(lynx::input2D::key::D))
         dpos.x = 1.f;
-    if (lynx::input::key_pressed(lynx::input::key::W))
+    if (lynx::input2D::key_pressed(lynx::input2D::key::W))
         dpos.y = 1.f;
-    if (lynx::input::key_pressed(lynx::input::key::S))
+    if (lynx::input2D::key_pressed(lynx::input2D::key::S))
         dpos.y = -1.f;
     if (!kit::approaches_zero(glm::length2(dpos)))
         m_camera->transform.position += 2.f * glm::normalize(dpos) * ts * m_camera->size();
@@ -244,7 +245,7 @@ kit::time app::draw_time() const
 
 glm::vec2 app::world_mouse_position() const
 {
-    const glm::vec2 mpos = lynx::input::mouse_position();
+    const glm::vec2 mpos = lynx::input2D::mouse_position();
     return m_camera->screen_to_world(mpos);
 }
 const std::vector<kit::scope<lynx::shape2D>> &app::shapes() const
@@ -292,7 +293,7 @@ bool app::decode(const YAML::Node &node)
     if (node["Layers"])
         for (const auto &l : layers())
             if (node["Layers"][l->id])
-                node["Layers"][l->id].as<lynx::layer>(*l);
+                node["Layers"][l->id].as<lynx::layer2D>(*l);
 
     if (node["Shape colors"])
         for (std::size_t i = 0; i < m_shapes.size(); i++)

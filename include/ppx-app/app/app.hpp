@@ -19,7 +19,7 @@
 namespace ppx
 {
 class revolute_joint2D;
-class app : public lynx::app, public kit::serializable
+class app : public lynx::app2D, public kit::serializable
 {
   public:
     inline static const lynx::color DEFAULT_BODY_COLOR{123u, 143u, 161u};
@@ -51,7 +51,7 @@ class app : public lynx::app, public kit::serializable
 
     virtual void on_update(float ts) override;
     virtual void on_render(float ts) override;
-    virtual bool on_event(const lynx::event &event) override;
+    virtual bool on_event(const lynx::event2D &event) override;
 
     lynx::color body_color = DEFAULT_BODY_COLOR;
     lynx::color joint_color = DEFAULT_JOINT_COLOR;

@@ -3,6 +3,7 @@
 
 #include "lynx/drawing/drawable.hpp"
 #include "lynx/drawing/line.hpp"
+#include "lynx/app/window.hpp"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
