@@ -51,8 +51,8 @@ std::vector<glm::vec2> spring_line::build_line_points(const glm::vec2 &p1, const
 void spring_line::update_line_points(const glm::vec2 &p1, const glm::vec2 &p2)
 {
     const std::vector<glm::vec2> points = build_line_points(p1, p2);
-    const auto feach = [&points](std::size_t index, lynx::vertex2D &v) { v.position = points[index]; };
-    m_line_strip.update_points(feach);
+    for (std::size_t i = 0; i < points.size(); i++)
+        m_line_strip[i].position = points[i];
 }
 
 void spring_line::draw(lynx::window2D &window) const
