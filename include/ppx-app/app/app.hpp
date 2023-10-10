@@ -35,9 +35,7 @@ class app : public lynx::app2D, public kit::serializable
     bool sync_timestep = true;
     bool paused = false;
 
-    kit::time update_time() const;
     kit::time physics_time() const;
-    kit::time draw_time() const;
 
     glm::vec2 world_mouse_position() const;
     const std::vector<kit::scope<lynx::shape2D>> &shapes() const;
@@ -71,9 +69,7 @@ class app : public lynx::app2D, public kit::serializable
     std::vector<spring_line> m_spring_lines;
     std::unordered_map<const revolute_joint2D *, thick_line> m_revolute_lines;
 
-    kit::time m_update_time;
     kit::time m_physics_time;
-    kit::time m_draw_time;
 
     void update_entities();
     void update_joints();

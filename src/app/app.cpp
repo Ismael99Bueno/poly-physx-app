@@ -86,30 +86,26 @@ void app::add_world_callbacks()
 
 void app::on_update(const float ts)
 {
-    const kit::clock update_clock;
-    timestep = glm::clamp(sync_timestep ? ts : timestep, world.integrator.min_timestep, world.integrator.max_timestep);
-
     {
-        KIT_PERF_SCOPE("-Physics-")
+        KIT_PERF_SCOPE("PPX-APP:Physics")
         const kit::clock physics_clock;
+
+        timestep =
+            glm::clamp(sync_timestep ? ts : timestep, world.integrator.min_timestep, world.integrator.max_timestep);
         if (!paused)
             for (std::uint32_t i = 0; i < integrations_per_frame; i++)
                 world.raw_forward(timestep);
         m_physics_time = physics_clock.elapsed();
     }
-
     update_entities();
     update_joints();
     move_camera(ts);
-    m_update_time = update_clock.elapsed();
 }
 
 void app::on_render(const float ts)
 {
-    const kit::clock draw_clock;
     draw_entities();
     draw_joints();
-    m_draw_time = draw_clock.elapsed();
 }
 
 bool app::on_event(const lynx::event2D &event)
@@ -230,17 +226,9 @@ void app::zoom(const float offset, const float ts)
     m_camera->transform.position += dpos;
 }
 
-kit::time app::update_time() const
-{
-    return m_update_time;
-}
 kit::time app::physics_time() const
 {
     return m_physics_time;
-}
-kit::time app::draw_time() const
-{
-    return m_draw_time;
 }
 
 glm::vec2 app::world_mouse_position() const
