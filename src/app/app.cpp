@@ -43,8 +43,8 @@ void app::add_world_callbacks()
     }};
 
     const kit::callback<const spring2D::ptr &> add_spring{[this](const spring2D::ptr &sp) {
-        m_spring_lines.emplace_back(sp->body1()->position() + sp->rotated_anchor1(),
-                                    sp->body2()->position() + sp->rotated_anchor2(), joint_color);
+        m_spring_lines.emplace_back(sp->joint.body1()->position() + sp->joint.rotated_anchor1(),
+                                    sp->joint.body2()->position() + sp->joint.rotated_anchor2(), joint_color);
     }};
     const kit::callback<const spring2D &> remove_spring{[this](const spring2D &sp) {
         m_spring_lines[sp.index] = m_spring_lines.back();
@@ -55,8 +55,9 @@ void app::add_world_callbacks()
         const auto *rj = dynamic_cast<revolute_joint2D *>(ctr);
         if (!rj)
             return;
-        m_revolute_lines.emplace(rj, thick_line(rj->body1()->position() + rj->rotated_anchor1(),
-                                                rj->body2()->position() + rj->rotated_anchor2(), joint_color));
+        m_revolute_lines.emplace(rj,
+                                 thick_line(rj->joint.body1()->position() + rj->joint.rotated_anchor1(),
+                                            rj->joint.body2()->position() + rj->joint.rotated_anchor2(), joint_color));
     }};
     const kit::callback<const constraint2D &> remove_revolute{[this](const constraint2D &ctr) {
         const auto *rj = dynamic_cast<const revolute_joint2D *>(&ctr);
@@ -149,14 +150,14 @@ void app::update_joints()
         const spring2D &sp = springs[i];
         spring_line &spline = m_spring_lines[i];
 
-        spline.p1(sp.body1()->position() + sp.rotated_anchor1());
-        spline.p2(sp.body2()->position() + sp.rotated_anchor2());
+        spline.p1(sp.joint.body1()->position() + sp.joint.rotated_anchor1());
+        spline.p2(sp.joint.body2()->position() + sp.joint.rotated_anchor2());
     }
 
     for (auto &[rj, thline] : m_revolute_lines)
     {
-        thline.p1(rj->body1()->position() + rj->rotated_anchor1());
-        thline.p2(rj->body2()->position() + rj->rotated_anchor2());
+        thline.p1(rj->joint.body1()->position() + rj->joint.rotated_anchor1());
+        thline.p2(rj->joint.body2()->position() + rj->joint.rotated_anchor2());
     }
 }
 
