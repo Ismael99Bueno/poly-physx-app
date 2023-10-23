@@ -177,7 +177,8 @@ void app::draw_joints() const
 
 void app::move_camera(const float ts)
 {
-    if (ImGui::GetIO().WantCaptureKeyboard)
+    if (ImGui::GetIO().WantCaptureKeyboard || lynx::input2D::key_pressed(lynx::input2D::key::LEFT_CONTROL) ||
+        lynx::input2D::key_pressed(lynx::input2D::key::LEFT_SHIFT))
         return;
     glm::vec2 dpos{0.f};
     if (lynx::input2D::key_pressed(lynx::input2D::key::A))
