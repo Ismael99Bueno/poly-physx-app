@@ -18,7 +18,7 @@
 
 namespace ppx
 {
-class revolute_joint2D;
+class distance_joint2D;
 class app : public lynx::app2D, public kit::serializable
 {
   public:
@@ -40,7 +40,7 @@ class app : public lynx::app2D, public kit::serializable
     glm::vec2 world_mouse_position() const;
     const std::vector<kit::scope<lynx::shape2D>> &shapes() const;
     const std::vector<spring_line> &spring_lines() const;
-    const std::unordered_map<const revolute_joint2D *, thick_line> &revolute_lines() const;
+    const std::unordered_map<const distance_joint2D *, thick_line> &dist_joint_lines() const;
 
 #ifdef KIT_USE_YAML_CPP
     virtual YAML::Node encode() const override;
@@ -67,7 +67,7 @@ class app : public lynx::app2D, public kit::serializable
 
     std::vector<kit::scope<lynx::shape2D>> m_shapes;
     std::vector<spring_line> m_spring_lines;
-    std::unordered_map<const revolute_joint2D *, thick_line> m_revolute_lines;
+    std::unordered_map<const distance_joint2D *, thick_line> m_dist_joint_lines;
 
     kit::time m_physics_time;
 

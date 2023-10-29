@@ -2,7 +2,7 @@
 #include "ppx-app/app/app.hpp"
 #include "ppx-app/app/menu_layer.hpp"
 #include "lynx/geometry/camera.hpp"
-#include "ppx/joints/revolute_joint2D.hpp"
+#include "ppx/joints/distance_joint2D.hpp"
 #include "kit/utility/utils.hpp"
 
 namespace ppx
@@ -51,19 +51,19 @@ void app::add_world_callbacks()
         m_spring_lines.pop_back();
     }};
 
-    const kit::callback<constraint2D *> add_revolute{[this](constraint2D *ctr) {
-        const auto *rj = dynamic_cast<revolute_joint2D *>(ctr);
-        if (!rj)
+    const kit::callback<constraint2D *> add_dist_joint{[this](constraint2D *ctr) {
+        const auto *dj = dynamic_cast<distance_joint2D *>(ctr);
+        if (!dj)
             return;
-        m_revolute_lines.emplace(rj,
-                                 thick_line(rj->joint.body1()->position() + rj->joint.rotated_anchor1(),
-                                            rj->joint.body2()->position() + rj->joint.rotated_anchor2(), joint_color));
+        m_dist_joint_lines.emplace(dj, thick_line(dj->joint.body1()->position() + dj->joint.rotated_anchor1(),
+                                                  dj->joint.body2()->position() + dj->joint.rotated_anchor2(),
+                                                  joint_color));
     }};
-    const kit::callback<const constraint2D &> remove_revolute{[this](const constraint2D &ctr) {
-        const auto *rj = dynamic_cast<const revolute_joint2D *>(&ctr);
-        if (!rj)
+    const kit::callback<const constraint2D &> remove_dist_joint{[this](const constraint2D &ctr) {
+        const auto *dj = dynamic_cast<const distance_joint2D *>(&ctr);
+        if (!dj)
             return;
-        m_revolute_lines.erase(rj);
+        m_dist_joint_lines.erase(dj);
     }};
 
     world.events.on_body_addition += add_shape;
@@ -72,8 +72,8 @@ void app::add_world_callbacks()
     world.events.on_spring_addition += add_spring;
     world.events.on_early_spring_removal += remove_spring;
 
-    world.events.on_constraint_addition += add_revolute;
-    world.events.on_constraint_removal += remove_revolute;
+    world.events.on_constraint_addition += add_dist_joint;
+    world.events.on_constraint_removal += remove_dist_joint;
 }
 
 void app::on_update(const float ts)
@@ -154,10 +154,10 @@ void app::update_joints()
         spline.p2(sp.joint.body2()->position() + sp.joint.rotated_anchor2());
     }
 
-    for (auto &[rj, thline] : m_revolute_lines)
+    for (auto &[dj, thline] : m_dist_joint_lines)
     {
-        thline.p1(rj->joint.body1()->position() + rj->joint.rotated_anchor1());
-        thline.p2(rj->joint.body2()->position() + rj->joint.rotated_anchor2());
+        thline.p1(dj->joint.body1()->position() + dj->joint.rotated_anchor1());
+        thline.p2(dj->joint.body2()->position() + dj->joint.rotated_anchor2());
     }
 }
 
@@ -171,7 +171,7 @@ void app::draw_joints() const
 {
     for (const spring_line &spline : m_spring_lines)
         m_window->draw(spline);
-    for (const auto &[rj, thline] : m_revolute_lines)
+    for (const auto &[dj, thline] : m_dist_joint_lines)
         m_window->draw(thline);
 }
 
@@ -222,9 +222,9 @@ const std::vector<spring_line> &app::spring_lines() const
 {
     return m_spring_lines;
 }
-const std::unordered_map<const revolute_joint2D *, thick_line> &app::revolute_lines() const
+const std::unordered_map<const distance_joint2D *, thick_line> &app::dist_joint_lines() const
 {
-    return m_revolute_lines;
+    return m_dist_joint_lines;
 }
 
 #ifdef KIT_USE_YAML_CPP
