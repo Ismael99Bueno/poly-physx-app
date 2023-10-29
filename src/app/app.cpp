@@ -70,7 +70,7 @@ void app::add_world_callbacks()
     world.events.on_late_body_removal += remove_shape;
 
     world.events.on_spring_addition += add_spring;
-    world.events.on_spring_removal += remove_spring;
+    world.events.on_early_spring_removal += remove_spring;
 
     world.events.on_constraint_addition += add_revolute;
     world.events.on_constraint_removal += remove_revolute;
