@@ -7,8 +7,7 @@
 
 namespace ppx
 {
-app::app(const rk::butcher_tableau &table, const std::size_t allocations, const char *name)
-    : lynx::app2D(800, 600, name), world(table, allocations)
+app::app(const rk::butcher_tableau &table, const char *name) : lynx::app2D(800, 600, name), world(table)
 {
     m_window = window();
     push_layer<menu_layer>();
@@ -131,10 +130,9 @@ bool app::on_event(const lynx::event2D &event)
 
 void app::update_entities()
 {
-    const auto bodies = world.bodies();
-    for (std::size_t i = 0; i < bodies.unwrap().size(); i++)
+    for (std::size_t i = 0; i < world.bodies.size(); i++)
     {
-        const body2D &body = bodies[i];
+        const body2D &body = world.bodies[i];
         const kit::transform2D &transform = body.transform();
 
         m_shapes[i]->transform.position = transform.position;
@@ -144,10 +142,9 @@ void app::update_entities()
 }
 void app::update_joints()
 {
-    const auto springs = world.springs();
-    for (std::size_t i = 0; i < springs.unwrap().size(); i++)
+    for (std::size_t i = 0; i < world.springs.size(); i++)
     {
-        const spring2D &sp = springs[i];
+        const spring2D &sp = world.springs[i];
         spring_line &spline = m_spring_lines[i];
 
         spline.p1(sp.joint.body1()->position() + sp.joint.rotated_anchor1());

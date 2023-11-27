@@ -26,8 +26,7 @@ class app : public lynx::app2D, public kit::serializable
     inline static const lynx::color DEFAULT_JOINT_COLOR{207u, 185u, 151u};
     inline static const lynx::color DEFAULT_BODY_OUTLINE_COLOR{225u, 152u, 152u};
 
-    app(const rk::butcher_tableau &table = rk::butcher_tableau::rk4, std::size_t allocations = 100,
-        const char *name = "poly-physx");
+    app(const rk::butcher_tableau &table = rk::butcher_tableau::rk4, const char *name = "poly-physx");
     virtual ~app() = default;
 
     world2D world;
