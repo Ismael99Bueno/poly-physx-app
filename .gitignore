@@ -21,3 +21,5 @@
 **.vcxproj*
 
 imgui.ini
+
+__pycache__
