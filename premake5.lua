@@ -29,7 +29,7 @@ includedirs {
    "include",
    "%{wks.location}/poly-physx/include",
    "%{wks.location}/lynx/include",
-   "%{wks.location}/shapes-2D/include",
+   "%{wks.location}/geometry/include",
    "%{wks.location}/rk-integrator/include",
    "%{wks.location}/cpp-kit/include",
    "%{wks.location}/vendor/yaml-cpp/include",

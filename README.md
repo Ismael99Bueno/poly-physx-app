@@ -19,7 +19,7 @@ poly-physx-app depends on the following projects:
 - [Dear ImGui](https://github.com/ismawno/imgui)
 - [imgui-sfml](https://github.com/ismawno/imgui-sfml)
 - [glm](https://github.com/g-truc/glm)
-- [shapes-2D](https://github.com/ismawno/shapes-2D)
+- [geometry](https://github.com/ismawno/geometry)
 - [rk-integrator](https://github.com/ismawno/rk-integrator)
 - [debug-tools](https://github.com/ismawno/debug-tools)
 - [profile-tools](https://github.com/ismawno/profile-tools)
