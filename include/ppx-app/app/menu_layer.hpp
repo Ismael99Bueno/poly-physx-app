@@ -1,5 +1,4 @@
-#ifndef PPX_MENU_LAYER_HPP
-#define PPX_MENU_LAYER_HPP
+#pragma once
 
 #include "lynx/app/layer.hpp"
 #include "lynx/app/window.hpp"
@@ -18,5 +17,3 @@ class menu_layer : public lynx::layer2D
     lynx::window2D *m_window;
 };
 } // namespace ppx
-
-#endif

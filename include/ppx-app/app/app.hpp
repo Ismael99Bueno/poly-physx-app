@@ -1,5 +1,4 @@
-#ifndef PPX_APP_HPP
-#define PPX_APP_HPP
+#pragma once
 
 #include "ppx/world2D.hpp"
 
@@ -83,5 +82,3 @@ class app : public lynx::app2D, public kit::serializable
 };
 
 } // namespace ppx
-
-#endif

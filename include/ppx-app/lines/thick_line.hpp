@@ -1,5 +1,4 @@
-#ifndef PPX_THICK_LINE_HPP
-#define PPX_THICK_LINE_HPP
+#pragma once
 
 #include "lynx/drawing/drawable.hpp"
 #include "lynx/drawing/shape.hpp"
@@ -44,5 +43,3 @@ class thick_line : public lynx::line2D
     void update_orientation();
 };
 } // namespace ppx
-
-#endif

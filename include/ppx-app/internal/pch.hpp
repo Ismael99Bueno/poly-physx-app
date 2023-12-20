@@ -1,5 +1,4 @@
-#ifndef PPX_APP_PCH_HPP
-#define PPX_APP_PCH_HPP
+#pragma once
 
 #include <string>
 #include <vector>
@@ -17,5 +16,3 @@
 #endif
 #endif
 #include "ppx/internal/pch.hpp"
-
-#endif

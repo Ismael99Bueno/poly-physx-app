@@ -1,5 +1,4 @@
-#ifndef PPX_SPRING_LINE_HPP
-#define PPX_SPRING_LINE_HPP
+#pragma once
 
 #include "lynx/drawing/drawable.hpp"
 #include "lynx/drawing/line.hpp"
@@ -54,5 +53,3 @@ class spring_line : public lynx::line2D
     void update_line_points(const glm::vec2 &p1, const glm::vec2 &p2);
 };
 } // namespace ppx
-
-#endif
