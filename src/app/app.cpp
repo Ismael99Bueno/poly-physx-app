@@ -32,7 +32,7 @@ void app::add_world_callbacks()
             return;
         }
         const geo::polygon &poly = body->shape<geo::polygon>();
-        m_shapes.emplace_back(kit::make_scope<lynx::polygon2D>(poly.locals(), body_color))
+        m_shapes.emplace_back(kit::make_scope<lynx::polygon2D>(poly.locals().as_vector(), body_color))
             ->outline_color(body_outline_color);
     }};
 
