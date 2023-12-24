@@ -4,6 +4,7 @@
 
 #include "ppx-app/lines/thick_line.hpp"
 #include "ppx-app/lines/spring_line.hpp"
+#include "ppx-app/app/menu_layer.hpp"
 
 #include "lynx/app/app.hpp"
 #include "lynx/drawing/shape.hpp"
@@ -25,11 +26,23 @@ class app : public lynx::app2D, public kit::serializable
     inline static const lynx::color DEFAULT_JOINT_COLOR{207u, 185u, 151u};
     inline static const lynx::color DEFAULT_BODY_OUTLINE_COLOR{225u, 152u, 152u};
 
-    app(const rk::butcher_tableau &table = rk::butcher_tableau::rk4, const char *name = "poly-physx");
+    template <class... WorldArgs>
+    app(const char *name = "poly-physx", WorldArgs &&...args)
+        : lynx::app2D(800, 600, name), world(std::forward<WorldArgs>(args)...)
+    {
+        m_window = window();
+        push_layer<menu_layer>();
+
+        m_window->maintain_camera_aspect_ratio(true);
+        m_camera = m_window->set_camera<lynx::orthographic2D>(m_window->pixel_aspect(), 50.f);
+        m_camera->flip_y_axis();
+
+        add_world_callbacks();
+    }
+
     virtual ~app() = default;
 
     world2D world;
-    float timestep = 1e-3f;
     bool sync_timestep = true;
     bool paused = false;
 

@@ -1,26 +1,11 @@
 #include "ppx-app/internal/pch.hpp"
 #include "ppx-app/app/app.hpp"
-#include "ppx-app/app/menu_layer.hpp"
 #include "lynx/geometry/camera.hpp"
 #include "ppx/joints/distance_joint2D.hpp"
 #include "kit/utility/utils.hpp"
 
 namespace ppx
 {
-app::app(const rk::butcher_tableau &table, const char *name) : lynx::app2D(800, 600, name), world(table)
-{
-    m_window = window();
-    push_layer<menu_layer>();
-
-    m_window->maintain_camera_aspect_ratio(true);
-    m_camera = m_window->set_camera<lynx::orthographic2D>(m_window->pixel_aspect(), 50.f);
-    m_camera->flip_y_axis();
-
-    world.integrator.min_timestep = 0.0002f;
-    world.integrator.max_timestep = 0.006f;
-
-    add_world_callbacks();
-}
 
 void app::add_world_callbacks()
 {
@@ -81,11 +66,14 @@ void app::on_update(const float ts)
         KIT_PERF_SCOPE("PPX-APP:Physics")
         const kit::clock physics_clock;
 
-        timestep =
-            glm::clamp(sync_timestep ? ts : timestep, world.integrator.min_timestep, world.integrator.max_timestep);
+        if (sync_timestep)
+            world.integrator.ts.value = ts;
+        if (world.integrator.ts.limited)
+            world.integrator.ts.clamp();
+
         if (!paused)
             for (std::uint32_t i = 0; i < integrations_per_frame; i++)
-                world.raw_forward(timestep);
+                world.step();
         m_physics_time = physics_clock.elapsed();
     }
     update_entities();
@@ -229,7 +217,6 @@ YAML::Node app::encode() const
 {
     YAML::Node node;
     node["Engine"] = world;
-    node["Timestep"] = timestep;
     for (const auto &l : layers())
         node["Layers"][l->id] = *l;
     for (const auto &shape : m_shapes)
@@ -251,7 +238,6 @@ bool app::decode(const YAML::Node &node)
         return false;
 
     node["Engine"].as<ppx::world2D>(world);
-    timestep = node["Timestep"].as<float>();
 
     if (node["Layers"])
         for (const auto &l : layers())
