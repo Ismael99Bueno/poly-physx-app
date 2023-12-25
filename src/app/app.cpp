@@ -6,7 +6,6 @@
 
 namespace ppx
 {
-
 void app::add_world_callbacks()
 {
     const kit::callback<const body2D::ptr &> add_shape{[this](const body2D::ptr &body) {
