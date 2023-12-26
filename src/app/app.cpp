@@ -120,7 +120,7 @@ void app::update_entities()
     for (std::size_t i = 0; i < world.bodies.size(); i++)
     {
         const body2D &body = world.bodies[i];
-        const kit::transform2D &transform = body.transform();
+        const kit::transform2D<float> &transform = body.transform();
 
         m_shapes[i]->transform.position = transform.position;
         m_shapes[i]->transform.rotation = transform.rotation;
@@ -210,55 +210,5 @@ const std::unordered_map<const distance_joint2D *, thick_line> &app::dist_joint_
 {
     return m_dist_joint_lines;
 }
-
-#ifdef KIT_USE_YAML_CPP
-YAML::Node app::encode() const
-{
-    YAML::Node node;
-    node["Engine"] = world;
-    for (const auto &l : layers())
-        node["Layers"][l->id] = *l;
-    for (const auto &shape : m_shapes)
-        node["Shape colors"].push_back(shape->color().normalized);
-    node["Paused"] = paused;
-    node["Sync timestep"] = sync_timestep;
-    node["Body color"] = body_color.normalized;
-    node["Joints color"] = joint_color.normalized;
-    node["Integrations per frame"] = integrations_per_frame;
-    node["Framerate"] = framerate_cap();
-    node["Camera position"] = m_camera->transform.position;
-    node["Camera scale"] = m_camera->transform.scale;
-    node["Camera rotation"] = m_camera->transform.rotation;
-    return node;
-}
-bool app::decode(const YAML::Node &node)
-{
-    if (!node.IsMap() || node.size() < 11)
-        return false;
-
-    node["Engine"].as<ppx::world2D>(world);
-
-    if (node["Layers"])
-        for (const auto &l : layers())
-            if (node["Layers"][l->id])
-                node["Layers"][l->id].as<lynx::layer2D>(*l);
-
-    if (node["Shape colors"])
-        for (std::size_t i = 0; i < m_shapes.size(); i++)
-            m_shapes[i]->color(lynx::color(node["Shape colors"][i].as<glm::vec4>()));
-
-    paused = node["Paused"].as<bool>();
-    sync_timestep = node["Sync timestep"].as<bool>();
-    body_color = lynx::color(node["Body color"].as<glm::vec4>());
-    joint_color = lynx::color(node["Joints color"].as<glm::vec4>());
-    integrations_per_frame = node["Integrations per frame"].as<std::uint32_t>();
-    limit_framerate(node["Framerate"].as<std::uint32_t>());
-
-    m_camera->transform.position = node["Camera position"].as<glm::vec2>();
-    m_camera->transform.scale = node["Camera scale"].as<glm::vec2>();
-    m_camera->transform.rotation = node["Camera rotation"].as<float>();
-    return true;
-}
-#endif
 
 } // namespace ppx

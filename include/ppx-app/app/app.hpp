@@ -10,16 +10,11 @@
 #include "lynx/drawing/shape.hpp"
 
 #include "kit/memory/scope.hpp"
-#include "kit/interface/serialization.hpp"
-
-#ifdef KIT_USE_YAML_CPP
-#include <yaml-cpp/yaml.h>
-#endif
 
 namespace ppx
 {
 class distance_joint2D;
-class app : public lynx::app2D, public kit::serializable
+class app : public lynx::app2D
 {
   public:
     inline static const lynx::color DEFAULT_BODY_COLOR{123u, 143u, 161u};
@@ -52,11 +47,6 @@ class app : public lynx::app2D, public kit::serializable
     const std::vector<kit::scope<lynx::shape2D>> &shapes() const;
     const std::vector<spring_line> &spring_lines() const;
     const std::unordered_map<const distance_joint2D *, thick_line> &dist_joint_lines() const;
-
-#ifdef KIT_USE_YAML_CPP
-    virtual YAML::Node encode() const override;
-    virtual bool decode(const YAML::Node &node) override;
-#endif
 
     virtual void on_update(float ts) override;
     virtual void on_render(float ts) override;
