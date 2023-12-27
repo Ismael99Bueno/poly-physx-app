@@ -1,5 +1,7 @@
 #include "ppx-app/internal/pch.hpp"
 #include "ppx-app/app/app.hpp"
+#include "ppx-app/serialization/serialization.hpp"
+
 #include "lynx/geometry/camera.hpp"
 #include "ppx/joints/distance_joint2D.hpp"
 #include "kit/utility/utils.hpp"
@@ -210,5 +212,16 @@ const std::unordered_map<const distance_joint2D *, thick_line> &app::dist_joint_
 {
     return m_dist_joint_lines;
 }
+
+#ifdef KIT_USE_YAML_CPP
+YAML::Node app::encode() const
+{
+    return kit::yaml::codec<app>::encode(*this);
+}
+bool app::decode(const YAML::Node &node)
+{
+    return kit::yaml::codec<app>::decode(node, *this);
+}
+#endif
 
 } // namespace ppx

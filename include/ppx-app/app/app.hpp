@@ -10,6 +10,7 @@
 #include "lynx/drawing/shape.hpp"
 
 #include "kit/memory/scope.hpp"
+#include "kit/serialization/yaml/serializer.hpp"
 
 namespace ppx
 {
@@ -41,6 +42,12 @@ class app : public lynx::app2D
     bool sync_timestep = true;
     bool paused = false;
 
+    lynx::color body_color = DEFAULT_BODY_COLOR;
+    lynx::color joint_color = DEFAULT_JOINT_COLOR;
+    lynx::color body_outline_color = DEFAULT_BODY_OUTLINE_COLOR;
+
+    std::uint32_t integrations_per_frame = 1;
+
     kit::time physics_time() const;
 
     glm::vec2 world_mouse_position() const;
@@ -52,11 +59,10 @@ class app : public lynx::app2D
     virtual void on_render(float ts) override;
     virtual bool on_event(const lynx::event2D &event) override;
 
-    lynx::color body_color = DEFAULT_BODY_COLOR;
-    lynx::color joint_color = DEFAULT_JOINT_COLOR;
-    lynx::color body_outline_color = DEFAULT_BODY_OUTLINE_COLOR;
-
-    std::uint32_t integrations_per_frame = 1;
+#ifdef KIT_USE_YAML_CPP
+    virtual YAML::Node encode() const override;
+    virtual bool decode(const YAML::Node &node) override;
+#endif
 
   private:
     virtual void on_body_update(const body2D &body, lynx::shape2D &shape)

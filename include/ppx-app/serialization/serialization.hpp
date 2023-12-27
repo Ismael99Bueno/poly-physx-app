@@ -1,13 +1,18 @@
 #pragma once
 
 #include "ppx-app/app/app.hpp"
+#include "ppx/serialization/serialization.hpp"
 #include "kit/serialization/yaml/codec.hpp"
+#include "kit/serialization/yaml/glm.hpp"
+#include "lynx/serialization/serialization.hpp"
 
 template <> struct kit::yaml::codec<ppx::app>
 {
     static YAML::Node encode(const ppx::app &app)
     {
         YAML::Node node;
+        node["Lynx app"] = kit::yaml::codec<lynx::app2D>::encode(app);
+
         node["Engine"] = app.world;
         for (const auto &shape : app.shapes())
             node["Shape colors"].push_back(shape->color().normalized);
@@ -24,9 +29,10 @@ template <> struct kit::yaml::codec<ppx::app>
     }
     static bool decode(const YAML::Node &node, ppx::app &app)
     {
-        if (!node.IsMap() || node.size() < 11)
+        if (!node.IsMap() || node.size() < 12)
             return false;
 
+        kit::yaml::codec<lynx::app2D>::decode(node["Lynx app"], app);
         node["Engine"].as<ppx::world2D>(app.world);
 
         if (node["Shape colors"])
