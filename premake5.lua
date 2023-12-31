@@ -40,3 +40,5 @@ includedirs {
    "%{wks.location}/vendor/implot",
    "%{wks.location}/vendor/spdlog/include"
 }
+filter "system:windows"
+   includedirs "%{VULKAN_SDK}/include"
