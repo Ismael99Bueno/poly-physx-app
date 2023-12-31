@@ -41,4 +41,4 @@ includedirs {
    "%{wks.location}/vendor/spdlog/include"
 }
 filter "system:windows"
-   includedirs "%{VULKAN_SDK}/include"
+   includedirs "%{VULKAN_SDK}/Include"
