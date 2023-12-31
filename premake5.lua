@@ -40,5 +40,6 @@ includedirs {
    "%{wks.location}/vendor/implot",
    "%{wks.location}/vendor/spdlog/include"
 }
+VULKAN_SDK = os.getenv("VULKAN_SDK")
 filter "system:windows"
    includedirs "%{VULKAN_SDK}/Include"
