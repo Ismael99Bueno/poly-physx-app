@@ -100,7 +100,7 @@ bool app::on_event(const lynx::event2D &event)
         case lynx::input2D::key::ESCAPE:
             shutdown();
             return true;
-        case lynx::input2D::key::SPACE:
+        case lynx::input2D::key::P:
             paused = !paused;
             return true;
         default:
