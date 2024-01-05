@@ -10,14 +10,14 @@ namespace ppx
 {
 void app::add_world_callbacks()
 {
-    const kit::callback<const body2D::ptr &> add_shape{[this](const body2D::ptr &body) {
-        if (const auto *c = body->shape_if<geo::circle>())
+    const kit::callback<body2D &> add_shape{[this](body2D &body) {
+        if (const auto *c = body.shape_if<geo::circle>())
         {
             m_shapes.emplace_back(kit::make_scope<lynx::ellipse2D>(c->radius, body_color))
                 ->outline_color(body_outline_color);
             return;
         }
-        const geo::polygon &poly = body->shape<geo::polygon>();
+        const geo::polygon &poly = body.shape<geo::polygon>();
         m_shapes.emplace_back(kit::make_scope<lynx::polygon2D>(poly.locals().as_vector(), body_color))
             ->outline_color(body_outline_color);
     }};
@@ -27,9 +27,9 @@ void app::add_world_callbacks()
         m_shapes.pop_back();
     }};
 
-    const kit::callback<const spring2D::ptr &> add_spring{[this](const spring2D::ptr &sp) {
-        m_spring_lines.emplace_back(sp->joint.body1()->position() + sp->joint.rotated_anchor1(),
-                                    sp->joint.body2()->position() + sp->joint.rotated_anchor2(), joint_color);
+    const kit::callback<spring2D &> add_spring{[this](spring2D &sp) {
+        m_spring_lines.emplace_back(sp.joint.body1()->position() + sp.joint.rotated_anchor1(),
+                                    sp.joint.body2()->position() + sp.joint.rotated_anchor2(), joint_color);
     }};
     const kit::callback<const spring2D &> remove_spring{[this](const spring2D &sp) {
         m_spring_lines[sp.index] = m_spring_lines.back();
