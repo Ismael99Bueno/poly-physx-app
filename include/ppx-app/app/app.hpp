@@ -78,10 +78,10 @@ class app : public lynx::app2D
 
     kit::time m_physics_time;
 
-    void update_entities();
+    void update_shapes();
     void update_joints();
 
-    void draw_entities() const;
+    void draw_shapes() const;
     void draw_joints() const;
 
     void zoom(float offset, float ts);

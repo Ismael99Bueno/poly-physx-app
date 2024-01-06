@@ -13,13 +13,15 @@ void app::add_world_callbacks()
     const kit::callback<body2D &> add_shape{[this](body2D &body) {
         if (const auto *c = body.shape_if<geo::circle>())
         {
-            m_shapes.emplace_back(kit::make_scope<lynx::ellipse2D>(c->radius, body_color))
-                ->outline_color(body_outline_color);
+            auto &shape = m_shapes.emplace_back(kit::make_scope<lynx::ellipse2D>(c->radius, body_color));
+            shape->outline_color(body_outline_color);
+            shape->transform = body.transform();
             return;
         }
         const geo::polygon &poly = body.shape<geo::polygon>();
-        m_shapes.emplace_back(kit::make_scope<lynx::polygon2D>(poly.locals().as_vector(), body_color))
-            ->outline_color(body_outline_color);
+        auto &shape = m_shapes.emplace_back(kit::make_scope<lynx::polygon2D>(poly.locals().as_vector(), body_color));
+        shape->outline_color(body_outline_color);
+        shape->transform = body.transform();
     }};
 
     const kit::callback<std::size_t> remove_shape{[this](const std::size_t index) {
@@ -77,14 +79,14 @@ void app::on_update(const float ts)
                 world.step();
         m_physics_time = physics_clock.elapsed();
     }
-    update_entities();
+    update_shapes();
     update_joints();
     move_camera(ts);
 }
 
 void app::on_render(const float ts)
 {
-    draw_entities();
+    draw_shapes();
     draw_joints();
 }
 
@@ -117,7 +119,7 @@ bool app::on_event(const lynx::event2D &event)
     return false;
 }
 
-void app::update_entities()
+void app::update_shapes()
 {
     for (std::size_t i = 0; i < world.bodies.size(); i++)
     {
@@ -147,7 +149,7 @@ void app::update_joints()
     }
 }
 
-void app::draw_entities() const
+void app::draw_shapes() const
 {
     for (const auto &shape : m_shapes)
         m_window->draw(*shape);
