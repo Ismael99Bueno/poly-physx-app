@@ -15,7 +15,7 @@ void app::add_world_callbacks()
         {
             auto &shape = m_shapes.emplace_back(kit::make_scope<lynx::ellipse2D>(c->radius, body_color));
             shape->outline_color(body_outline_color);
-            shape->transform = body.transform();
+            shape->transform.position = body.position();
             return;
         }
         const geo::polygon &poly = body.shape<geo::polygon>();
@@ -144,8 +144,13 @@ void app::update_joints()
 
     for (auto &[dj, thline] : m_dist_joint_lines)
     {
+        const float stress = dj->constraint_value() * 5.f;
+        const lynx::gradient<3> grad{lynx::color::red, lynx::color{glm::vec3(0.8f)}, lynx::color::blue};
+        const lynx::color color = grad.evaluate(std::clamp(0.5f * (stress + 1.f), 0.f, 1.f));
+
         thline.p1(dj->joint.body1()->position() + dj->joint.rotated_anchor1());
         thline.p2(dj->joint.body2()->position() + dj->joint.rotated_anchor2());
+        thline.color(color);
     }
 }
 
