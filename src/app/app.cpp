@@ -145,7 +145,7 @@ void app::update_joints()
     for (auto &[dj, thline] : m_dist_joint_lines)
     {
         const float stress = dj->constraint_value() * 5.f;
-        const lynx::gradient<3> grad{lynx::color::red, lynx::color{glm::vec3(0.8f)}, lynx::color::blue};
+        const lynx::gradient<3> grad{lynx::color::blue, lynx::color{glm::vec3(0.8f)}, lynx::color::red};
         const lynx::color color = grad.evaluate(std::clamp(0.5f * (stress + 1.f), 0.f, 1.f));
 
         thline.p1(dj->joint.body1()->position() + dj->joint.rotated_anchor1());
