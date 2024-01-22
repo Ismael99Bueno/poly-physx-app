@@ -18,8 +18,10 @@ void app::add_world_callbacks()
             shape->transform.position = body.position();
             return;
         }
-        const geo::polygon &poly = body.shape<geo::polygon>();
-        auto &shape = m_shapes.emplace_back(kit::make_scope<lynx::polygon2D>(poly.locals().as_vector(), body_color));
+        const geo::polygon<8> &poly = body.shape<geo::polygon<8>>();
+        const std::vector<glm::vec2> vertices{poly.locals.begin(), poly.locals.end()};
+
+        auto &shape = m_shapes.emplace_back(kit::make_scope<lynx::polygon2D>(vertices, body_color));
         shape->outline_color(body_outline_color);
         shape->transform = body.transform();
     }};
