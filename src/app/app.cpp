@@ -11,14 +11,14 @@ namespace ppx
 void app::add_world_callbacks()
 {
     const kit::callback<body2D &> add_shape{[this](body2D &body) {
-        if (const auto *c = body.shape_if<geo::circle>())
+        if (const auto *c = body.shape_if<circle>())
         {
             auto &shape = m_shapes.emplace_back(kit::make_scope<lynx::ellipse2D>(c->radius, body_color));
             shape->outline_color(body_outline_color);
             shape->transform.position = body.position();
             return;
         }
-        const geo::polygon<8> &poly = body.shape<geo::polygon<8>>();
+        const polygon &poly = body.shape<polygon>();
         const std::vector<glm::vec2> vertices{poly.locals.begin(), poly.locals.end()};
 
         auto &shape = m_shapes.emplace_back(kit::make_scope<lynx::polygon2D>(vertices, body_color));
