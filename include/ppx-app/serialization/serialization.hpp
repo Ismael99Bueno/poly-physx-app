@@ -18,7 +18,7 @@ template <> struct kit::yaml::codec<ppx::app>
             node["Shape colors"].push_back(shape->color().normalized);
         node["Paused"] = app.paused;
         node["Sync timestep"] = app.sync_timestep;
-        node["Body color"] = app.body_color.normalized;
+        node["Collider color"] = app.collider_color.normalized;
         node["Joints color"] = app.joint_color.normalized;
         node["Integrations per frame"] = app.integrations_per_frame;
         node["Framerate"] = app.framerate_cap();
@@ -41,7 +41,7 @@ template <> struct kit::yaml::codec<ppx::app>
 
         app.paused = node["Paused"].as<bool>();
         app.sync_timestep = node["Sync timestep"].as<bool>();
-        app.body_color = lynx::color(node["Body color"].as<glm::vec4>());
+        app.collider_color = lynx::color(node["Collider color"].as<glm::vec4>());
         app.joint_color = lynx::color(node["Joints color"].as<glm::vec4>());
         app.integrations_per_frame = node["Integrations per frame"].as<std::uint32_t>();
         app.limit_framerate(node["Framerate"].as<std::uint32_t>());

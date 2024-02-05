@@ -10,59 +10,50 @@ namespace ppx
 {
 void app::add_world_callbacks()
 {
-    const kit::callback<body2D &> add_shape{[this](body2D &body) {
-        if (const auto *c = body.shape_if<circle>())
+    world.colliders.events.on_addition += [this](collider2D &collider) {
+        if (const auto *c = collider.shape_if<circle>())
         {
-            auto &shape = m_shapes.emplace_back(kit::make_scope<lynx::ellipse2D>(c->radius, body_color));
-            shape->outline_color(body_outline_color);
-            shape->transform.position = body.position();
+            auto &shape = m_shapes.emplace_back(kit::make_scope<lynx::ellipse2D>(c->radius(), collider_color));
+            shape->outline_color(collider_outline_color);
+            shape->transform = collider.transform();
             return;
         }
-        const polygon &poly = body.shape<polygon>();
+        const polygon &poly = collider.shape<polygon>();
         const std::vector<glm::vec2> vertices{poly.locals.begin(), poly.locals.end()};
 
-        auto &shape = m_shapes.emplace_back(kit::make_scope<lynx::polygon2D>(vertices, body_color));
-        shape->outline_color(body_outline_color);
-        shape->transform = body.transform();
-    }};
+        auto &shape = m_shapes.emplace_back(kit::make_scope<lynx::polygon2D>(vertices, collider_color));
+        shape->outline_color(collider_outline_color);
+        shape->transform = collider.transform();
+    };
 
-    const kit::callback<std::size_t> remove_shape{[this](const std::size_t index) {
-        m_shapes[index] = std::move(m_shapes.back());
-        m_shapes.pop_back();
-    }};
+    world.colliders.events.on_late_removal +=
+        [this](const std::size_t index) { m_shapes.erase(m_shapes.begin() + index); };
 
-    const kit::callback<spring2D &> add_spring{[this](spring2D &sp) {
-        m_spring_lines.emplace_back(sp.joint.body1()->position() + sp.joint.rotated_anchor1(),
-                                    sp.joint.body2()->position() + sp.joint.rotated_anchor2(), joint_color);
-    }};
-    const kit::callback<const spring2D &> remove_spring{[this](const spring2D &sp) {
-        m_spring_lines[sp.index] = m_spring_lines.back();
+    world.springs.events.on_addition += [this](spring2D &sp) {
+        m_spring_lines.emplace_back(sp.joint.body1()->centroid() + sp.joint.rotated_anchor1(),
+                                    sp.joint.body2()->centroid() + sp.joint.rotated_anchor2(), joint_color);
+    };
+
+    world.springs.events.on_late_removal += [this](const std::size_t index) {
+        m_spring_lines[index] = m_spring_lines.back();
         m_spring_lines.pop_back();
-    }};
+    };
 
-    const kit::callback<constraint2D *> add_dist_joint{[this](constraint2D *ctr) {
+    world.constraints.events.on_addition += [this](constraint2D *ctr) {
         const auto *dj = dynamic_cast<distance_joint2D *>(ctr);
         if (!dj)
             return;
-        m_dist_joint_lines.emplace(dj, thick_line(dj->joint.body1()->position() + dj->joint.rotated_anchor1(),
-                                                  dj->joint.body2()->position() + dj->joint.rotated_anchor2(),
+        m_dist_joint_lines.emplace(dj, thick_line(dj->joint.body1()->centroid() + dj->joint.rotated_anchor1(),
+                                                  dj->joint.body2()->centroid() + dj->joint.rotated_anchor2(),
                                                   joint_color));
-    }};
-    const kit::callback<const constraint2D &> remove_dist_joint{[this](const constraint2D &ctr) {
+    };
+
+    world.constraints.events.on_removal += [this](const constraint2D &ctr) {
         const auto *dj = dynamic_cast<const distance_joint2D *>(&ctr);
         if (!dj)
             return;
         m_dist_joint_lines.erase(dj);
-    }};
-
-    world.events.on_body_addition += add_shape;
-    world.events.on_late_body_removal += remove_shape;
-
-    world.events.on_spring_addition += add_spring;
-    world.events.on_early_spring_removal += remove_spring;
-
-    world.events.on_constraint_addition += add_dist_joint;
-    world.events.on_constraint_removal += remove_dist_joint;
+    };
 }
 
 void app::on_update(const float ts)
