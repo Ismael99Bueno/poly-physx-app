@@ -65,10 +65,6 @@ class app : public lynx::app2D
 #endif
 
   private:
-    virtual void on_body_update(const body2D &body, lynx::shape2D &shape)
-    {
-    }
-
     lynx::window2D *m_window;
     lynx::orthographic2D *m_camera;
 

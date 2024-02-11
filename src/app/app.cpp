@@ -15,15 +15,13 @@ void app::add_world_callbacks()
         {
             auto &shape = m_shapes.emplace_back(kit::make_scope<lynx::ellipse2D>(c->radius(), collider_color));
             shape->outline_color(collider_outline_color);
-            shape->transform = collider.transform();
             return;
         }
         const polygon &poly = collider.shape<polygon>();
-        const std::vector<glm::vec2> vertices{poly.locals.begin(), poly.locals.end()};
+        const std::vector<glm::vec2> vertices{poly.vertices.model.begin(), poly.vertices.model.end()};
 
         auto &shape = m_shapes.emplace_back(kit::make_scope<lynx::polygon2D>(vertices, collider_color));
         shape->outline_color(collider_outline_color);
-        shape->transform = collider.transform();
     };
 
     world.colliders.events.on_late_removal +=
@@ -114,15 +112,8 @@ bool app::on_event(const lynx::event2D &event)
 
 void app::update_shapes()
 {
-    for (std::size_t i = 0; i < world.bodies.size(); i++)
-    {
-        const body2D &body = world.bodies[i];
-        const kit::transform2D<float> &transform = body.transform();
-
-        m_shapes[i]->transform.position = transform.position;
-        m_shapes[i]->transform.rotation = transform.rotation;
-        on_body_update(body, *m_shapes[i]);
-    }
+    for (std::size_t i = 0; i < world.colliders.size(); i++)
+        m_shapes[i]->transform = world.colliders[i].ltransform();
 }
 void app::update_joints()
 {
