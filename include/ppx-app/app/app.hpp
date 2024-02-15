@@ -48,7 +48,7 @@ class app : public lynx::app2D
 
     std::uint32_t integrations_per_frame = 1;
 
-    kit::time physics_time() const;
+    kit::perf::time physics_time() const;
 
     glm::vec2 world_mouse_position() const;
     const std::vector<kit::scope<lynx::shape2D>> &shapes() const;
@@ -72,7 +72,7 @@ class app : public lynx::app2D
     std::vector<spring_line> m_spring_lines;
     std::unordered_map<const distance_joint2D *, thick_line> m_dist_joint_lines;
 
-    kit::time m_physics_time;
+    kit::perf::time m_physics_time;
 
     void update_shapes();
     void update_joints();

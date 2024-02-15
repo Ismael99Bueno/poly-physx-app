@@ -58,7 +58,7 @@ void app::on_update(const float ts)
 {
     {
         KIT_PERF_SCOPE("PPX-APP:Physics")
-        const kit::clock physics_clock;
+        const kit::perf::clock physics_clock;
 
         if (sync_timestep)
             world.integrator.ts.value = ts;
@@ -102,7 +102,7 @@ bool app::on_event(const lynx::event2D &event)
     case lynx::event2D::SCROLLED:
         if (ImGui::GetIO().WantCaptureMouse)
             break;
-        zoom(event.scroll_offset.y, frame_time().as<kit::time::seconds, float>());
+        zoom(event.scroll_offset.y, frame_time().as<kit::perf::time::seconds, float>());
         return true;
     default:
         return false;
@@ -181,7 +181,7 @@ void app::zoom(const float offset, const float ts)
     m_camera->transform.position += dpos;
 }
 
-kit::time app::physics_time() const
+kit::perf::time app::physics_time() const
 {
     return m_physics_time;
 }
