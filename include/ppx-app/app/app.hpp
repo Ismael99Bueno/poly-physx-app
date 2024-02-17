@@ -20,7 +20,6 @@ class app : public lynx::app2D
   public:
     inline static const lynx::color DEFAULT_COLLIDER_COLOR{123u, 143u, 161u};
     inline static const lynx::color DEFAULT_JOINT_COLOR{207u, 185u, 151u};
-    inline static const lynx::color DEFAULT_COLLIDER_OUTLINE_COLOR{225u, 152u, 152u};
 
     template <class... WorldArgs>
     app(const char *name = "poly-physx", WorldArgs &&...args)
@@ -44,7 +43,6 @@ class app : public lynx::app2D
 
     lynx::color collider_color = DEFAULT_COLLIDER_COLOR;
     lynx::color joint_color = DEFAULT_JOINT_COLOR;
-    lynx::color collider_outline_color = DEFAULT_COLLIDER_OUTLINE_COLOR;
 
     std::uint32_t integrations_per_frame = 1;
 

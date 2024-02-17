@@ -13,15 +13,13 @@ void app::add_world_callbacks()
     world.colliders.events.on_addition += [this](collider2D &collider) {
         if (const auto *c = collider.shape_if<circle>())
         {
-            auto &shape = m_shapes.emplace_back(kit::make_scope<lynx::ellipse2D>(c->radius(), collider_color));
-            shape->outline_color(collider_outline_color);
+            m_shapes.emplace_back(kit::make_scope<lynx::ellipse2D>(c->radius(), collider_color));
             return;
         }
         const polygon &poly = collider.shape<polygon>();
         const std::vector<glm::vec2> vertices{poly.vertices.model.begin(), poly.vertices.model.end()};
 
-        auto &shape = m_shapes.emplace_back(kit::make_scope<lynx::polygon2D>(vertices, collider_color));
-        shape->outline_color(collider_outline_color);
+        m_shapes.emplace_back(kit::make_scope<lynx::polygon2D>(vertices, collider_color));
     };
 
     world.colliders.events.on_late_removal +=
