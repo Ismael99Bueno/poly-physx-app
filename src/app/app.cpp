@@ -111,7 +111,11 @@ bool app::on_event(const lynx::event2D &event)
 void app::update_shapes()
 {
     for (std::size_t i = 0; i < world.colliders.size(); i++)
+    {
+        const glm::vec2 scale = m_shapes[i]->transform.scale;
         m_shapes[i]->transform = world.colliders[i].ltransform();
+        m_shapes[i]->transform.scale = scale;
+    }
 }
 void app::update_joints()
 {
