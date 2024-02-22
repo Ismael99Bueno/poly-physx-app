@@ -30,6 +30,9 @@ class thick_line : public lynx::line2D
     const lynx::color &color() const override;
     void color(const lynx::color &color) override;
 
+    const kit::transform2D<float> *parent() const;
+    void parent(const kit::transform2D<float> *parent);
+
     float width() const;
     void width(float width);
 

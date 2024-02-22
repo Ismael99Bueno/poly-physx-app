@@ -29,6 +29,9 @@ class spring_line : public lynx::line2D
     const lynx::color &color() const override;
     void color(const lynx::color &color) override;
 
+    const kit::transform2D<float> *parent() const;
+    void parent(const kit::transform2D<float> *parent);
+
     std::size_t supports_count() const;
     float supports_length() const;
     float left_padding() const;

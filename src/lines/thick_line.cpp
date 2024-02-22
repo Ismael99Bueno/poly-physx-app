@@ -81,6 +81,17 @@ void thick_line::color(const lynx::color &color)
     m_circle2.color(color);
 }
 
+const kit::transform2D<float> *thick_line::parent() const
+{
+    return m_rect.transform.parent;
+}
+void thick_line::parent(const kit::transform2D<float> *parent)
+{
+    m_rect.transform.parent = parent;
+    m_circle1.transform.parent = parent;
+    m_circle2.transform.parent = parent;
+}
+
 float thick_line::width() const
 {
     return m_rect.transform.scale.y;

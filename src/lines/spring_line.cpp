@@ -87,6 +87,15 @@ void spring_line::color(const lynx::color &color)
     m_line_strip.color(color);
 }
 
+const kit::transform2D<float> *spring_line::parent() const
+{
+    return m_line_strip.parent();
+}
+void spring_line::parent(const kit::transform2D<float> *parent)
+{
+    m_line_strip.parent(parent);
+}
+
 std::size_t spring_line::supports_count() const
 {
     return m_supports_count;
