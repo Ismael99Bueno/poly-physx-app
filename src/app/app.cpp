@@ -100,7 +100,7 @@ bool app::on_event(const lynx::event2D &event)
     case lynx::event2D::SCROLLED:
         if (ImGui::GetIO().WantCaptureMouse)
             break;
-        zoom(event.scroll_offset.y, frame_time().as<kit::perf::time::seconds, float>());
+        zoom(event.scroll_offset.y);
         return true;
     default:
         return false;
@@ -172,9 +172,9 @@ void app::move_camera(const float ts)
         m_camera->transform.position += 2.f * glm::normalize(dpos) * ts * m_camera->size();
 }
 
-void app::zoom(const float offset, const float ts)
+void app::zoom(const float offset)
 {
-    const float factor = 4.f * offset * ts; // glm::clamp(offset, -0.05f, 0.05f);
+    const float factor = 4.f * offset * 0.006f; // glm::clamp(offset, -0.05f, 0.05f);
     const glm::vec2 mpos = world_mouse_position();
     const glm::vec2 dpos = (mpos - m_camera->transform.position) * factor;
     const float size = m_camera->size() * (1.f - factor);
