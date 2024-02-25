@@ -124,8 +124,8 @@ void app::update_joints()
         const spring2D &sp = world.springs[i];
         spring_line &spline = m_spring_lines[i];
 
-        spline.p1(sp.joint.body1()->position() + sp.joint.rotated_anchor1());
-        spline.p2(sp.joint.body2()->position() + sp.joint.rotated_anchor2());
+        spline.p1(sp.joint.body1()->centroid() + sp.joint.rotated_anchor1());
+        spline.p2(sp.joint.body2()->centroid() + sp.joint.rotated_anchor2());
     }
 
     for (auto &[dj, thline] : m_dist_joint_lines)
@@ -134,8 +134,8 @@ void app::update_joints()
         const lynx::gradient<3> grad{lynx::color::blue, lynx::color{glm::vec3(0.8f)}, lynx::color::red};
         const lynx::color color = grad.evaluate(std::clamp(0.5f * (stress + 1.f), 0.f, 1.f));
 
-        thline.p1(dj->joint.body1()->position() + dj->joint.rotated_anchor1());
-        thline.p2(dj->joint.body2()->position() + dj->joint.rotated_anchor2());
+        thline.p1(dj->joint.body1()->centroid() + dj->joint.rotated_anchor1());
+        thline.p2(dj->joint.body2()->centroid() + dj->joint.rotated_anchor2());
         thline.color(color);
     }
 }
