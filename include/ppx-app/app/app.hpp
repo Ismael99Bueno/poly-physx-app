@@ -78,7 +78,7 @@ class app : public lynx::app2D
     void draw_shapes() const;
     void draw_joints() const;
 
-    void zoom(float offset, float ts);
+    void zoom(float offset);
     void move_camera(float ts);
 
     void add_world_callbacks();
