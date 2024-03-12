@@ -25,30 +25,19 @@ void app::add_world_callbacks()
     world.colliders.events.on_late_removal +=
         [this](const std::size_t index) { m_shapes.erase(m_shapes.begin() + index); };
 
-    world.springs.events.on_addition += [this](spring2D &sp) {
-        m_spring_lines.emplace_back(sp.joint.body1()->centroid() + sp.joint.rotated_anchor1(),
-                                    sp.joint.body2()->centroid() + sp.joint.rotated_anchor2(), joint_color);
-    };
+    world.joints.manager<spring2D>()->events.on_addition +=
+        [this](spring2D &sp) { m_spring_lines.emplace_back(sp.ganchor1(), sp.ganchor2(), joint_color); };
 
-    world.springs.events.on_late_removal += [this](const std::size_t index) {
+    world.joints.manager<spring2D>()->events.on_late_removal += [this](const std::size_t index) {
         m_spring_lines[index] = m_spring_lines.back();
         m_spring_lines.pop_back();
     };
 
-    world.constraints.events.on_addition += [this](constraint2D *ctr) {
-        const auto *dj = dynamic_cast<distance_joint2D *>(ctr);
-        if (!dj)
-            return;
-        m_dist_joint_lines.emplace(dj, thick_line(dj->joint.body1()->centroid() + dj->joint.rotated_anchor1(),
-                                                  dj->joint.body2()->centroid() + dj->joint.rotated_anchor2(),
-                                                  joint_color));
-    };
-
-    world.constraints.events.on_removal += [this](const constraint2D &ctr) {
-        const auto *dj = dynamic_cast<const distance_joint2D *>(&ctr);
-        if (!dj)
-            return;
-        m_dist_joint_lines.erase(dj);
+    world.joints.manager<distance_joint2D>()->events.on_addition +=
+        [this](distance_joint2D &dj) { m_dist_joint_lines.emplace_back(dj.ganchor1(), dj.ganchor2(), joint_color); };
+    world.joints.manager<distance_joint2D>()->events.on_late_removal += [this](const std::size_t index) {
+        m_dist_joint_lines[index] = m_dist_joint_lines.back();
+        m_dist_joint_lines.pop_back();
     };
 }
 
@@ -119,23 +108,28 @@ void app::update_shapes()
 }
 void app::update_joints()
 {
-    for (std::size_t i = 0; i < world.springs.size(); i++)
+    const joint_container2D<spring2D> *springs = world.joints.manager<spring2D>();
+    for (std::size_t i = 0; i < springs->size(); i++)
     {
-        const spring2D &sp = world.springs[i];
+        const spring2D &sp = springs->at(i);
         spring_line &spline = m_spring_lines[i];
 
-        spline.p1(sp.joint.body1()->centroid() + sp.joint.rotated_anchor1());
-        spline.p2(sp.joint.body2()->centroid() + sp.joint.rotated_anchor2());
+        spline.p1(sp.ganchor1());
+        spline.p2(sp.ganchor2());
     }
 
-    for (auto &[dj, thline] : m_dist_joint_lines)
+    const joint_container2D<distance_joint2D> *djs = world.joints.manager<distance_joint2D>();
+    for (std::size_t i = 0; i < djs->size(); i++)
     {
-        const float stress = dj->constraint_value() * 5.f;
+        const distance_joint2D &dj = djs->at(i);
+        thick_line &thline = m_dist_joint_lines[i];
+
+        thline.p1(dj.ganchor1());
+        thline.p2(dj.ganchor2());
+
+        const float stress = dj.constraint_value() * 5.f;
         const lynx::gradient<3> grad{lynx::color::blue, lynx::color{glm::vec3(0.8f)}, lynx::color::red};
         const lynx::color color = grad.evaluate(std::clamp(0.5f * (stress + 1.f), 0.f, 1.f));
-
-        thline.p1(dj->joint.body1()->centroid() + dj->joint.rotated_anchor1());
-        thline.p2(dj->joint.body2()->centroid() + dj->joint.rotated_anchor2());
         thline.color(color);
     }
 }
@@ -150,7 +144,7 @@ void app::draw_joints() const
 {
     for (const spring_line &spline : m_spring_lines)
         m_window->draw(spline);
-    for (const auto &[dj, thline] : m_dist_joint_lines)
+    for (const thick_line &thline : m_dist_joint_lines)
         m_window->draw(thline);
 }
 
@@ -201,7 +195,7 @@ const std::vector<spring_line> &app::spring_lines() const
 {
     return m_spring_lines;
 }
-const std::unordered_map<const distance_joint2D *, thick_line> &app::dist_joint_lines() const
+const std::vector<thick_line> &app::dist_joint_lines() const
 {
     return m_dist_joint_lines;
 }

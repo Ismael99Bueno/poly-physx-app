@@ -25,6 +25,7 @@ class app : public lynx::app2D
     app(const char *name = "poly-physx", WorldArgs &&...args)
         : lynx::app2D(800, 600, name), world(std::forward<WorldArgs>(args)...)
     {
+        world.add_builtin_joint_managers();
         m_window = window();
         push_layer<menu_layer>();
 
@@ -51,7 +52,7 @@ class app : public lynx::app2D
     glm::vec2 world_mouse_position() const;
     const std::vector<kit::scope<lynx::shape2D>> &shapes() const;
     const std::vector<spring_line> &spring_lines() const;
-    const std::unordered_map<const distance_joint2D *, thick_line> &dist_joint_lines() const;
+    const std::vector<thick_line> &dist_joint_lines() const;
 
     virtual void on_update(float ts) override;
     virtual void on_render(float ts) override;
@@ -68,7 +69,7 @@ class app : public lynx::app2D
 
     std::vector<kit::scope<lynx::shape2D>> m_shapes;
     std::vector<spring_line> m_spring_lines;
-    std::unordered_map<const distance_joint2D *, thick_line> m_dist_joint_lines;
+    std::vector<thick_line> m_dist_joint_lines;
 
     kit::perf::time m_physics_time;
 
