@@ -14,8 +14,8 @@ template <> struct kit::yaml::codec<ppx::app>
         node["Lynx app"] = kit::yaml::codec<lynx::app2D>::encode(app);
 
         node["Engine"] = app.world;
-        for (const auto &shape : app.shapes())
-            node["Shape colors"].push_back(shape->color().normalized);
+        for (const auto &[collider, shape] : app.shapes())
+            node["Shape colors"][collider->index] = shape->color().normalized;
         node["Paused"] = app.paused;
         node["Sync timestep"] = app.sync_timestep;
         node["Collider color"] = app.collider_color.normalized;
@@ -36,8 +36,8 @@ template <> struct kit::yaml::codec<ppx::app>
         node["Engine"].as<ppx::world2D>(app.world);
 
         if (node["Shape colors"])
-            for (std::size_t i = 0; i < app.shapes().size(); i++)
-                app.shapes()[i]->color(lynx::color(node["Shape colors"][i].as<glm::vec4>()));
+            for (const auto &[collider, shape] : app.shapes())
+                shape->color(lynx::color(node["Shape colors"][collider->index].as<glm::vec4>()));
 
         app.paused = node["Paused"].as<bool>();
         app.sync_timestep = node["Sync timestep"].as<bool>();
