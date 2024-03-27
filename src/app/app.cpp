@@ -116,7 +116,7 @@ void app::update_joints()
         thline.p1(dj->ganchor1());
         thline.p2(dj->ganchor2());
 
-        const float stress = dj->constraint_value() * 5.f;
+        const float stress = dj->constraint_position() * 5.f;
         const lynx::gradient<3> grad{lynx::color::blue, lynx::color{glm::vec3(0.8f)}, lynx::color::red};
         const lynx::color color = grad.evaluate(std::clamp(0.5f * (stress + 1.f), 0.f, 1.f));
         thline.color(color);
