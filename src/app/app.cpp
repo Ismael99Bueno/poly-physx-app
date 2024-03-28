@@ -46,8 +46,6 @@ void app::on_update(const float ts)
 
         if (sync_timestep)
             world.integrator.ts.value = ts;
-        if (world.integrator.ts.limited)
-            world.integrator.ts.clamp();
 
         if (!paused)
             for (std::uint32_t i = 0; i < integrations_per_frame; i++)
