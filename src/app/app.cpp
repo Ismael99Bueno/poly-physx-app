@@ -97,7 +97,7 @@ void app::update_shapes()
     for (const auto &[collider, shape] : m_shapes)
     {
         const glm::vec2 scale = shape->transform.scale;
-        shape->transform = collider->ltransform();
+        shape->transform = collider->ltransform().get();
         shape->transform.scale = scale;
     }
 }
