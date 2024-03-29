@@ -1,6 +1,7 @@
 #include "ppx-app/internal/pch.hpp"
 #include "ppx-app/app/app.hpp"
 #include "ppx-app/serialization/serialization.hpp"
+#include "ppx-app/shapes/oriented_circle.hpp"
 
 #include "lynx/geometry/camera.hpp"
 #include "ppx/joints/distance_joint2D.hpp"
@@ -13,7 +14,7 @@ void app::add_world_callbacks()
     world.colliders.events.on_addition += [this](collider2D *collider) {
         if (const auto *c = collider->shape_if<circle>())
         {
-            m_shapes.emplace(collider, kit::make_scope<lynx::ellipse2D>(c->radius(), collider_color));
+            m_shapes.emplace(collider, kit::make_scope<oriented_circle>(c->radius(), collider_color));
             return;
         }
         const polygon &poly = collider->shape<polygon>();
