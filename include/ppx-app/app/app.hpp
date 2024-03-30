@@ -22,8 +22,7 @@ class app : public lynx::app2D
     inline static const lynx::color DEFAULT_JOINT_COLOR{207u, 185u, 151u};
 
     template <class... WorldArgs>
-    app(const char *name = "poly-physx", WorldArgs &&...args)
-        : lynx::app2D(800, 600, name), world(std::forward<WorldArgs>(args)...)
+    app(const char *name, WorldArgs &&...args) : lynx::app2D(800, 600, name), world(std::forward<WorldArgs>(args)...)
     {
         world.add_builtin_joint_managers();
         m_window = window();
