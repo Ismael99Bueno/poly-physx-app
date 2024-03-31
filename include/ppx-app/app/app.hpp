@@ -38,7 +38,7 @@ class app : public lynx::app2D
     virtual ~app() = default;
 
     world2D world;
-    bool sync_timestep = true;
+    bool sync_timestep = false;
     bool paused = false;
 
     lynx::color collider_color = DEFAULT_COLLIDER_COLOR;
