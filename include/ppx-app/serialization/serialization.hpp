@@ -18,6 +18,7 @@ template <> struct kit::yaml::codec<ppx::app>
             node["Shape colors"][collider->index] = shape->color().normalized;
         node["Paused"] = app.paused;
         node["Sync timestep"] = app.sync_timestep;
+        node["Sync speed"] = app.sync_speed;
         node["Collider color"] = app.collider_color.normalized;
         node["Joints color"] = app.joint_color.normalized;
         node["Integrations per frame"] = app.integrations_per_frame;
@@ -41,6 +42,7 @@ template <> struct kit::yaml::codec<ppx::app>
 
         app.paused = node["Paused"].as<bool>();
         app.sync_timestep = node["Sync timestep"].as<bool>();
+        app.sync_speed = node["Sync speed"].as<float>();
         app.collider_color = lynx::color(node["Collider color"].as<glm::vec4>());
         app.joint_color = lynx::color(node["Joints color"].as<glm::vec4>());
         app.integrations_per_frame = node["Integrations per frame"].as<std::uint32_t>();

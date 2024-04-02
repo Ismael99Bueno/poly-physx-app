@@ -45,11 +45,8 @@ void app::on_update(const float ts)
         KIT_PERF_SCOPE("PPX-APP:Physics")
         const kit::perf::clock physics_clock;
 
-        if (sync_timestep && m_sync_counter++ >= sync_period)
-        {
-            world.integrator.ts.value = ts;
-            m_sync_counter = 0;
-        }
+        if (sync_timestep)
+            world.integrator.ts.value = sync_speed * ts + (1.f - sync_speed) * world.integrator.ts.value;
 
         if (!paused)
             for (std::uint32_t i = 0; i < integrations_per_frame; i++)

@@ -38,9 +38,9 @@ class app : public lynx::app2D
     virtual ~app() = default;
 
     world2D world;
-    bool sync_timestep = false;
+    bool sync_timestep = true;
     bool paused = false;
-    std::uint32_t sync_period = 60;
+    float sync_speed = 0.001f;
 
     lynx::color collider_color = DEFAULT_COLLIDER_COLOR;
     lynx::color joint_color = DEFAULT_JOINT_COLOR;
@@ -72,7 +72,6 @@ class app : public lynx::app2D
     std::unordered_map<distance_joint2D *, thick_line> m_dist_joint_lines;
 
     kit::perf::time m_physics_time;
-    std::uint32_t m_sync_counter = 0;
 
     void update_shapes();
     void update_joints();
