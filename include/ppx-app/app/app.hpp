@@ -40,7 +40,7 @@ class app : public lynx::app2D
     world2D world;
     bool sync_timestep = true;
     bool paused = false;
-    float sync_speed = 0.001f;
+    float sync_speed = 0.01f;
 
     lynx::color collider_color = DEFAULT_COLLIDER_COLOR;
     lynx::color joint_color = DEFAULT_JOINT_COLOR;
