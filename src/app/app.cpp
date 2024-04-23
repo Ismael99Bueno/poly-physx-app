@@ -25,11 +25,12 @@ void app::add_world_callbacks()
 
     world.colliders.events.on_removal += [this](collider2D &collider) { m_shapes.erase(&collider); };
 
-    world.joints.manager<spring2D>()->events.on_addition += [this](spring2D *sp) {
+    world.joints.manager<spring_joint2D>()->events.on_addition += [this](spring_joint2D *sp) {
         m_spring_lines.emplace(sp, spring_line{sp->ganchor1(), sp->ganchor2(), joint_color});
     };
 
-    world.joints.manager<spring2D>()->events.on_removal += [this](spring2D &sp) { m_spring_lines.erase(&sp); };
+    world.joints.manager<spring_joint2D>()->events.on_removal +=
+        [this](spring_joint2D &sp) { m_spring_lines.erase(&sp); };
 
     world.joints.manager<distance_joint2D>()->events.on_addition += [this](distance_joint2D *dj) {
         m_dist_joint_lines.emplace(dj, thick_line{dj->ganchor1(), dj->ganchor2(), joint_color});
@@ -179,7 +180,7 @@ const std::unordered_map<collider2D *, kit::scope<lynx::shape2D>> &app::shapes()
 {
     return m_shapes;
 }
-const std::unordered_map<spring2D *, spring_line> &app::spring_lines() const
+const std::unordered_map<spring_joint2D *, spring_line> &app::spring_lines() const
 {
     return m_spring_lines;
 }

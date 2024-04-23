@@ -51,7 +51,7 @@ class app : public lynx::app2D
 
     glm::vec2 world_mouse_position() const;
     const std::unordered_map<collider2D *, kit::scope<lynx::shape2D>> &shapes() const;
-    const std::unordered_map<spring2D *, spring_line> &spring_lines() const;
+    const std::unordered_map<spring_joint2D *, spring_line> &spring_lines() const;
     const std::unordered_map<distance_joint2D *, thick_line> &dist_joint_lines() const;
 
     virtual void on_update(float ts) override;
@@ -68,7 +68,7 @@ class app : public lynx::app2D
     lynx::orthographic2D *m_camera;
 
     std::unordered_map<collider2D *, kit::scope<lynx::shape2D>> m_shapes;
-    std::unordered_map<spring2D *, spring_line> m_spring_lines;
+    std::unordered_map<spring_joint2D *, spring_line> m_spring_lines;
     std::unordered_map<distance_joint2D *, thick_line> m_dist_joint_lines;
 
     kit::perf::time m_physics_time;
