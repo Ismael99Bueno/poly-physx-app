@@ -14,7 +14,7 @@ void distance_repr2D::update()
     m_line.p2(m_dj->ganchor2());
 
     const float stress = m_dj->constraint_position() * 5.f;
-    const lynx::gradient<3> grad{lynx::color::red, lynx::color{glm::vec3(0.8f)}, lynx::color::blue};
+    const lynx::gradient<3> grad{m_color1, lynx::color{glm::vec3(0.8f)}, m_color2};
     const lynx::color color = grad.evaluate(std::clamp(0.5f * (stress + 1.f), 0.f, 1.f));
     m_line.color(color);
 }

@@ -6,7 +6,7 @@
 
 namespace ppx
 {
-class spring_repr2D : joint_repr2D
+class spring_repr2D : public joint_repr2D
 {
   public:
     spring_repr2D(const spring_joint2D *sj, const lynx::color &color);

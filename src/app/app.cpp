@@ -2,6 +2,9 @@
 #include "ppx-app/app/app.hpp"
 #include "ppx-app/serialization/serialization.hpp"
 #include "ppx-app/drawables/shapes/oriented_circle.hpp"
+#include "ppx-app/drawables/joints/distance_repr2D.hpp"
+#include "ppx-app/drawables/joints/spring_repr2D.hpp"
+#include "ppx-app/drawables/joints/prismatic_repr2D.hpp"
 
 #include "lynx/geometry/camera.hpp"
 #include "ppx/joints/distance_joint2D.hpp"
@@ -25,19 +28,16 @@ void app::add_world_callbacks()
 
     world.colliders.events.on_removal += [this](collider2D &collider) { m_shapes.erase(&collider); };
 
-    world.joints.manager<spring_joint2D>()->events.on_addition += [this](spring_joint2D *sp) {
-        m_spring_line2Ds.emplace(sp, spring_line2D{sp->ganchor1(), sp->ganchor2(), joint_color});
-    };
-
-    world.joints.manager<spring_joint2D>()->events.on_removal +=
-        [this](spring_joint2D &sp) { m_spring_line2Ds.erase(&sp); };
+    world.joints.manager<spring_joint2D>()->events.on_addition +=
+        [this](spring_joint2D *sp) { m_joints.emplace(sp, kit::make_scope<spring_repr2D>(sp, joint_color)); };
 
     world.joints.manager<distance_joint2D>()->events.on_addition += [this](distance_joint2D *dj) {
-        m_dist_joint_lines.emplace(dj, thick_line2D{dj->ganchor1(), dj->ganchor2(), joint_color});
+        m_joints.emplace(dj, kit::make_scope<distance_repr2D>(dj, lynx::color::red, lynx::color::blue));
     };
+    world.joints.manager<prismatic_joint2D>()->events.on_addition +=
+        [this](prismatic_joint2D *pj) { m_joints.emplace(pj, kit::make_scope<prismatic_repr2D>(pj, joint_color)); };
 
-    world.joints.manager<distance_joint2D>()->events.on_removal +=
-        [this](distance_joint2D &dj) { m_dist_joint_lines.erase(&dj); };
+    world.joints.events.on_removal += [this](joint2D &joint) { m_joints.erase(&joint); };
 }
 
 void app::on_update(const float ts)
@@ -105,22 +105,8 @@ void app::update_shapes()
 }
 void app::update_joints()
 {
-    for (auto &[sp, spline] : m_spring_line2Ds)
-    {
-        spline.p1(sp->ganchor1());
-        spline.p2(sp->ganchor2());
-    }
-
-    for (auto &[dj, thline] : m_dist_joint_lines)
-    {
-        thline.p1(dj->ganchor1());
-        thline.p2(dj->ganchor2());
-
-        const float stress = dj->constraint_position() * 5.f;
-        const lynx::gradient<3> grad{lynx::color::red, lynx::color{glm::vec3(0.8f)}, lynx::color::blue};
-        const lynx::color color = grad.evaluate(std::clamp(0.5f * (stress + 1.f), 0.f, 1.f));
-        thline.color(color);
-    }
+    for (auto &[joint, jrepr] : m_joints)
+        jrepr->update();
 }
 
 void app::draw_shapes() const
@@ -131,10 +117,8 @@ void app::draw_shapes() const
 
 void app::draw_joints() const
 {
-    for (const auto &[sp, spline] : m_spring_line2Ds)
-        m_window->draw(spline);
-    for (const auto &[dj, thline] : m_dist_joint_lines)
-        m_window->draw(thline);
+    for (const auto &[joint, jrepr] : m_joints)
+        m_window->draw(*jrepr);
 }
 
 void app::move_camera(const float ts)
@@ -179,14 +163,6 @@ glm::vec2 app::world_mouse_position() const
 const std::unordered_map<collider2D *, kit::scope<lynx::shape2D>> &app::shapes() const
 {
     return m_shapes;
-}
-const std::unordered_map<spring_joint2D *, spring_line2D> &app::spring_line2Ds() const
-{
-    return m_spring_line2Ds;
-}
-const std::unordered_map<distance_joint2D *, thick_line2D> &app::dist_joint_lines() const
-{
-    return m_dist_joint_lines;
 }
 
 #ifdef KIT_USE_YAML_CPP
