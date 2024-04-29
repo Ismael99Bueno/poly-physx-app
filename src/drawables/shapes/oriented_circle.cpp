@@ -1,5 +1,5 @@
 #include "ppx-app/internal/pch.hpp"
-#include "ppx-app/shapes/oriented_circle.hpp"
+#include "ppx-app/drawables/shapes/oriented_circle.hpp"
 
 namespace ppx
 {

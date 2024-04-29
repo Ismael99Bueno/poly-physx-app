@@ -1,7 +1,7 @@
 #include "ppx-app/internal/pch.hpp"
 #include "ppx-app/app/app.hpp"
 #include "ppx-app/serialization/serialization.hpp"
-#include "ppx-app/shapes/oriented_circle.hpp"
+#include "ppx-app/drawables/shapes/oriented_circle.hpp"
 
 #include "lynx/geometry/camera.hpp"
 #include "ppx/joints/distance_joint2D.hpp"
