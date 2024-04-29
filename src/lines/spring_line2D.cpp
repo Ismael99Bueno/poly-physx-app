@@ -1,20 +1,20 @@
 #include "ppx-app/internal/pch.hpp"
-#include "ppx-app/lines/spring_line.hpp"
+#include "ppx-app/lines/spring_line2D.hpp"
 #include "lynx/app/window.hpp"
 
 namespace ppx
 {
-spring_line::spring_line(const glm::vec2 &p1, const glm::vec2 &p2, const lynx::color &color,
-                         const std::size_t supports_count)
+spring_line2D::spring_line2D(const glm::vec2 &p1, const glm::vec2 &p2, const lynx::color &color,
+                             const std::size_t supports_count)
     : m_supports_count(supports_count), m_line_strip(build_line_points(p1, p2), color)
 {
 }
-spring_line::spring_line(const lynx::color &color, const std::size_t supports_count)
-    : spring_line({0.f, 0.f}, {1.f, 0.f}, color, supports_count)
+spring_line2D::spring_line2D(const lynx::color &color, const std::size_t supports_count)
+    : spring_line2D({0.f, 0.f}, {1.f, 0.f}, color, supports_count)
 {
 }
 
-std::vector<glm::vec2> spring_line::build_line_points(const glm::vec2 &p1, const glm::vec2 &p2)
+std::vector<glm::vec2> spring_line2D::build_line_points(const glm::vec2 &p1, const glm::vec2 &p2)
 {
     std::vector<glm::vec2> points = {p1, p2};
     points.resize(3 + 4 * m_supports_count);
@@ -48,91 +48,91 @@ std::vector<glm::vec2> spring_line::build_line_points(const glm::vec2 &p1, const
     return points;
 }
 
-void spring_line::update_line_points(const glm::vec2 &p1, const glm::vec2 &p2)
+void spring_line2D::update_line_points(const glm::vec2 &p1, const glm::vec2 &p2)
 {
     const std::vector<glm::vec2> points = build_line_points(p1, p2);
     for (std::size_t i = 0; i < points.size(); i++)
         m_line_strip[i].position = points[i];
 }
 
-void spring_line::draw(lynx::window2D &window) const
+void spring_line2D::draw(lynx::window2D &window) const
 {
     window.draw(m_line_strip);
 }
 
-const glm::vec2 &spring_line::p1() const
+const glm::vec2 &spring_line2D::p1() const
 {
     return m_line_strip[0].position;
 }
-const glm::vec2 &spring_line::p2() const
+const glm::vec2 &spring_line2D::p2() const
 {
     return m_line_strip[1].position;
 }
 
-void spring_line::p1(const glm::vec2 &p1)
+void spring_line2D::p1(const glm::vec2 &p1)
 {
     update_line_points(p1, p2());
 }
-void spring_line::p2(const glm::vec2 &p2)
+void spring_line2D::p2(const glm::vec2 &p2)
 {
     update_line_points(p1(), p2);
 }
 
-const lynx::color &spring_line::color() const
+const lynx::color &spring_line2D::color() const
 {
     return m_line_strip.color();
 }
-void spring_line::color(const lynx::color &color)
+void spring_line2D::color(const lynx::color &color)
 {
     m_line_strip.color(color);
 }
 
-const kit::transform2D<float> *spring_line::parent() const
+const kit::transform2D<float> *spring_line2D::parent() const
 {
     return m_line_strip.parent();
 }
-void spring_line::parent(const kit::transform2D<float> *parent)
+void spring_line2D::parent(const kit::transform2D<float> *parent)
 {
     m_line_strip.parent(parent);
 }
 
-std::size_t spring_line::supports_count() const
+std::size_t spring_line2D::supports_count() const
 {
     return m_supports_count;
 }
-float spring_line::supports_length() const
+float spring_line2D::supports_length() const
 {
     return m_supports_length;
 }
-float spring_line::left_padding() const
+float spring_line2D::left_padding() const
 {
     return m_left_padding;
 }
-float spring_line::right_padding() const
+float spring_line2D::right_padding() const
 {
     return m_right_padding;
 }
-float spring_line::min_height() const
+float spring_line2D::min_height() const
 {
     return m_min_height;
 }
 
-void spring_line::supports_length(const float supports_length)
+void spring_line2D::supports_length(const float supports_length)
 {
     m_supports_length = supports_length;
     update_line_points(p1(), p2());
 }
-void spring_line::left_padding(const float left_padding)
+void spring_line2D::left_padding(const float left_padding)
 {
     m_left_padding = left_padding;
     update_line_points(p1(), p2());
 }
-void spring_line::right_padding(const float right_padding)
+void spring_line2D::right_padding(const float right_padding)
 {
     m_right_padding = right_padding;
     update_line_points(p1(), p2());
 }
-void spring_line::min_height(const float min_height)
+void spring_line2D::min_height(const float min_height)
 {
     m_min_height = min_height;
     update_line_points(p1(), p2());

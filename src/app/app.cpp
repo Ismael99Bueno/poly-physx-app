@@ -26,14 +26,14 @@ void app::add_world_callbacks()
     world.colliders.events.on_removal += [this](collider2D &collider) { m_shapes.erase(&collider); };
 
     world.joints.manager<spring_joint2D>()->events.on_addition += [this](spring_joint2D *sp) {
-        m_spring_lines.emplace(sp, spring_line{sp->ganchor1(), sp->ganchor2(), joint_color});
+        m_spring_line2Ds.emplace(sp, spring_line2D{sp->ganchor1(), sp->ganchor2(), joint_color});
     };
 
     world.joints.manager<spring_joint2D>()->events.on_removal +=
-        [this](spring_joint2D &sp) { m_spring_lines.erase(&sp); };
+        [this](spring_joint2D &sp) { m_spring_line2Ds.erase(&sp); };
 
     world.joints.manager<distance_joint2D>()->events.on_addition += [this](distance_joint2D *dj) {
-        m_dist_joint_lines.emplace(dj, thick_line{dj->ganchor1(), dj->ganchor2(), joint_color});
+        m_dist_joint_lines.emplace(dj, thick_line2D{dj->ganchor1(), dj->ganchor2(), joint_color});
     };
 
     world.joints.manager<distance_joint2D>()->events.on_removal +=
@@ -105,7 +105,7 @@ void app::update_shapes()
 }
 void app::update_joints()
 {
-    for (auto &[sp, spline] : m_spring_lines)
+    for (auto &[sp, spline] : m_spring_line2Ds)
     {
         spline.p1(sp->ganchor1());
         spline.p2(sp->ganchor2());
@@ -131,7 +131,7 @@ void app::draw_shapes() const
 
 void app::draw_joints() const
 {
-    for (const auto &[sp, spline] : m_spring_lines)
+    for (const auto &[sp, spline] : m_spring_line2Ds)
         m_window->draw(spline);
     for (const auto &[dj, thline] : m_dist_joint_lines)
         m_window->draw(thline);
@@ -180,11 +180,11 @@ const std::unordered_map<collider2D *, kit::scope<lynx::shape2D>> &app::shapes()
 {
     return m_shapes;
 }
-const std::unordered_map<spring_joint2D *, spring_line> &app::spring_lines() const
+const std::unordered_map<spring_joint2D *, spring_line2D> &app::spring_line2Ds() const
 {
-    return m_spring_lines;
+    return m_spring_line2Ds;
 }
-const std::unordered_map<distance_joint2D *, thick_line> &app::dist_joint_lines() const
+const std::unordered_map<distance_joint2D *, thick_line2D> &app::dist_joint_lines() const
 {
     return m_dist_joint_lines;
 }

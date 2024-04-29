@@ -2,8 +2,8 @@
 
 #include "ppx/world2D.hpp"
 
-#include "ppx-app/lines/thick_line.hpp"
-#include "ppx-app/lines/spring_line.hpp"
+#include "ppx-app/lines/thick_line2D.hpp"
+#include "ppx-app/lines/spring_line2D.hpp"
 #include "ppx-app/app/menu_layer.hpp"
 
 #include "lynx/app/app.hpp"
@@ -14,7 +14,6 @@
 
 namespace ppx
 {
-class distance_joint2D;
 class app : public lynx::app2D
 {
   public:
@@ -51,8 +50,8 @@ class app : public lynx::app2D
 
     glm::vec2 world_mouse_position() const;
     const std::unordered_map<collider2D *, kit::scope<lynx::shape2D>> &shapes() const;
-    const std::unordered_map<spring_joint2D *, spring_line> &spring_lines() const;
-    const std::unordered_map<distance_joint2D *, thick_line> &dist_joint_lines() const;
+    const std::unordered_map<spring_joint2D *, spring_line2D> &spring_line2Ds() const;
+    const std::unordered_map<distance_joint2D *, thick_line2D> &dist_joint_lines() const;
 
     virtual void on_update(float ts) override;
     virtual void on_render(float ts) override;
@@ -68,8 +67,8 @@ class app : public lynx::app2D
     lynx::orthographic2D *m_camera;
 
     std::unordered_map<collider2D *, kit::scope<lynx::shape2D>> m_shapes;
-    std::unordered_map<spring_joint2D *, spring_line> m_spring_lines;
-    std::unordered_map<distance_joint2D *, thick_line> m_dist_joint_lines;
+    std::unordered_map<spring_joint2D *, spring_line2D> m_spring_line2Ds;
+    std::unordered_map<distance_joint2D *, thick_line2D> m_dist_joint_lines;
 
     kit::perf::time m_physics_time;
 
