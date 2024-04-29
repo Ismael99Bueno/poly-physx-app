@@ -1,5 +1,5 @@
 #include "ppx-app/internal/pch.hpp"
-#include "ppx-app/lines/thick_line2D.hpp"
+#include "ppx-app/drawables/lines/thick_line2D.hpp"
 #include "lynx/app/window.hpp"
 
 namespace ppx
