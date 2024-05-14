@@ -8,7 +8,7 @@
 #include "lynx/app/app.hpp"
 #include "lynx/drawing/shape.hpp"
 
-#include "kit/memory/scope.hpp"
+#include "kit/memory/ptr/scope.hpp"
 #include "kit/serialization/yaml/serializer.hpp"
 
 namespace ppx
