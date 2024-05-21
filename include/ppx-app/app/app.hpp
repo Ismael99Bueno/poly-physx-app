@@ -54,6 +54,8 @@ class app : public lynx::app2D
     virtual void on_render(float ts) override;
     virtual bool on_event(const lynx::event2D &event) override;
 
+    std::pair<lynx::color, lynx::color> &color(collider2D *collider);
+
 #ifdef KIT_USE_YAML_CPP
     virtual YAML::Node encode() const override;
     virtual bool decode(const YAML::Node &node) override;
@@ -64,6 +66,7 @@ class app : public lynx::app2D
     lynx::orthographic2D *m_camera;
 
     std::unordered_map<collider2D *, kit::scope<lynx::shape2D>> m_shapes;
+    std::unordered_map<collider2D *, std::pair<lynx::color, lynx::color>> m_shape_colors;
     std::unordered_map<joint2D *, kit::scope<joint_repr2D>> m_joints;
 
     kit::perf::time m_physics_time;

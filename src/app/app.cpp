@@ -15,18 +15,24 @@ namespace ppx
 void app::add_world_callbacks()
 {
     world.colliders.events.on_addition += [this](collider2D *collider) {
+        const lynx::color faded = lynx::color{glm::vec3{collider_color.normalized} * 0.6f};
         if (const auto *c = collider->shape_if<circle>())
         {
             m_shapes.emplace(collider, kit::make_scope<oriented_circle>(c->radius(), collider_color));
+            m_shape_colors[collider] = {collider_color, faded};
             return;
         }
         const polygon &poly = collider->shape<polygon>();
         const std::vector<glm::vec2> vertices{poly.vertices.model.begin(), poly.vertices.model.end()};
 
         m_shapes.emplace(collider, kit::make_scope<lynx::polygon2D>(vertices, collider_color));
+        m_shape_colors[collider] = {collider_color, faded};
     };
 
-    world.colliders.events.on_removal += [this](collider2D &collider) { m_shapes.erase(&collider); };
+    world.colliders.events.on_removal += [this](collider2D &collider) {
+        m_shapes.erase(&collider);
+        m_shape_colors.erase(&collider);
+    };
 
     world.joints.manager<spring_joint2D>()->events.on_addition +=
         [this](spring_joint2D *sp) { m_joints.emplace(sp, kit::make_scope<spring_repr2D>(sp, joint_color)); };
@@ -94,6 +100,11 @@ bool app::on_event(const lynx::event2D &event)
     return false;
 }
 
+std::pair<lynx::color, lynx::color> &app::color(collider2D *collider)
+{
+    return m_shape_colors.at(collider);
+}
+
 void app::update_shapes()
 {
     for (const auto &[collider, shape] : m_shapes)
@@ -101,6 +112,10 @@ void app::update_shapes()
         const glm::vec2 scale = shape->transform.scale;
         shape->transform = collider->ltransform().get();
         shape->transform.scale = scale;
+        if (collider->body()->asleep())
+            shape->color(m_shape_colors.at(collider).second);
+        else
+            shape->color(m_shape_colors.at(collider).first);
     }
 }
 void app::update_joints()
