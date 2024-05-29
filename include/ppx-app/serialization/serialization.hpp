@@ -15,12 +15,12 @@ template <> struct kit::yaml::codec<ppx::app>
 
         node["Engine"] = app.world;
         for (const auto &[collider, shape] : app.shapes())
-            node["Shape colors"][collider->index] = shape->color().normalized;
+            node["Shape colors"][collider->index] = shape->color().rgba;
         node["Paused"] = app.paused;
         node["Sync timestep"] = app.sync_timestep;
         node["Sync speed"] = app.sync_speed;
-        node["Collider color"] = app.collider_color.normalized;
-        node["Joints color"] = app.joint_color.normalized;
+        node["Collider color"] = app.collider_color.rgba;
+        node["Joints color"] = app.joint_color.rgba;
         node["Integrations per frame"] = app.integrations_per_frame;
         node["Framerate"] = app.framerate_cap();
         node["Camera position"] = app.window()->camera()->transform.position;

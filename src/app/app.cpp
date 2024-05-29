@@ -15,7 +15,7 @@ namespace ppx
 void app::add_world_callbacks()
 {
     world.colliders.events.on_addition += [this](collider2D *collider) {
-        const lynx::color faded = lynx::color::grey_out(collider_color, 0.4f);
+        const lynx::color faded = collider_color * 0.6f;
         if (const auto *c = collider->shape_if<circle>())
         {
             m_shapes.emplace(collider, kit::make_scope<oriented_circle>(c->radius(), collider_color));
