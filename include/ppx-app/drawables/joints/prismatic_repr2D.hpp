@@ -15,10 +15,9 @@ class prismatic_repr2D : public joint_repr2D
   private:
     const prismatic_joint2D *m_pj;
     lynx::thin_line2D m_line;
-    lynx::color m_color1;
-    lynx::color m_color2;
+    lynx::color m_color;
 
-    void update() override;
+    void update(float sleep_greyout) override;
     void draw(lynx::window2D &window) const override;
 };
 } // namespace ppx

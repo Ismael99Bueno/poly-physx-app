@@ -54,6 +54,8 @@ void app::add_world_callbacks()
         [this](prismatic_joint2D *pj) { m_joints.emplace(pj, kit::make_scope<prismatic_repr2D>(pj, joint_color)); };
 
     world.joints.events.on_addition += [this](joint2D *joint) {
+        const lynx::color faded = joint_color * sleep_greyout;
+        m_joint_colors[joint] = {joint_color, faded};
         const auto it = std::find(m_to_remove_joints.begin(), m_to_remove_joints.end(), joint);
         if (it != m_to_remove_joints.end())
             m_to_remove_joints.erase(it);
@@ -62,7 +64,10 @@ void app::add_world_callbacks()
         if (current_state() == state::RENDERING)
             m_to_remove_joints.push_back(&joint);
         else
+        {
             m_joints.erase(&joint);
+            m_joint_colors.erase(&joint);
+        }
     };
 }
 
@@ -136,10 +141,7 @@ void app::update_shapes()
         m_shapes.erase(collider);
         m_shape_colors.erase(collider);
     }
-    for (joint2D *joint : m_to_remove_joints)
-        m_joints.erase(joint);
     m_to_remove_colliders.clear();
-    m_to_remove_joints.clear();
 
     for (const auto &[collider, shape] : m_shapes)
     {
@@ -154,8 +156,15 @@ void app::update_shapes()
 }
 void app::update_joints()
 {
+    for (joint2D *joint : m_to_remove_joints)
+    {
+        m_joints.erase(joint);
+        m_joint_colors.erase(joint);
+    }
+    m_to_remove_joints.clear();
+
     for (auto &[joint, jrepr] : m_joints)
-        jrepr->update();
+        jrepr->update(sleep_greyout);
 }
 
 void app::draw_shapes() const

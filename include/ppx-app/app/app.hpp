@@ -58,6 +58,9 @@ class app : public lynx::app2D
     const std::pair<lynx::color, lynx::color> &color(collider2D *collider) const;
     std::pair<lynx::color, lynx::color> &color(collider2D *collider);
 
+    const std::pair<lynx::color, lynx::color> &color(joint2D *joint) const;
+    std::pair<lynx::color, lynx::color> &color(joint2D *joint);
+
 #ifdef KIT_USE_YAML_CPP
     virtual YAML::Node encode() const override;
     virtual bool decode(const YAML::Node &node) override;
@@ -69,7 +72,9 @@ class app : public lynx::app2D
 
     std::unordered_map<collider2D *, kit::scope<lynx::shape2D>> m_shapes;
     std::unordered_map<collider2D *, std::pair<lynx::color, lynx::color>> m_shape_colors;
+
     std::unordered_map<joint2D *, kit::scope<joint_repr2D>> m_joints;
+    std::unordered_map<joint2D *, std::pair<lynx::color, lynx::color>> m_joint_colors;
 
     std::vector<collider2D *> m_to_remove_colliders;
     std::vector<joint2D *> m_to_remove_joints;

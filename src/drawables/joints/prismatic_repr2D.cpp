@@ -4,14 +4,16 @@
 namespace ppx
 {
 prismatic_repr2D::prismatic_repr2D(const prismatic_joint2D *pj, const lynx::color &color)
-    : m_pj(pj), m_line(pj->ganchor1(), pj->ganchor2(), color)
+    : m_pj(pj), m_line(pj->ganchor1(), pj->ganchor2(), color), m_color(color)
 {
 }
 
-void prismatic_repr2D::update()
+void prismatic_repr2D::update(const float sleep_greyout)
 {
     m_line.p1(m_pj->ganchor1());
     m_line.p2(m_pj->ganchor2());
+
+    m_line.color(m_pj->asleep() ? sleep_greyout * m_color : m_color);
 }
 
 void prismatic_repr2D::draw(lynx::window2D &window) const

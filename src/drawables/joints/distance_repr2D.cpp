@@ -8,7 +8,7 @@ distance_repr2D::distance_repr2D(const distance_joint2D *dj, const lynx::color &
 {
 }
 
-void distance_repr2D::update()
+void distance_repr2D::update(const float sleep_greyout)
 {
     m_line.p1(m_dj->ganchor1());
     m_line.p2(m_dj->ganchor2());
@@ -16,7 +16,7 @@ void distance_repr2D::update()
     const float stress = m_dj->constraint_position() * 2.f;
     const lynx::gradient<3> grad{m_color1, lynx::color{glm::vec3(0.8f)}, m_color2};
     const lynx::color color = grad.evaluate(std::clamp(0.5f * (stress + 1.f), 0.f, 1.f));
-    m_line.color(color);
+    m_line.color(m_dj->asleep() ? sleep_greyout * color : color);
 }
 
 void distance_repr2D::draw(lynx::window2D &window) const

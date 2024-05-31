@@ -14,8 +14,9 @@ class spring_repr2D : public joint_repr2D
   private:
     const spring_joint2D *m_sj;
     spring_line2D m_line;
+    lynx::color m_color;
 
-    void update() override;
+    void update(float sleep_greyout) override;
     void draw(lynx::window2D &window) const override;
 };
 } // namespace ppx

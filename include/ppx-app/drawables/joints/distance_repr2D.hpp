@@ -17,7 +17,7 @@ class distance_repr2D : public joint_repr2D
     lynx::color m_color1;
     lynx::color m_color2;
 
-    void update() override;
+    void update(float sleep_greyout) override;
     void draw(lynx::window2D &window) const override;
 };
 } // namespace ppx
