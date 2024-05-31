@@ -39,6 +39,7 @@ class app : public lynx::app2D
     bool sync_timestep = true;
     bool paused = false;
     float sync_speed = 0.01f;
+    float sleep_greyout = 0.6f;
 
     lynx::color collider_color = DEFAULT_COLLIDER_COLOR;
     lynx::color joint_color = DEFAULT_JOINT_COLOR;
@@ -54,6 +55,7 @@ class app : public lynx::app2D
     virtual void on_render(float ts) override;
     virtual bool on_event(const lynx::event2D &event) override;
 
+    const std::pair<lynx::color, lynx::color> &color(collider2D *collider) const;
     std::pair<lynx::color, lynx::color> &color(collider2D *collider);
 
 #ifdef KIT_USE_YAML_CPP

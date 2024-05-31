@@ -14,8 +14,9 @@ template <> struct kit::yaml::codec<ppx::app>
         node["Lynx app"] = kit::yaml::codec<lynx::app2D>::encode(app);
 
         node["Engine"] = app.world;
-        for (const auto &[collider, shape] : app.shapes())
-            node["Shape colors"][collider->index] = shape->color().rgba;
+        for (const auto &pair : app.shapes())
+            node["Shape colors"][pair.first->index] = app.color(pair.first).first.rgba;
+        node["Sleep greyout"] = app.sleep_greyout;
         node["Paused"] = app.paused;
         node["Sync timestep"] = app.sync_timestep;
         node["Sync speed"] = app.sync_speed;
@@ -33,18 +34,25 @@ template <> struct kit::yaml::codec<ppx::app>
         if (!node.IsMap() || node.size() < 12)
             return false;
 
+        app.collider_color = lynx::color(node["Collider color"].as<glm::vec4>());
+        app.joint_color = lynx::color(node["Joints color"].as<glm::vec4>());
+
         kit::yaml::codec<lynx::app2D>::decode(node["Lynx app"], app);
         node["Engine"].as<ppx::world2D>(app.world);
 
+        app.sleep_greyout = node["Sleep greyout"].as<float>();
         if (node["Shape colors"])
-            for (const auto &[collider, shape] : app.shapes())
-                shape->color(lynx::color(node["Shape colors"][collider->index].as<glm::vec4>()));
+            for (auto &[collider, shape] : app.shapes())
+            {
+                auto &pair = app.color(collider);
+                pair.first = lynx::color(node["Shape colors"][collider->index].as<glm::vec4>());
+                pair.second = app.sleep_greyout * pair.first;
+                shape->color(pair.first);
+            }
 
         app.paused = node["Paused"].as<bool>();
         app.sync_timestep = node["Sync timestep"].as<bool>();
         app.sync_speed = node["Sync speed"].as<float>();
-        app.collider_color = lynx::color(node["Collider color"].as<glm::vec4>());
-        app.joint_color = lynx::color(node["Joints color"].as<glm::vec4>());
         app.integrations_per_frame = node["Integrations per frame"].as<std::uint32_t>();
         app.limit_framerate(node["Framerate"].as<std::uint32_t>());
 
