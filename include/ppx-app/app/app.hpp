@@ -3,6 +3,7 @@
 #include "ppx/world2D.hpp"
 
 #include "ppx-app/drawables/joints/joint_repr2D.hpp"
+#include "ppx-app/drawables/shapes/collider_repr2D.hpp"
 #include "ppx-app/app/menu_layer.hpp"
 
 #include "lynx/app/app.hpp"
@@ -49,17 +50,12 @@ class app : public lynx::app2D
     kit::perf::time physics_time() const;
 
     glm::vec2 world_mouse_position() const;
-    const std::unordered_map<collider2D *, kit::scope<lynx::shape2D>> &shapes() const;
+    const std::unordered_map<collider2D *, collider_repr2D> &shapes() const;
+    void color(collider2D *collider, const lynx::color &color);
 
     virtual void on_update(float ts) override;
     virtual void on_render(float ts) override;
     virtual bool on_event(const lynx::event2D &event) override;
-
-    const std::pair<lynx::color, lynx::color> &color(collider2D *collider) const;
-    std::pair<lynx::color, lynx::color> &color(collider2D *collider);
-
-    const std::pair<lynx::color, lynx::color> &color(joint2D *joint) const;
-    std::pair<lynx::color, lynx::color> &color(joint2D *joint);
 
 #ifdef KIT_USE_YAML_CPP
     virtual YAML::Node encode() const override;
@@ -70,11 +66,8 @@ class app : public lynx::app2D
     lynx::window2D *m_window;
     lynx::orthographic2D *m_camera;
 
-    std::unordered_map<collider2D *, kit::scope<lynx::shape2D>> m_shapes;
-    std::unordered_map<collider2D *, std::pair<lynx::color, lynx::color>> m_shape_colors;
-
+    std::unordered_map<collider2D *, collider_repr2D> m_shapes;
     std::unordered_map<joint2D *, kit::scope<joint_repr2D>> m_joints;
-    std::unordered_map<joint2D *, std::pair<lynx::color, lynx::color>> m_joint_colors;
 
     std::vector<collider2D *> m_to_remove_colliders;
     std::vector<joint2D *> m_to_remove_joints;

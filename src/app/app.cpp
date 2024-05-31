@@ -15,33 +15,20 @@ namespace ppx
 void app::add_world_callbacks()
 {
     world.colliders.events.on_addition += [this](collider2D *collider) {
-        const lynx::color faded = collider_color * sleep_greyout;
-        if (const auto *c = collider->shape_if<circle>())
-        {
-            m_shapes.emplace(collider, kit::make_scope<oriented_circle>(c->radius(), collider_color));
-            m_shape_colors[collider] = {collider_color, faded};
-        }
-        else
-        {
-            const polygon &poly = collider->shape<polygon>();
-            const std::vector<glm::vec2> vertices{poly.vertices.model.begin(), poly.vertices.model.end()};
+        KIT_ASSERT_ERROR(!m_shapes.contains(collider), "Collider already exists in the app");
 
-            m_shapes.emplace(collider, kit::make_scope<lynx::polygon2D>(vertices, collider_color));
-            m_shape_colors[collider] = {collider_color, faded};
-        }
+        m_shapes.emplace(collider, collider_repr2D(collider, collider_color));
         const auto it = std::find(m_to_remove_colliders.begin(), m_to_remove_colliders.end(), collider);
         if (it != m_to_remove_colliders.end())
             m_to_remove_colliders.erase(it);
     };
 
     world.colliders.events.on_removal += [this](collider2D &collider) {
+        KIT_ASSERT_ERROR(m_shapes.contains(&collider), "Collider does not exist in the app");
         if (current_state() == state::RENDERING)
             m_to_remove_colliders.push_back(&collider);
         else
-        {
             m_shapes.erase(&collider);
-            m_shape_colors.erase(&collider);
-        }
     };
 
     world.joints.manager<spring_joint2D>()->events.on_addition +=
@@ -54,20 +41,16 @@ void app::add_world_callbacks()
         [this](prismatic_joint2D *pj) { m_joints.emplace(pj, kit::make_scope<prismatic_repr2D>(pj, joint_color)); };
 
     world.joints.events.on_addition += [this](joint2D *joint) {
-        const lynx::color faded = joint_color * sleep_greyout;
-        m_joint_colors[joint] = {joint_color, faded};
         const auto it = std::find(m_to_remove_joints.begin(), m_to_remove_joints.end(), joint);
         if (it != m_to_remove_joints.end())
             m_to_remove_joints.erase(it);
     };
     world.joints.events.on_removal += [this](joint2D &joint) {
+        KIT_ASSERT_ERROR(m_joints.contains(&joint), "Joint does not exist in the app");
         if (current_state() == state::RENDERING)
             m_to_remove_joints.push_back(&joint);
         else
-        {
             m_joints.erase(&joint);
-            m_joint_colors.erase(&joint);
-        }
     };
 }
 
@@ -125,42 +108,20 @@ bool app::on_event(const lynx::event2D &event)
     return false;
 }
 
-const std::pair<lynx::color, lynx::color> &app::color(collider2D *collider) const
-{
-    return m_shape_colors.at(collider);
-}
-std::pair<lynx::color, lynx::color> &app::color(collider2D *collider)
-{
-    return m_shape_colors.at(collider);
-}
-
 void app::update_shapes()
 {
     for (collider2D *collider : m_to_remove_colliders)
-    {
         m_shapes.erase(collider);
-        m_shape_colors.erase(collider);
-    }
+
     m_to_remove_colliders.clear();
 
-    for (const auto &[collider, shape] : m_shapes)
-    {
-        const glm::vec2 scale = shape->transform.scale;
-        shape->transform = collider->ltransform().get();
-        shape->transform.scale = scale;
-        if (collider->body()->asleep())
-            shape->color(m_shape_colors.at(collider).second);
-        else
-            shape->color(m_shape_colors.at(collider).first);
-    }
+    for (auto &[collider, crepr] : m_shapes)
+        crepr.update(sleep_greyout);
 }
 void app::update_joints()
 {
     for (joint2D *joint : m_to_remove_joints)
-    {
         m_joints.erase(joint);
-        m_joint_colors.erase(joint);
-    }
     m_to_remove_joints.clear();
 
     for (auto &[joint, jrepr] : m_joints)
@@ -169,8 +130,8 @@ void app::update_joints()
 
 void app::draw_shapes() const
 {
-    for (const auto &[collider, shape] : m_shapes)
-        m_window->draw(*shape);
+    for (const auto &[collider, crepr] : m_shapes)
+        m_window->draw(crepr);
 }
 
 void app::draw_joints() const
@@ -221,9 +182,14 @@ glm::vec2 app::world_mouse_position() const
     const glm::vec2 mpos = lynx::input2D::mouse_position();
     return m_camera->screen_to_world(mpos);
 }
-const std::unordered_map<collider2D *, kit::scope<lynx::shape2D>> &app::shapes() const
+const std::unordered_map<collider2D *, collider_repr2D> &app::shapes() const
 {
     return m_shapes;
+}
+void app::color(collider2D *collider, const lynx::color &color)
+{
+    KIT_ASSERT_ERROR(m_shapes.contains(collider), "Collider does not exist in the app");
+    m_shapes.at(collider).color = color;
 }
 
 #ifdef KIT_USE_YAML_CPP
