@@ -15,13 +15,13 @@ template <> struct kit::yaml::codec<ppx::app>
 
         node["Engine"] = app.world;
         for (const auto &[collider, crepr] : app.shapes())
-            node["Shape colors"][collider->index] = crepr.color.rgba;
+            node["Shape colors"][collider->index] = crepr.color;
         node["Sleep greyout"] = app.sleep_greyout;
         node["Paused"] = app.paused;
         node["Sync timestep"] = app.sync_timestep;
         node["Sync speed"] = app.sync_speed;
-        node["Collider color"] = app.collider_color.rgba;
-        node["Joints color"] = app.joint_color.rgba;
+        node["Collider color"] = app.collider_color;
+        node["Joints color"] = app.joint_color;
         node["Integrations per frame"] = app.integrations_per_frame;
         node["Framerate"] = app.framerate_cap();
         node["Camera position"] = app.window()->camera()->transform.position;
@@ -34,8 +34,8 @@ template <> struct kit::yaml::codec<ppx::app>
         if (!node.IsMap() || node.size() < 12)
             return false;
 
-        app.collider_color = lynx::color(node["Collider color"].as<glm::vec4>());
-        app.joint_color = lynx::color(node["Joints color"].as<glm::vec4>());
+        app.collider_color = node["Collider color"].as<lynx::color>();
+        app.joint_color = node["Joints color"].as<lynx::color>();
 
         kit::yaml::codec<lynx::app2D>::decode(node["Lynx app"], app);
         node["Engine"].as<ppx::world2D>(app.world);
@@ -43,7 +43,7 @@ template <> struct kit::yaml::codec<ppx::app>
         app.sleep_greyout = node["Sleep greyout"].as<float>();
         if (node["Shape colors"])
             for (auto &[collider, repr] : app.shapes())
-                app.color(collider, lynx::color(node["Shape colors"][collider->index].as<glm::vec4>()));
+                app.color(collider, node["Shape colors"][collider->index].as<lynx::color>());
 
         app.paused = node["Paused"].as<bool>();
         app.sync_timestep = node["Sync timestep"].as<bool>();
