@@ -17,8 +17,8 @@ namespace ppx
 class app : public lynx::app2D
 {
   public:
-    inline static const lynx::color DEFAULT_COLLIDER_COLOR{123u, 143u, 161u};
-    inline static const lynx::color DEFAULT_JOINT_COLOR{207u, 185u, 151u};
+    inline static lynx::color collider_color{123u, 143u, 161u};
+    inline static lynx::color joint_color{207u, 185u, 151u};
 
     template <class... WorldArgs>
     app(const char *name, WorldArgs &&...args) : lynx::app2D(800, 600, name), world(std::forward<WorldArgs>(args)...)
@@ -41,9 +41,6 @@ class app : public lynx::app2D
     bool paused = false;
     float sync_speed = 0.01f;
     float sleep_greyout = 0.6f;
-
-    lynx::color collider_color = DEFAULT_COLLIDER_COLOR;
-    lynx::color joint_color = DEFAULT_JOINT_COLOR;
 
     std::uint32_t integrations_per_frame = 1;
 
