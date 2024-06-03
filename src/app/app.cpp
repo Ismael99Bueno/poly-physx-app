@@ -34,9 +34,8 @@ void app::add_world_callbacks()
     world.joints.manager<spring_joint2D>()->events.on_addition +=
         [this](spring_joint2D *sp) { m_joints.emplace(sp, kit::make_scope<spring_repr2D>(sp, joint_color)); };
 
-    world.joints.manager<distance_joint2D>()->events.on_addition += [this](distance_joint2D *dj) {
-        m_joints.emplace(dj, kit::make_scope<distance_repr2D>(dj, lynx::color::red, lynx::color::blue));
-    };
+    world.joints.manager<distance_joint2D>()->events.on_addition +=
+        [this](distance_joint2D *dj) { m_joints.emplace(dj, kit::make_scope<distance_repr2D>(dj)); };
     world.joints.manager<prismatic_joint2D>()->events.on_addition +=
         [this](prismatic_joint2D *pj) { m_joints.emplace(pj, kit::make_scope<prismatic_repr2D>(pj, joint_color)); };
 
@@ -46,7 +45,6 @@ void app::add_world_callbacks()
             m_to_remove_joints.erase(it);
     };
     world.joints.events.on_removal += [this](joint2D &joint) {
-        KIT_ASSERT_ERROR(m_joints.contains(&joint), "Joint does not exist in the app");
         if (current_state() == state::RENDERING)
             m_to_remove_joints.push_back(&joint);
         else
