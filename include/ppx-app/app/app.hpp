@@ -20,19 +20,13 @@ class app : public lynx::app2D
     inline static lynx::color collider_color{123u, 143u, 161u};
     inline static lynx::color joint_color{207u, 185u, 151u};
 
-    template <class... WorldArgs>
-    app(const char *name, WorldArgs &&...args) : lynx::app2D(800, 600, name), world(std::forward<WorldArgs>(args)...)
+    struct specs
     {
-        world.add_builtin_joint_managers();
-        m_window = window();
-        push_layer<menu_layer>();
+        ppx::specs::world2D world;
+        lynx::window2D::specs window;
+    };
 
-        m_window->maintain_camera_aspect_ratio(true);
-        m_camera = m_window->set_camera<lynx::orthographic2D>(m_window->pixel_aspect(), 50.f);
-        m_camera->flip_y_axis();
-
-        add_world_callbacks();
-    }
+    app(const specs &spc = {});
 
     virtual ~app() = default;
 

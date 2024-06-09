@@ -12,6 +12,19 @@
 
 namespace ppx
 {
+app::app(const specs &spc) : lynx::app2D(spc.window), world(spc.world)
+{
+    world.add_builtin_joint_managers();
+    m_window = window();
+    push_layer<menu_layer>();
+
+    m_window->maintain_camera_aspect_ratio(true);
+    m_camera = m_window->set_camera<lynx::orthographic2D>(m_window->pixel_aspect(), 50.f);
+    m_camera->flip_y_axis();
+
+    add_world_callbacks();
+}
+
 void app::add_world_callbacks()
 {
     world.colliders.events.on_addition += [this](collider2D *collider) {
