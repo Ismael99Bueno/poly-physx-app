@@ -105,6 +105,22 @@ bool app::on_event(const lynx::event2D &event)
         case lynx::input2D::key::P:
             paused = !paused;
             return true;
+        case lynx::input2D::key::RIGHT:
+            if (paused)
+                world.step();
+            return true;
+        default:
+            return false;
+        }
+    case lynx::event2D::KEY_REPEAT:
+        if (ImGui::GetIO().WantCaptureKeyboard)
+            break;
+        switch (event.key)
+        {
+        case lynx::input2D::key::RIGHT:
+            if (paused)
+                world.step();
+            return true;
         default:
             return false;
         }
