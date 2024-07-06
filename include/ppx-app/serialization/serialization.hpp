@@ -15,7 +15,7 @@ template <> struct kit::yaml::codec<ppx::app>
 
         node["Engine"] = app.world;
         for (const auto &[collider, crepr] : app.shapes())
-            node["Shape colors"][collider->index] = crepr.color;
+            node["Shape colors"][collider->meta.index] = crepr.color;
         node["Sleep greyout"] = app.sleep_greyout;
         node["Paused"] = app.paused;
         node["Sync timestep"] = app.sync_timestep;
@@ -43,7 +43,7 @@ template <> struct kit::yaml::codec<ppx::app>
         app.sleep_greyout = node["Sleep greyout"].as<float>();
         if (node["Shape colors"])
             for (auto &[collider, repr] : app.shapes())
-                app.color(collider, node["Shape colors"][collider->index].as<lynx::color>());
+                app.color(collider, node["Shape colors"][collider->meta.index].as<lynx::color>());
 
         app.paused = node["Paused"].as<bool>();
         app.sync_timestep = node["Sync timestep"].as<bool>();
