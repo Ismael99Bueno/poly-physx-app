@@ -6,7 +6,7 @@
 
 namespace ppx
 {
-class distance_repr2D : public joint_repr2D
+class distance_repr2D final : public joint_repr2D
 {
   public:
     distance_repr2D(const distance_joint2D *dj);

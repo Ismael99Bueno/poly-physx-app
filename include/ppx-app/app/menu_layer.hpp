@@ -5,7 +5,7 @@
 
 namespace ppx
 {
-class menu_layer : public lynx::layer2D
+class menu_layer final : public lynx::layer2D
 {
   public:
     menu_layer();

@@ -12,7 +12,7 @@
 
 namespace ppx
 {
-class thick_line2D : public lynx::line2D
+class thick_line2D final : public lynx::line2D
 {
   public:
     thick_line2D(const glm::vec2 &p1 = {0.f, 0.f}, const glm::vec2 &p2 = {1.f, 0.f},

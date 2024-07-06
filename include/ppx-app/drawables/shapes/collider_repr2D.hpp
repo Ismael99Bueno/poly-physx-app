@@ -7,7 +7,7 @@
 
 namespace ppx
 {
-class collider_repr2D : public lynx::drawable2D
+class collider_repr2D final : public lynx::drawable2D
 {
   public:
     collider_repr2D(collider2D *collider, const lynx::color &color);
