@@ -29,19 +29,12 @@ void app::add_world_callbacks()
 {
     world.colliders.events.on_addition += [this](collider2D *collider) {
         KIT_ASSERT_ERROR(!m_shapes.contains(collider), "Collider already exists in the app");
-
         m_shapes.emplace(collider, collider_repr2D(collider, collider_color));
-        const auto it = std::find(m_to_remove_colliders.begin(), m_to_remove_colliders.end(), collider);
-        if (it != m_to_remove_colliders.end())
-            m_to_remove_colliders.erase(it);
     };
 
     world.colliders.events.on_removal += [this](collider2D &collider) {
         KIT_ASSERT_ERROR(m_shapes.contains(&collider), "Collider does not exist in the app");
-        if (current_state() == state::RENDERING)
-            m_to_remove_colliders.push_back(&collider);
-        else
-            m_shapes.erase(&collider);
+        m_shapes.erase(&collider);
     };
 
     world.joints.manager<spring_joint2D>()->events.on_addition +=
@@ -52,17 +45,7 @@ void app::add_world_callbacks()
     world.joints.manager<prismatic_joint2D>()->events.on_addition +=
         [this](prismatic_joint2D *pj) { m_joints.emplace(pj, kit::make_scope<prismatic_repr2D>(pj, joint_color)); };
 
-    world.joints.events.on_addition += [this](joint2D *joint) {
-        const auto it = std::find(m_to_remove_joints.begin(), m_to_remove_joints.end(), joint);
-        if (it != m_to_remove_joints.end())
-            m_to_remove_joints.erase(it);
-    };
-    world.joints.events.on_removal += [this](joint2D &joint) {
-        if (current_state() == state::RENDERING)
-            m_to_remove_joints.push_back(&joint);
-        else
-            m_joints.erase(&joint);
-    };
+    world.joints.events.on_removal += [this](joint2D &joint) { m_joints.erase(&joint); };
 }
 
 void app::on_update(const float ts)
@@ -137,20 +120,11 @@ bool app::on_event(const lynx::event2D &event)
 
 void app::update_shapes()
 {
-    for (collider2D *collider : m_to_remove_colliders)
-        m_shapes.erase(collider);
-
-    m_to_remove_colliders.clear();
-
     for (auto &[collider, crepr] : m_shapes)
         crepr.update(sleep_greyout);
 }
 void app::update_joints()
 {
-    for (joint2D *joint : m_to_remove_joints)
-        m_joints.erase(joint);
-    m_to_remove_joints.clear();
-
     for (auto &[joint, jrepr] : m_joints)
         jrepr->update(sleep_greyout);
 }

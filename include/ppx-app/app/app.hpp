@@ -60,9 +60,6 @@ class app : public lynx::app2D
     std::unordered_map<collider2D *, collider_repr2D> m_shapes;
     std::unordered_map<joint2D *, kit::scope<joint_repr2D>> m_joints;
 
-    std::vector<collider2D *> m_to_remove_colliders;
-    std::vector<joint2D *> m_to_remove_joints;
-
     kit::perf::time m_physics_time;
 
     void update_shapes();
