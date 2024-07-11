@@ -9,7 +9,7 @@ namespace ppx
 class spring_repr2D final : public joint_repr2D
 {
   public:
-    spring_repr2D(const spring_joint2D *sj, const lynx::color &color);
+    spring_repr2D(const spring_joint2D *sj, const lynx::color &color, float sleep_greyout);
 
   private:
     const spring_joint2D *m_sj;

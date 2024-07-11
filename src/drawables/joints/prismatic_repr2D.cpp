@@ -3,9 +3,10 @@
 
 namespace ppx
 {
-prismatic_repr2D::prismatic_repr2D(const prismatic_joint2D *pj, const lynx::color &color)
+prismatic_repr2D::prismatic_repr2D(const prismatic_joint2D *pj, const lynx::color &color, const float sleep_greyout)
     : m_pj(pj), m_line(pj->ganchor1(), pj->ganchor2(), color), m_color(color)
 {
+    update(sleep_greyout);
 }
 
 void prismatic_repr2D::update(const float sleep_greyout)

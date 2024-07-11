@@ -9,7 +9,7 @@ namespace ppx
 class distance_repr2D final : public joint_repr2D
 {
   public:
-    distance_repr2D(const distance_joint2D *dj);
+    distance_repr2D(const distance_joint2D *dj, float sleep_greyout);
 
     static inline lynx::color stretch = lynx::color::blue;
     static inline lynx::color relax = lynx::color::white * 0.8f;

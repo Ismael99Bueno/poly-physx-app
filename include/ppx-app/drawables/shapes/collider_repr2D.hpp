@@ -10,7 +10,7 @@ namespace ppx
 class collider_repr2D final : public lynx::drawable2D
 {
   public:
-    collider_repr2D(collider2D *collider, const lynx::color &color);
+    collider_repr2D(collider2D *collider, const lynx::color &color, float sleep_greyout);
     collider2D *collider;
     kit::scope<lynx::shape2D> shape;
     lynx::color color;

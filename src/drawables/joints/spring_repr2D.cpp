@@ -3,9 +3,10 @@
 
 namespace ppx
 {
-spring_repr2D::spring_repr2D(const spring_joint2D *sj, const lynx::color &color)
+spring_repr2D::spring_repr2D(const spring_joint2D *sj, const lynx::color &color, const float sleep_greyout)
     : m_sj(sj), m_line(sj->ganchor1(), sj->ganchor2(), color), m_color(color)
 {
+    update(sleep_greyout);
 }
 
 void spring_repr2D::update(const float sleep_greyout)

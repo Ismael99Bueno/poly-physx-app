@@ -10,7 +10,7 @@ namespace ppx
 class prismatic_repr2D final : public joint_repr2D
 {
   public:
-    prismatic_repr2D(const prismatic_joint2D *pj, const lynx::color &color);
+    prismatic_repr2D(const prismatic_joint2D *pj, const lynx::color &color, float sleep_greyout);
 
   private:
     const prismatic_joint2D *m_pj;

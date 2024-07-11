@@ -3,8 +3,10 @@
 
 namespace ppx
 {
-distance_repr2D::distance_repr2D(const distance_joint2D *dj) : m_dj(dj), m_line(dj->ganchor1(), dj->ganchor2())
+distance_repr2D::distance_repr2D(const distance_joint2D *dj, const float sleep_greyout)
+    : m_dj(dj), m_line(dj->ganchor1(), dj->ganchor2())
 {
+    update(sleep_greyout);
 }
 
 void distance_repr2D::update(const float sleep_greyout)
