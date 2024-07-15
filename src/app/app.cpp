@@ -53,7 +53,7 @@ void app::add_world_callbacks()
 void app::on_update(const float ts)
 {
     {
-        KIT_PERF_SCOPE("PPX-APP::Physics")
+        KIT_PERF_SCOPE("ppx::app::physics")
         const kit::perf::clock physics_clock;
 
         if (sync_timestep)
