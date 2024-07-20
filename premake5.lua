@@ -12,7 +12,9 @@ filter "system:macosx or linux"
       "-Wpedantic",
       "-Wconversion",
       "-Wno-unused-parameter",
-      "-Wno-sign-conversion"
+      "-Wno-sign-conversion",
+      "-Wno-gnu-anonymous-struct",
+      "-Wno-nested-anon-types"
    }
 filter {}
 
