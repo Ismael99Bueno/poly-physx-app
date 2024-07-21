@@ -21,7 +21,7 @@ collider_repr2D::collider_repr2D(collider2D *collider, const lynx::color &color,
 void collider_repr2D::update(const float sleep_greyout)
 {
     const glm::vec2 scale = shape->transform.scale;
-    shape->transform = collider->ltransform().get();
+    shape->transform = collider->ltransform();
     shape->transform.scale = scale;
     shape->color(collider->body()->asleep() ? color * sleep_greyout : color);
 }
