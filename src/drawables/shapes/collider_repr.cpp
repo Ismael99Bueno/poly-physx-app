@@ -1,6 +1,6 @@
 #include "ppx-app/internal/pch.hpp"
 #include "ppx-app/drawables/shapes/collider_repr.hpp"
-#include "ppx-app/drawables/shapes/oriented_circle.hpp"
+#include "ppx-app/drawables/shapes/oriented_nsphere.hpp"
 
 namespace ppx
 {
