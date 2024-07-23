@@ -1,8 +1,8 @@
 #pragma once
 
-#include "ppx/joints/prismatic_joint2D.hpp"
+#include "ppx/joints/prismatic_joint.hpp"
 #include "lynx/drawing/line.hpp"
-#include "ppx-app/drawables/joints/joint_repr2D.hpp"
+#include "ppx-app/drawables/joints/joint_repr.hpp"
 #include "lynx/app/window.hpp"
 
 namespace ppx

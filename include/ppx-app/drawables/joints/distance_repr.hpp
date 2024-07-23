@@ -1,8 +1,8 @@
 #pragma once
 
-#include "ppx-app/drawables/lines/thick_line2D.hpp"
-#include "ppx-app/drawables/joints/joint_repr2D.hpp"
-#include "ppx/joints/distance_joint2D.hpp"
+#include "ppx-app/drawables/lines/thick_line.hpp"
+#include "ppx-app/drawables/joints/joint_repr.hpp"
+#include "ppx/joints/distance_joint.hpp"
 
 namespace ppx
 {

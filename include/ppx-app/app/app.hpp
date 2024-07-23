@@ -1,9 +1,9 @@
 #pragma once
 
-#include "ppx/world2D.hpp"
+#include "ppx/world.hpp"
 
-#include "ppx-app/drawables/joints/joint_repr2D.hpp"
-#include "ppx-app/drawables/shapes/collider_repr2D.hpp"
+#include "ppx-app/drawables/joints/joint_repr.hpp"
+#include "ppx-app/drawables/shapes/collider_repr.hpp"
 #include "ppx-app/app/menu_layer.hpp"
 
 #include "lynx/app/app.hpp"

@@ -2,12 +2,12 @@
 #include "ppx-app/app/app.hpp"
 #include "ppx-app/serialization/serialization.hpp"
 #include "ppx-app/drawables/shapes/oriented_circle.hpp"
-#include "ppx-app/drawables/joints/distance_repr2D.hpp"
-#include "ppx-app/drawables/joints/spring_repr2D.hpp"
-#include "ppx-app/drawables/joints/prismatic_repr2D.hpp"
+#include "ppx-app/drawables/joints/distance_repr.hpp"
+#include "ppx-app/drawables/joints/spring_repr.hpp"
+#include "ppx-app/drawables/joints/prismatic_repr.hpp"
 
 #include "lynx/geometry/camera.hpp"
-#include "ppx/joints/distance_joint2D.hpp"
+#include "ppx/joints/distance_joint.hpp"
 #include "kit/utility/utils.hpp"
 
 namespace ppx

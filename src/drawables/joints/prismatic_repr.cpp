@@ -1,5 +1,5 @@
 #include "ppx-app/internal/pch.hpp"
-#include "ppx-app/drawables/joints/prismatic_repr2D.hpp"
+#include "ppx-app/drawables/joints/prismatic_repr.hpp"
 
 namespace ppx
 {

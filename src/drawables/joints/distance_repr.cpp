@@ -1,5 +1,5 @@
 #include "ppx-app/internal/pch.hpp"
-#include "ppx-app/drawables/joints/distance_repr2D.hpp"
+#include "ppx-app/drawables/joints/distance_repr.hpp"
 
 namespace ppx
 {

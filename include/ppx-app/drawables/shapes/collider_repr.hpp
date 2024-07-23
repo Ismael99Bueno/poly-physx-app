@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ppx/collider/collider2D.hpp"
+#include "ppx/collider/collider.hpp"
 #include "lynx/drawing/color.hpp"
 #include "lynx/drawing/shape.hpp"
 #include "lynx/app/window.hpp"

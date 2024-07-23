@@ -1,5 +1,5 @@
 #include "ppx-app/internal/pch.hpp"
-#include "ppx-app/drawables/shapes/collider_repr2D.hpp"
+#include "ppx-app/drawables/shapes/collider_repr.hpp"
 #include "ppx-app/drawables/shapes/oriented_circle.hpp"
 
 namespace ppx
